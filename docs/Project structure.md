@@ -68,4 +68,4 @@ There is no lookup order, and this is a feature. Many other SSGs have complex lo
 
 ## Partials
 
-Partials are just a folder of `.inja` files that can be included by other files.
+Partials are just a folder of `.inja` files that can be included by other files. The folder name is `partials`, and like templates, are an immediate descendant of the project root.

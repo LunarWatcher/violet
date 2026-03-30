@@ -10,6 +10,9 @@ This may be, but doesn't have to be the content root for a git repository. As an
 {
     "name": "Site name",
     "description": "Optional description; can be used by templates",
+    // A path prefix for the site. This must not be a full domain. 
+    // For example, if you want your site rendered at https://username.codeberg.page/repo, the site prefix would be /repo
+    "site_prefix": null | str,
     "include": {
         // See Page lists
     },

@@ -14,6 +14,8 @@ Page lists, also called content lists, are special pages that act as the root fo
 The page lists can contain content of their own. Where the content is placed, or if it's included at all, depends on the template implementation.
 ```
 
+No pages are forced into being page lists, as it's perfectly normal to have folders with content without the index page therefore automagically being an index page.
+
 ## Additional features
 
 ### RSS
