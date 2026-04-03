@@ -34,11 +34,29 @@ if (NOT WIN32 AND VIOLET_SANITISE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
 endif()
 
+set(INJA_USE_EMBEDDED_JSON OFF CACHE STRING "" FORCE)
+set(BUILD_TESTING OFF CACHE STRING "" FORCE)
+set(INJA_BUILD_TESTS OFF CACHE STRING "" FORCE)
+set(INJA_EXPORT OFF CACHE STRING "" FORCE)
+set(INJA_INSTALL OFF CACHE STRING "" FORCE)
+
 include(FetchContent)
 FetchContent_Declare(stc
     GIT_REPOSITORY https://github.com/LunarWatcher/stc
 )
-FetchContent_MakeAvailable(stc)
+FetchContent_Declare(cli11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11
+    GIT_TAG v2.6.2
+)
+FetchContent_Declare(json
+    GIT_REPOSITORY https://github.com/nlohmann/json
+    GIT_TAG v3.12.0
+)
+FetchContent_Declare(inja
+    GIT_REPOSITORY https://github.com/pantor/inja
+    GIT_TAG v3.5.0
+)
+FetchContent_MakeAvailable(stc cli11 json inja)
 
 add_subdirectory(src)
 

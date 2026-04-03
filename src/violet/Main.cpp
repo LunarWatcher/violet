@@ -1,5 +1,5 @@
-#include <iostream>
+#include "CommandLine.hpp"
 
-int main() {
-    std::cout << "Hewwo world" << std::endl;
+int main(int argc, char** argv) {
+    return violet::cliMain(argc, argv);
 }

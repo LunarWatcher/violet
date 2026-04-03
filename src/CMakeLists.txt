@@ -1,9 +1,15 @@
 add_executable(violet
     violet/Main.cpp
 )
-add_library(violetsrc INTERFACE
+add_library(violetsrc STATIC
+    violet/CommandLine.cpp
 )
-target_include_directories(violetsrc INTERFACE .)
+target_include_directories(violetsrc PUBLIC .)
+target_link_libraries(violetsrc PUBLIC
+    CLI11::CLI11
+    nlohmann_json::nlohmann_json
+    pantor::inja
+)
 
 target_link_libraries(violet violetsrc)
 
