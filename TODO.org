@@ -8,7 +8,7 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
    It would be beneficial for the theme to provide its own default theme, but this puts modifications of themes in a weird position. This would involve lookup path that checks
 
    1. the current folder
-   2. The selected theme's correspoding folder
+   2. The selected theme's corresponding folder
 
    And that just /feels/ bad, but it would make it much easier to get a site up, and would make it easier for other users to share and reuse themes. I would probably want to set up a core theme for the doc sites I generate at least.
 ** TODO Make the documentation cohesive and coherent

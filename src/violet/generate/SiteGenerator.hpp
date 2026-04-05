@@ -2,7 +2,9 @@
 
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
+
 #include <expected>
+#include <filesystem>
 #include <memory>
 #include <string_view>
 
@@ -23,9 +25,15 @@ public:
     /**
      * Generates the site
      *
+     * \param rootDir   Defines where the violet root is. Note that this is only set to the current working
+     *                  directory, as options for setting it on the CLI have not been added. It's kept as a parameter
+     *                  to be reserved as a future variable.
+     *
      * \returns whether or not the generation was successfully completed.
      */
-    bool generate();
+    bool generate(
+        const std::filesystem::path& rootDir = std::filesystem::current_path()
+    );
 
     /**
      * Returns a SiteGenerator initialised with the provided GenerateOpts, provided a `violet.json` is found in the

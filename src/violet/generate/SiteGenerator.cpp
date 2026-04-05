@@ -1,5 +1,6 @@
 #include "SiteGenerator.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -10,8 +11,57 @@ SiteGenerator::SiteGenerator(
     Config&& workspaceConf
 ) : opts(opts), cfg(std::move(workspaceConf)) {}
 
-bool SiteGenerator::generate() {
-    std::cerr << "Not implemented" << std::endl;
+bool SiteGenerator::generate(
+    const std::filesystem::path& rootDir
+) {
+
+    auto it = std::filesystem::recursive_directory_iterator(rootDir);
+    auto end = std::filesystem::recursive_directory_iterator();
+
+    do {
+
+        auto& f = *it;
+        auto& p = f.path();
+        auto relPath = std::filesystem::relative(
+            p,
+            rootDir
+        );
+        if (f.is_directory()) {
+            if (
+                // Ignore git
+                p.filename().string().starts_with(".git")
+                // Ignore user excludes
+                || std::find(
+                    cfg.exclude.cbegin(),
+                    cfg.exclude.cend(),
+                    relPath.string()
+                ) != cfg.exclude.cend()
+            ) {
+                it.disable_recursion_pending();
+                continue;
+            }
+        } else if (f.is_regular_file()) {
+            if (
+                // Ignore git
+                p.filename().string().starts_with(".git")
+                // Ignore violet config files
+                || relPath.string() == "violet.json"
+                || relPath.string() == "violet.theme.json"
+                // Ignore user excludes
+                || std::find(
+                    cfg.exclude.cbegin(),
+                    cfg.exclude.cend(),
+                    relPath.string()
+                ) != cfg.exclude.cend()
+            ) {
+                continue;
+            }
+
+        } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
+
+        std::cout << "Path: " << relPath.string() << std::endl;
+    } while (++it != end);
+
     return false;
 }
 
