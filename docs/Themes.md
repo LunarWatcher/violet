@@ -7,8 +7,8 @@ Themes are a special construct meant to be more reusable than directly writing t
 
 Themes are not required, and work together with templates and partials in the project. When a template or partial is required, the lookup order is as follows:
 
-1. If a theme is set, look in its `_templates` and `_partials` folders.
-2. If no theme is set, or if the theme does not contain the templates the empire are looking for, the project's `_templates` and `_partials` are checked.
+1. The project's `_templates` and `_partials` are checked.
+2. If no match is found and a theme is set, look in its `_templates` and `_partials` folders.
 
 ## The themes folder
 
