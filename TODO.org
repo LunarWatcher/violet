@@ -1,21 +1,34 @@
-* Core documentation [1/3]
+This file does not make sense in GitHub's interface. Switch to source mode for a usable exprience, [[https://codeberg.org/LunarWatcher/violet/src/branch/master/TODO.org|read]] it on codeberg for a better experience, or read it in emacs for the best experience.
+
+* Core documentation [1/4]
 ** DONE Design a core spec
+** TODO [#A] Need a decision on themes
+   It would be beneficial for the theme to provide its own default theme, but this puts modifications of themes in a weird position. This would involve lookup path that checks
+
+   1. the current folder
+   2. The selected theme's correspoding folder
+
+   And that just /feels/ bad, but it would make it much easier to get a site up, and would make it easier for other users to share and reuse themes. I would probably want to set up a core theme for the doc sites I generate at least.
 ** TODO Make the documentation cohesive and coherent
 ** TODO Render the documentation with violet
 
-* Core features [0/4]
+* Core features [0/5]
 ** TODO Templates
 ** TODO Basic rendering
 ** TODO Link translation
         The links should be translated automagically so the raw markdown can contain links to other markdown files, while the rendered markdown can contain links to the corresponding HTML page without that being a whole fucking thing.
         This will likely need to be restricted to markdown rendering though, as I'm not sure where else you would be able to do it.
 ** TODO Footnotes
+** TODO Set up a few standard ways to deploy sites
+   GH can get an action, not sure how the pipeline would work on codeberg. At least for my use, I'm at risk of just pushing to the corresponding branch with a script or some shit like that rather than actually doing a CI setup. Especially on Codeberg, since CI resources are more limited there.
 
 * Nice-to-have features [0/1]
 ** TODO Parse header IDs into a list for ToC generation support
 
-* Future [0/2]
+* Future [0/3]
 ** TODO `serve` with magpie
 ** TODO Taxonomies
+** TODO Embeddability of the core in other applications
+   Not sure if this would even be desirable, or if most proper servers implementing this would mostly want raw inja. Not sure if violet can provide enough value to not end up being inja with extra steps, which I do not want.
 
 

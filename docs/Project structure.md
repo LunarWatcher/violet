@@ -1,28 +1,16 @@
+---
+---
 # Project structure
-
-Unlike many SSGs, violet does not require a rigid structure out of the box, with the exception of for templates and partials.
 
 ## Content folders
 
-Instead, you must explicitly declare your folders through configuration:
-```jsonc
-{
-    "include": [
-        {
-            // Note: paths must start with ./, and cannot contain /../
-            // Paths are always relative to the root so they can be predictably mapped to non-violet
-            // renders in the average editor
-            "path": "./folder/",
-            // Raw: Copied as-is to the output folder. This is what you want to use for asset folders. "As-is" is with
-            //      the exception of JS and CSS, which may be minified in production mode.
-            // Content: Folders of markdown and HTML that serve some form of parsed content
-            "type": "raw|content"
-        }
-    ]
-}
-```
+Content folders start at the project root and includes everything within the project.
 
-This is with the exception of the root folder of the project, which is always included as `content`. Note that "root folder of the project" refers to the folder containing `violet.json`
+Only `.md` and `.html` files with frontmatter are parsed by violet; everything else is copied verbatim. This means that, starting at violet's root folder, the workspace links map 1:1 with output links.
+
+The site prefix may change this, but everything is still relative to some root, so it should still work out.
+
+Undesirable folders can be excluded through `violet.json`; see [Config](Config.md)
 
 ### Special file names
 

@@ -1,13 +1,8 @@
 #pragma once
 
-namespace violet {
+#include "violet/data/GenerateOpts.hpp"
 
-struct GenerateOpts {
-    /**
-     * Whether or not to watch for changes.
-     */
-    bool watch = false;
-};
+namespace violet {
 
 extern int generateMain(const GenerateOpts& opts);
 

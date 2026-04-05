@@ -1,5 +1,5 @@
 add_executable(tests
-  src/Placeholder.cpp
+    src/SelfTests.cpp
 )
 
 Include(FetchContent)
@@ -14,8 +14,10 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-target_link_libraries(tests Catch2::Catch2WithMain violetsrc)
+target_link_libraries(tests Catch2::Catch2WithMain violetsrc stc)
 
 target_include_directories(tests PUBLIC src/)
+
+target_compile_definitions(tests PUBLIC -DTEST_ROOT_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
 
 # vim:ft=cmake

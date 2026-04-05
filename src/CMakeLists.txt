@@ -3,6 +3,10 @@ add_executable(violet
 )
 add_library(violetsrc STATIC
     violet/CommandLine.cpp
+
+    violet/generate/SiteGenerator.cpp
+
+    violet/conf/ToJsonImpl.cpp
 )
 target_include_directories(violetsrc PUBLIC .)
 target_link_libraries(violetsrc PUBLIC

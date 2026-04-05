@@ -1,3 +1,5 @@
+---
+---
 # Config
 
 Violet's config is stored in a `violet.json` file at the content root for the project.
@@ -13,9 +15,11 @@ This may be, but doesn't have to be the content root for a git repository. As an
     // A path prefix for the site. This must not be a full domain. 
     // For example, if you want your site rendered at https://username.codeberg.page/repo, the site prefix would be /repo
     "site_prefix": null | str,
-    "include": {
-        // See Page lists
-    },
+    // Defines a set of folders to not include in the build. This list, by default, includes
+    // all files and folders that start with ".git" in the root folder (incuding .git/, .gitignore, .gitmodules, etc)
+    "exclude": [
+        "list/of/folders/to/exclude"
+    ],
     "data": {
         // Contains userdata. Referenced through {{ site.data }}
     }

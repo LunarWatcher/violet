@@ -1,3 +1,5 @@
+---
+---
 # Page lists
 
 Page lists, also called content lists, are special pages that act as the root for a feed. Though page lists typically are a `README.md`, they aren't required to.
@@ -32,4 +34,7 @@ If you want to generate an RSS feed for a given page list, you can opt into this
 
 The value of `rss` is the path it's mounted on in the rendered view. `/feed.xml` would mean `https://example.com/feed.xml` would be generated.
 
+## Writing page list templates
+
+See [Templating](Templating.md)
 

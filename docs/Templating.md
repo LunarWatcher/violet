@@ -1,3 +1,5 @@
+---
+---
 # Templating
 
 Violet uses [inja](https://github.com/pantor/inja/) as its underlying template engine.
@@ -7,7 +9,7 @@ Violet uses [inja](https://github.com/pantor/inja/) as its underlying template e
 There are two available root-level objects:
 
 * `page`: Contains options set by the page
-* `site`: Contains options set by the site 
+* `site`: Contains options set by the site
 
 ## Functions
 

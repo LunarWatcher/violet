@@ -1,5 +1,6 @@
 #include "CommandLine.hpp"
 #include "CLI/CLI.hpp"
+#include "violet/generate/SiteGenerator.hpp"
 #include <CLI/CLI.hpp>
 
 int violet::cliMain(int argc, char** argv) {
@@ -26,7 +27,7 @@ int violet::cliMain(int argc, char** argv) {
         "serve",
         "Currently not implemented, but will exist in the future:tm:"
     );
-    
+
     CLI11_PARSE(app, argc, argv);
 
     if (cmdGenerate->parsed()) {
@@ -42,6 +43,17 @@ int violet::cliMain(int argc, char** argv) {
 }
 
 int violet::generateMain(const GenerateOpts& opts) {
-    std::cout << "TODO" << std::endl;
+    auto siteGenResult = SiteGenerator::loadWorkspace(opts);
+    if (siteGenResult.has_value()) {
+        auto& ptr = siteGenResult.value();
+        auto genRes = ptr->generate();
+        if (!genRes) {
+            std::cerr << "Site generation failed. See error log" << std::endl;
+            return 1;
+        }
+    } else {
+        std::cerr << "Failed to load workspace: " << siteGenResult.error() << std::endl;
+        return 1;
+    }
     return 0;
 }
