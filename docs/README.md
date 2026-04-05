@@ -1,7 +1,7 @@
 ---
 {
     "title": "How to read the documentation",
-    "type": "page_list"
+    "layout": "page_list"
 }
 ---
 

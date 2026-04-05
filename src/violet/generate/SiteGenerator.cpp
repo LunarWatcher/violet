@@ -9,7 +9,10 @@ namespace violet {
 SiteGenerator::SiteGenerator(
     const GenerateOpts& opts,
     Config&& workspaceConf
-) : opts(opts), cfg(std::move(workspaceConf)) {}
+) : opts(opts),
+    cfg(std::move(workspaceConf)),
+    fileManager(this->opts)
+{}
 
 bool SiteGenerator::generate(
     const std::filesystem::path& rootDir
@@ -17,6 +20,12 @@ bool SiteGenerator::generate(
 
     auto it = std::filesystem::recursive_directory_iterator(rootDir);
     auto end = std::filesystem::recursive_directory_iterator();
+
+    // Not a huge fan of this
+    std::filesystem::path realOutputPath = opts.outputFolder;
+    if (!realOutputPath.is_absolute()) {
+        realOutputPath = rootDir / opts.outputFolder;
+    }
 
     do {
 
@@ -36,7 +45,17 @@ bool SiteGenerator::generate(
                     cfg.exclude.cend(),
                     relPath.string()
                 ) != cfg.exclude.cend()
+                // Inline output directory
+                || p == realOutputPath
             ) {
+                it.disable_recursion_pending();
+                continue;
+            }
+
+            // The special _ directories at the root are not processed by the recursion logic, so it must be disabled
+            // here.
+            // We also blanket disable all <root>/_[dir] folders since these are reserved folders.
+            if (relPath.string().starts_with("_")) {
                 it.disable_recursion_pending();
                 continue;
             }
@@ -55,6 +74,17 @@ bool SiteGenerator::generate(
                 ) != cfg.exclude.cend()
             ) {
                 continue;
+            }
+
+            auto ext = p.extension();
+
+            if (ext == ".md" || ext == ".html") {
+                
+            } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
+                // TODO: handle specially
+                fileManager.copyRaw(rootDir, relPath, relPath);
+            } else {
+                fileManager.copyRaw(rootDir, relPath, relPath);
             }
 
         } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.

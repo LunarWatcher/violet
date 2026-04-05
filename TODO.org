@@ -12,10 +12,16 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 
    And that just /feels/ bad, but it would make it much easier to get a site up, and would make it easier for other users to share and reuse themes. I would probably want to set up a core theme for the doc sites I generate at least.
 ** TODO Make the documentation cohesive and coherent
+*** TODO: Standardise on layout and type
+    Layout is now what was formerly the type, and the type is effectively a namespace for layouts.
+    Previously, type was used for both by accident, largely because the ~_templates/{type}~ was hacked in somewhat last minute. Any references left need to be updated
 ** TODO Render the documentation with violet
 
-* Core features [0/5]
+* Core features [0/6]
 ** TODO Templates
+** TODO Themes
+*** TODO General theme support
+*** TODO Built-in theme
 ** TODO Basic rendering
 ** TODO Link translation
         The links should be translated automagically so the raw markdown can contain links to other markdown files, while the rendered markdown can contain links to the corresponding HTML page without that being a whole fucking thing.

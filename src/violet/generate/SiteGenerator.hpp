@@ -2,6 +2,7 @@
 
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
+#include "violet/generate/FileManager.hpp"
 
 #include <expected>
 #include <filesystem>
@@ -14,6 +15,8 @@ class SiteGenerator {
 private:
     GenerateOpts opts;
     Config cfg;
+
+    FileManager fileManager;
 
     SiteGenerator(
         const GenerateOpts& opts,

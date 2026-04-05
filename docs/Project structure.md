@@ -59,12 +59,20 @@ project-root/
             |- base.inja
 ```
 
+
+The template path can be described as `_templates/{type}/{layout}.inja`. In the example above:
+
+* `single_page`, `page_list` are built-in layout types
+* `base.inja` is a custom layout types
+* `custom` and `_default` are both types, with `_default` being a builtin type with a special meaning.
+
+
 ### Reserved folders
 Folders starting with `_` are reserved for internal use. If your templates folder contains an underscored folder with an unknown name, the build will fail.
 
 The currently used special folders are:
 
-* `_default`: The default template used when no `type` is specified.
+* `_default`: The default template used when no `type` is specified, and that serves as a fallback for all custom types that lack a specific type.
 
 ### Template types
 
@@ -80,7 +88,8 @@ There is no lookup order, and this is a feature. Many other SSGs have complex lo
 * If no `type` is declared in the frontmatter, `_default` is used.
 * If a non-`_default` type is used, but it doesn't contain a given template, the `_default` is sourced.
 * If no template of the corresponding type nor in the `_default` fallback is found, the build fails.
-* If the `type` doesn't map to a folder in `templates`, the build fails.
+* If the `type` doesn't map to a folder in `templates` or in the theme, if set, the build fails.
+
 
 ## Partials
 
