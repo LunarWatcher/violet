@@ -1,8 +1,10 @@
 This file does not make sense in GitHub's interface. Switch to source mode for a usable exprience, [[https://codeberg.org/LunarWatcher/violet/src/branch/master/TODO.org|read]] it on codeberg for a better experience, or read it in emacs for the best experience.
 
-* Core documentation [1/4]
+* Core documentation [2/4]
 ** DONE Design a core spec
-** TODO [#A] Need a decision on themes
+** DONE [#A] Need a decision on themes
+   *Conclusion*: themes are GO
+
    It would be beneficial for the theme to provide its own default theme, but this puts modifications of themes in a weird position. This would involve lookup path that checks
 
    1. the current folder

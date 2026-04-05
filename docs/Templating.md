@@ -10,6 +10,7 @@ There are two available root-level objects:
 
 * `page`: Contains options set by the page
 * `site`: Contains options set by the site
+* `theme`: Contains options set by the theme. Only available if a theme is set, and it defines variables. See [Themes](Themes.md).
 
 ## Functions
 
