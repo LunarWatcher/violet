@@ -8,23 +8,16 @@
 
 namespace violet {
 
-struct Frontmatter {
-    std::string title;
-    std::string type;
-    std::chrono::zoned_seconds date;
-    std::chrono::zoned_seconds last_modified;
-
-    nlohmann::json rawWithIntDates;
-
-    void loadFileData(
-        std::filesystem::path& source
+namespace Frontmatter {
+    inline void loadFileData(
+        nlohmann::json& src,
+        const std::filesystem::path& source
     ) {
-        if (title == "") {
-            title = source.filename();
+        auto title = src.find("title");
+        if (title == src.end() || *title == "") {
+            *title = source.filename();
         }
     }
-};
-
-void from_json(const nlohmann::json& src, con)
+}
 
 }
