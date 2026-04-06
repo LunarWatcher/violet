@@ -6,9 +6,9 @@
 ---
 {
     "title": "Title for the page. Optional; defaults to the filename",
-    "type": "Type for the page. Default: single_page",
-    "class": "The class of the page. Default: _default",
-    "date": "ISO datetime for when the page was published; optional, defaults to when the page was last modified",
+    "type": "Type for the page. Default: _default",
+    "layout": "The layout to use for the page. Default: single_page",
+    "date": "ISO datetime for when the page was published; optional, defaults to when the page was last modified. Note that fractional timezones are not supported.",
     "last_modified": "ISO datetime for when the page was last modified. If not set, it's equal to the `date`",
     "taxonomies": {
         // Contains taxonomies, such as tags. Unused, but reserved for future use once I figure out how to not make taxonomies utter crap for DevEx

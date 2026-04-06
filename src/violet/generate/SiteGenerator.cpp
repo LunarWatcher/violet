@@ -1,5 +1,7 @@
 #include "SiteGenerator.hpp"
 
+#include "ProcessedFileType.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -14,6 +16,57 @@ SiteGenerator::SiteGenerator(
     fileManager(this->opts)
 {}
 
+nlohmann::json SiteGenerator::parseFrontmatter(std::ifstream& in) {
+    // we need to re-do the check already done on HTML, since we allow markdown to not contain frontmatter
+    std::string lineBuff;
+    std::getline(in, lineBuff);
+
+    if (lineBuff != "---") {
+        // Markdown; frontmatter is empty. Reset input stream
+        in.seekg(0);
+        in.clear();
+        return nlohmann::json::object();
+    }
+    std::stringstream json;
+    while (std::getline(in, lineBuff)) {
+        if (lineBuff == "---") {
+            if (json.tellp() == 0) {
+                // No JSON
+                // This is not particularly robust, but good enough for now.
+                // Parts of this will be substituted by an error once the parsing is error-handled.
+                return nlohmann::json::object();
+            }
+            // end of frontmatter reached
+            nlohmann::json out;
+            std::cout << json.str() << std::endl;
+            json >> out;
+            return out;
+        }
+        json << lineBuff << std::endl;
+    }
+    // EOF with no frontmatter terminator. Return null
+    // TODO: ... and log an error for the user.
+    // TOOD: do we also want to output to file, or just log at that point? I'm in favour of CLI errors, but I'm not sure
+    // if that scales well if there's hundreds of errors. I am somewhat in favour of a report file of sorts though, that
+    // compiles an aggregate set of the errors and where they're at.
+    return nullptr;
+}
+
+bool SiteGenerator::processFile(
+    const std::filesystem::path& rootDir,
+    const std::filesystem::path& relPath,
+    ProcessedFileType type
+) {
+    std::ifstream in(rootDir / relPath);
+    nlohmann::json frontmatter = parseFrontmatter(in);
+
+    if (frontmatter == nullptr) {
+        return false;
+    }
+
+    return true;
+}
+
 bool SiteGenerator::generate(
     const std::filesystem::path& rootDir
 ) {
@@ -27,6 +80,7 @@ bool SiteGenerator::generate(
         realOutputPath = rootDir / opts.outputFolder;
     }
 
+    bool success = true;
     do {
 
         auto& f = *it;
@@ -78,21 +132,53 @@ bool SiteGenerator::generate(
 
             auto ext = p.extension();
 
-            if (ext == ".md" || ext == ".html") {
-                
+            if (ext == ".md") {
+                success &= processFile(rootDir, relPath, ProcessedFileType::Markdown);
+                continue;
+            } else if (ext == ".html") {
+                // HTML files are conditionally processed. No frontmatter means they're copied as any other static file
+                // would, frontmatter means processed.
+                //
+                // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 7
+                // bytes rather than potentially an entire gigabyte-sized single-line file (unlikely to ever come up,
+                // but might as well)
+                std::ifstream in(p);
+                // this means the file is not readable. copyRaw will throw in this case.
+                // Other files can also trigger the same error, but we shamelessly ignore those for now.
+                if (!in) {
+                    // TODO: warn
+                    continue;
+                }
+
+                char ch;
+                for (size_t i = 0; i < 3; ++i) {
+                    if (!(in >> ch) || ch != '-') {
+                        goto cont;
+                    }
+                }
+                // noskipws is required, or the char will be eaten automagically by features that otherwise would be a
+                // convenience
+                if (!(in >> std::noskipws >> ch) || (ch != '\n' && ch != '\r')) {
+                    goto cont;
+                }
+
+                in.close();
+                // we have a frontmatter, or at least something that is frontmatter-shaped.
+                // It may still be malformed, but this will be addressed by processFile()
+                success &= processFile(rootDir, relPath, ProcessedFileType::Html);
+                continue;
             } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
                 // TODO: handle specially
-                fileManager.copyRaw(rootDir, relPath, relPath);
-            } else {
-                fileManager.copyRaw(rootDir, relPath, relPath);
             }
+        cont:
+            fileManager.copyRaw(rootDir, relPath, relPath);
 
         } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
 
         std::cout << "Path: " << relPath.string() << std::endl;
     } while (++it != end);
 
-    return false;
+    return success;
 }
 
 std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::loadWorkspace(

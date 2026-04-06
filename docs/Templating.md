@@ -34,7 +34,7 @@ Parameters:
 > The `Etc/GMT[offset]` timezones are filthy fucking liars because the signs are inverted. `Etc/GMT-1` is UTC+1, `Etc/GMT+1` is UTC-1. You can also convert to a location timezone if you prefer here; as long as it's in your system's timezone database, violet does not care.
 
 Given
-```
+```markdown
 ---
 { "date": "2026-03-30T20:02:51+0200" }
 ---

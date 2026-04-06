@@ -1,5 +1,5 @@
 ---
-{ "title": "Design principles" }
+{ "title": "Design principles" }
 ---
 # Design principles
 

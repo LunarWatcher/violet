@@ -15,4 +15,6 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
     if (auto it = src.find("data"); it != src.end() && !it->is_null()) {
         it->get_to(dest.data);
     }
+
+    dest.raw = src;
 }

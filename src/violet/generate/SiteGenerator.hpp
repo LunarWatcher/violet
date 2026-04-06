@@ -3,6 +3,7 @@
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/FileManager.hpp"
+#include "violet/generate/ProcessedFileType.hpp"
 
 #include <expected>
 #include <filesystem>
@@ -21,6 +22,13 @@ private:
     SiteGenerator(
         const GenerateOpts& opts,
         Config&& workspaceConf
+    );
+
+    nlohmann::json parseFrontmatter(std::ifstream& in);
+    bool processFile(
+        const std::filesystem::path& rootDir,
+        const std::filesystem::path& relPath,
+        ProcessedFileType type
     );
 public:
     ~SiteGenerator() = default;
