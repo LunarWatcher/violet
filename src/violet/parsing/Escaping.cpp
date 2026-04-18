@@ -56,10 +56,16 @@ void violet::urlEncode(
         case '@':
         case '[':
         case ']':
+
+        // Not technically reserved, but we're excluding it to avoid double-encoding
+        case '%':
             target << ch;
             return;
         }
     }
 
-    target << std::hex << (int) ch << std::dec;
+    target << std::hex
+           << "%"
+           << (int) ch
+           << std::dec;
 }

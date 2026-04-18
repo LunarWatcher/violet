@@ -141,6 +141,17 @@ This same logic also applies to inline code, but inline code is more limited. Si
 
 is in fact just a two-backtick inline code. Additionally, three-backtick inline code at the start of a line is currently misidentified as a code block. You can get around this by prefixing the line with a space, though I would advise you to stick to one backtick since three is redundant the vast majority of the time. This will probably be fixed at some point.
 
+### Language rendering
+
+Languages are rendered in HTML as a highlightjs-compatible class:
+```html
+<pre><code class="language-markdown">... content</code></pre>
+```
+
+No further rendering is done, as implementing arbitrary language parsing is a whole different beast, and not worth the effort when plenty of equivalent web-based implementations already exists. It's required that the implementing site sources highlightjs or equivalent manually, and loads the relevant languages for the code blocks to highlight. Violet's role is just in propagating the language information.
+
+This also means that the supported languages and their names depends on what your syntax highlighter of choice uses.
+
 ## Tables
 
 Tables are not implemented at this time. They'll require a fair few changes internally to be implementable while also supporting markdown content, and will likely end up being a mostly novel implementation, or just GFM-like. GFM tables have multiple annoyances that make me somewhat hesitant to directly use the GFM markup, particularly in dealing with multiline cells and merged cells, both vertically and horizontally. Part of me suspects tables are just  better implemented in HTML, since HTML can actually describe the table properly. That is also the only solution for rendering tables for now.
