@@ -27,8 +27,13 @@ private:
     nlohmann::json parseFrontmatter(std::ifstream& in);
     bool processFile(
         const std::filesystem::path& rootDir,
-        const std::filesystem::path& relPath,
+        std::filesystem::path relPath,
         ProcessedFileType type
+    );
+
+    void handleTemplatesAndSave(
+        std::string&& fileContent,
+        const std::filesystem::path& relPath
     );
 public:
     ~SiteGenerator() = default;

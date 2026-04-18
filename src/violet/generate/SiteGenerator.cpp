@@ -54,9 +54,31 @@ nlohmann::json SiteGenerator::parseFrontmatter(std::ifstream& in) {
     return nullptr;
 }
 
+void SiteGenerator::handleTemplatesAndSave(
+    std::string&& fileContent,
+    const std::filesystem::path& relPath
+) {
+    auto target = this->opts.outputFolder / relPath;
+    std::filesystem::create_directories(
+        target.parent_path()
+    );
+    std::ofstream f(
+        target
+    );
+    if (!f) {
+        std::cerr << "Failed to open " << target << std::endl;
+        return;
+    }
+    std::cout << "Committing generated page " << target << std::endl;
+    f.write(
+        fileContent.data(),
+        fileContent.size()
+    );
+}
+
 bool SiteGenerator::processFile(
     const std::filesystem::path& rootDir,
-    const std::filesystem::path& relPath,
+    std::filesystem::path relPath,
     ProcessedFileType type
 ) {
     std::ifstream in(rootDir / relPath);
@@ -72,12 +94,22 @@ bool SiteGenerator::processFile(
     switch (type) {
     case ProcessedFileType::Html: {
         std::string fileContent = content.str();
+
+        handleTemplatesAndSave(
+            std::move(fileContent),
+            relPath
+        );
     } break;
     case ProcessedFileType::Markdown: {
         std::string fileContent = Markdown::parse(
             content
         );
 
+        auto newPath = relPath.replace_extension(".html");
+        handleTemplatesAndSave(
+            std::move(fileContent),
+            newPath
+        );
     } break;
     }
 
