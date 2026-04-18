@@ -1,23 +1,36 @@
 #pragma once
 
-#include <chrono>
 #include <filesystem>
-#include <string>
 
 #include <nlohmann/json.hpp>
 
 namespace violet {
 
-namespace Frontmatter {
-    inline void loadFileData(
-        nlohmann::json& src,
+struct ListingFrontmatter {
+    std::string rss;
+    bool recursive;
+};
+
+struct Frontmatter {
+    std::optional<std::string> title;
+    std::string type;
+    std::string layout;
+
+    int64_t date;
+    int64_t last_modified;
+
+    nlohmann::json data;
+
+    void withFilePath(
         const std::filesystem::path& source
     ) {
-        auto title = src.find("title");
-        if (title == src.end() || *title == "") {
+        if (!title) {
             *title = source.filename();
         }
     }
-}
+};
+
+extern void from_json(const nlohmann::json& src, ListingFrontmatter& dest);
+extern void from_json(const nlohmann::json& src, Frontmatter& dest);
 
 }

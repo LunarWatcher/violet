@@ -16,5 +16,19 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         it->get_to(dest.data);
     }
 
-    dest.raw = src;
+    // We manually assemble `raw` to force custom fields into `data`.
+    dest.raw = {
+        {"name", dest.name},
+        {"data", dest.data},
+        {"exclude", dest.exclude}
+    };
+
+    if (dest.description) {
+        dest.raw["description"] = dest.description.value();
+    }
+
+    if (dest.site_prefix) {
+        dest.raw["site_prefix"] = dest.site_prefix.value();
+    }
+
 }

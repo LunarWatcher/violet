@@ -29,6 +29,8 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 ** TODO Footnotes
 ** TODO Set up a few standard ways to deploy sites
    GH can get an action, not sure how the pipeline would work on codeberg. At least for my use, I'm at risk of just pushing to the corresponding branch with a script or some shit like that rather than actually doing a CI setup. Especially on Codeberg, since CI resources are more limited there.
+** TODO Unicode handling
+   I /suspect/ I don't need to care since all the unicode codepoints start with 1, and the ascii set does not, so all the standard markdown chars should be unambiguous
 
 * Nice-to-have features [0/1]
 ** TODO Parse header IDs into a list for ToC generation support

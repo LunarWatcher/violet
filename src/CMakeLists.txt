@@ -4,11 +4,16 @@ add_executable(violet
 add_library(violetsrc STATIC
     violet/CommandLine.cpp
 
+    violet/conf/ToJsonImpl.cpp
+
     violet/generate/SiteGenerator.cpp
     violet/generate/FileManager.cpp
 
-    violet/conf/ToJsonImpl.cpp
+    violet/parsing/DateTimeParsing.cpp
+    violet/parsing/Markdown.cpp
+    violet/parsing/Escaping.cpp
 )
+
 target_include_directories(violetsrc PUBLIC .)
 target_link_libraries(violetsrc PUBLIC
     CLI11::CLI11

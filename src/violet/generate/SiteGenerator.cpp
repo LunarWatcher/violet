@@ -6,6 +6,8 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <sstream>
+#include <violet/parsing/Markdown.hpp>
 
 namespace violet {
 SiteGenerator::SiteGenerator(
@@ -46,7 +48,7 @@ nlohmann::json SiteGenerator::parseFrontmatter(std::ifstream& in) {
     }
     // EOF with no frontmatter terminator. Return null
     // TODO: ... and log an error for the user.
-    // TOOD: do we also want to output to file, or just log at that point? I'm in favour of CLI errors, but I'm not sure
+    // TODO: do we also want to output to file, or just log at that point? I'm in favour of CLI errors, but I'm not sure
     // if that scales well if there's hundreds of errors. I am somewhat in favour of a report file of sorts though, that
     // compiles an aggregate set of the errors and where they're at.
     return nullptr;
@@ -62,6 +64,25 @@ bool SiteGenerator::processFile(
 
     if (frontmatter == nullptr) {
         return false;
+    }
+
+    // TODO: is there a way to use stream directects to avoid std::getline?
+    std::stringstream content;
+    std::string line;
+    while (std::getline(in, line)) {
+        content << line;
+    }
+
+    switch (type) {
+    case ProcessedFileType::Html: {
+        std::string fileContent = content.str();
+    } break;
+    case ProcessedFileType::Markdown: {
+        std::string fileContent = Markdown::parse(
+            content
+        );
+
+    } break;
     }
 
     return true;

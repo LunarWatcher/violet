@@ -15,13 +15,10 @@
     },
     // Only supported if type == page_list. See Page lists for more info
     "listing": {
+        // Path to where the RSS file is rendered.
         "rss": "/path/to/rss-file.xml",
         // Whether or not the list page is recursive, i.e. whether subfolders should be included
-        "recursive": false,
-        // Whether or not the list page should include folders. Folders are never included in RSS generation regardless of this option,
-        // but this option controls whether or not the folders are included in the list. Can be useful if you want to have a master list that
-        // links to sub-lists
-        "include_folders": false,
+        "recursive": false
     },
     "data": {
         // optional userdata. Can be referred through {{ page.data }} in templates. Anything non-standard goes here
