@@ -66,12 +66,8 @@ bool SiteGenerator::processFile(
         return false;
     }
 
-    // TODO: is there a way to use stream directects to avoid std::getline?
     std::stringstream content;
-    std::string line;
-    while (std::getline(in, line)) {
-        content << line;
-    }
+    content << in.rdbuf();
 
     switch (type) {
     case ProcessedFileType::Html: {

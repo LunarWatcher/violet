@@ -25,7 +25,7 @@ struct Frontmatter {
         const std::filesystem::path& source
     ) {
         if (!title) {
-            *title = source.filename();
+            title = source.filename();
         }
     }
 };
