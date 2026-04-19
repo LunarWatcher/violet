@@ -1,6 +1,7 @@
 #include "Markdown.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/parsing/Escaping.hpp"
+#include "violet/parsing/LinkTranslate.hpp"
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -366,14 +367,23 @@ void Markdown::parseParagraphContent(
                     if (ch == close) {
                         break;
                     }
-                    urlEncode(
-                        ch,
-                        urlOrRef,
-                        false
-                    );
+                    if (open == '(') {
+                        urlEncode(
+                            ch,
+                            urlOrRef,
+                            false
+                        );
+                    } else {
+                        // references have to be unmodified
+                        urlOrRef << ch;
+                    }
                 }
-                node->urlType = URLNode::Type::Standard;
-                node->urlOrRef = urlOrRef.str();
+                node->urlType = open == '(' ? URLNode::Type::Standard : URLNode::Type::Reference;
+                node->urlOrRef = open == '(' ? stringifyAndTranslateUrl(urlOrRef) : urlOrRef.str();
+                
+            } else if (in.peek() == ':') {
+                // TODO: how should this work with the tree? These nodes should technically disappear from the tree
+                // itself, since they'd be converted to a context object.
             } else {
                 node->urlType = URLNode::Type::Reference;
                 node->urlOrRef = content.str();

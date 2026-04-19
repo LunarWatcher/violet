@@ -4,6 +4,7 @@ add_executable(tests
     src/SelfTests.cpp
 
     src/parsing/MarkdownTests.cpp
+    src/parsing/UrlTests.cpp
 )
 
 Include(FetchContent)
