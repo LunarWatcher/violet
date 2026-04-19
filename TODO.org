@@ -38,13 +38,15 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 ** TODO Parse header IDs into a list for ToC generation support
    This already needs to be done for duplicate ID resolution, so it can easily be exported along with the content.
 
-* Bugs [0/2]
+* Bugs [0/3]
 ** TODO page capitalisation is preserved
    Not sure how much of a problem this is, but I'd assume the sane standard should be translating to lower-case.
 
    This is more challenging for internal link parsing though, since this would require the generation context to be passed to the generator functions, which it currently isn't set up to do. Using a singleton would be a nice bypass, but not particularly thread-safe for separating the markdown parser from violet in the future
 ** TODO Link translation doesn't account for the `README` rewrite
    This probably falls into the same category as the previous section; there likely needs to be a proper registry that handles how the URL rewrites are done to maintain consistency and linkage. Plus, if there's other rewrites in the future, these can be linked up based on the source URL rather than doing in-place rewrites
+** TODO site_prefix needs to force the format to be `/some/prefix`
+   Does C++ have a generic path parsing system? Could potentially abuse `std::filesystem` for this particular use-case
 
 * Nice-to-have features [0/0]
 
