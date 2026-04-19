@@ -9,6 +9,8 @@ add_library(violetsrc STATIC
     violet/generate/SiteGenerator.cpp
     violet/generate/FileManager.cpp
 
+    violet/generate/templates/InjaManager.cpp
+
     violet/parsing/DateTimeParsing.cpp
     violet/parsing/Markdown.cpp
     violet/parsing/Escaping.cpp
@@ -19,6 +21,7 @@ target_link_libraries(violetsrc PUBLIC
     CLI11::CLI11
     nlohmann_json::nlohmann_json
     pantor::inja
+    stc
 )
 
 target_link_libraries(violet violetsrc)

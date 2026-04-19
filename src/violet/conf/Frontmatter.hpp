@@ -16,8 +16,10 @@ struct Frontmatter {
     std::string type;
     std::string layout;
 
-    int64_t date;
-    int64_t last_modified;
+    std::optional<int64_t> date;
+    std::optional<int64_t> last_modified;
+
+    std::optional<ListingFrontmatter> listing;
 
     nlohmann::json data;
 
@@ -30,7 +32,10 @@ struct Frontmatter {
     }
 };
 
-extern void from_json(const nlohmann::json& src, ListingFrontmatter& dest);
 extern void from_json(const nlohmann::json& src, Frontmatter& dest);
+extern void from_json(const nlohmann::json& src, ListingFrontmatter& dest);
+
+extern void to_json(nlohmann::json& dest, const Frontmatter& src);
+extern void to_json(nlohmann::json& dest, const ListingFrontmatter& src);
 
 }

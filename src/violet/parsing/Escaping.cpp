@@ -14,6 +14,11 @@ void violet::htmlEscape(
     case '>':
         target << "&gt;";
         break;
+    case '{':
+    case '}':
+    case '#':
+        target << "&#" << (int) ch;
+        break;
     default:
         target << ch;
     }

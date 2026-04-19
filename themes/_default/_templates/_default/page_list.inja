@@ -4,7 +4,7 @@
     </head>
     <body>
         <main>
-            <p>Boop, I come from the single_page template</p>
+            <p>Boop, I come from the page_list template</p>
             {% include "content" %}
         </main>
     </body>

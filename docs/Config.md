@@ -12,6 +12,12 @@ This may be, but doesn't have to be the content root for a git repository. As an
 {
     "name": "Site name",
     "description": "Optional description; can be used by templates",
+    // Theme is a special key. By default, it's _default, which is a built-in theme.
+    // As per the docs for Themes, themes prefixed with a _ are builtin themes
+    // If omitted, the _default theme is used.
+    // If explicitly set to null, no theme is loaded, and the site itself must define templates before rendering can happen.
+    // Otherwise, a folder in _themes/{value of theme} must exist and be not empty.
+    // Themes are not required; if you're unsure, I suggest not defining this config option and letting it _default
     "theme": "_default",
     // A path prefix for the site. This must not be a full domain. 
     // For example, if you want your site rendered at https://username.codeberg.page/repo, the site prefix would be /repo

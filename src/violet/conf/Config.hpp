@@ -13,6 +13,7 @@ struct Config {
 
     std::optional<std::string> site_prefix;
     std::vector<std::string> exclude;
+    std::optional<std::string> theme;
     nlohmann::json data;
 
     /**

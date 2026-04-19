@@ -10,12 +10,21 @@
 #include <violet/parsing/Markdown.hpp>
 
 namespace violet {
+
 SiteGenerator::SiteGenerator(
     const GenerateOpts& opts,
     Config&& workspaceConf
 ) : opts(opts),
     cfg(std::move(workspaceConf)),
-    fileManager(this->opts)
+    fileManager(
+        this->opts,
+        this->cfg
+    ),
+    injaManager(
+        this->opts,
+        this->cfg,
+        this->fileManager
+    )
 {}
 
 nlohmann::json SiteGenerator::parseFrontmatter(std::ifstream& in) {
@@ -56,7 +65,8 @@ nlohmann::json SiteGenerator::parseFrontmatter(std::ifstream& in) {
 
 void SiteGenerator::handleTemplatesAndSave(
     std::string&& fileContent,
-    const std::filesystem::path& relPath
+    const std::filesystem::path& relPath,
+    const Frontmatter& frontmatter
 ) {
     auto target = this->opts.outputFolder / relPath;
     std::filesystem::create_directories(
@@ -69,10 +79,16 @@ void SiteGenerator::handleTemplatesAndSave(
         std::cerr << "Failed to open " << target << std::endl;
         return;
     }
+    auto renderedContent = injaManager.renderPage(
+        fileContent,
+        relPath,
+        frontmatter
+    );
+    
     std::cout << "Committing generated page " << target << std::endl;
     f.write(
-        fileContent.data(),
-        fileContent.size()
+        renderedContent.data(),
+        renderedContent.size()
     );
 }
 
@@ -81,12 +97,14 @@ bool SiteGenerator::processFile(
     std::filesystem::path relPath,
     ProcessedFileType type
 ) {
+    std::cout << "Now reading " << relPath << std::endl;
     std::ifstream in(rootDir / relPath);
     nlohmann::json frontmatter = parseFrontmatter(in);
 
     if (frontmatter == nullptr) {
         return false;
     }
+    Frontmatter parsedFrontmatter = frontmatter;
 
     std::stringstream content;
     content << in.rdbuf();
@@ -97,7 +115,8 @@ bool SiteGenerator::processFile(
 
         handleTemplatesAndSave(
             std::move(fileContent),
-            relPath
+            relPath,
+            parsedFrontmatter
         );
     } break;
     case ProcessedFileType::Markdown: {
@@ -111,10 +130,11 @@ bool SiteGenerator::processFile(
         } else {
             newPath = relPath.replace_filename("index.html");
         }
-            
+
         handleTemplatesAndSave(
             std::move(fileContent),
-            newPath
+            newPath,
+            parsedFrontmatter
         );
     } break;
     }
@@ -125,6 +145,7 @@ bool SiteGenerator::processFile(
 bool SiteGenerator::generate(
     const std::filesystem::path& rootDir
 ) {
+    this->fileManager.imbueRoot(rootDir);
 
     auto it = std::filesystem::recursive_directory_iterator(rootDir);
     auto end = std::filesystem::recursive_directory_iterator();
@@ -241,7 +262,7 @@ bool SiteGenerator::generate(
 
         } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
 
-        std::cout << "Path: " << relPath.string() << std::endl;
+        // std::cout << "Path: " << relPath.string() << std::endl;
     } while (++it != end);
 
     return success;

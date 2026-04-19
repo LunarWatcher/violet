@@ -4,6 +4,7 @@
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/FileManager.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
+#include "violet/generate/templates/InjaManager.hpp"
 
 #include <expected>
 #include <filesystem>
@@ -18,6 +19,7 @@ private:
     Config cfg;
 
     FileManager fileManager;
+    InjaManager injaManager;
 
     SiteGenerator(
         const GenerateOpts& opts,
@@ -33,7 +35,8 @@ private:
 
     void handleTemplatesAndSave(
         std::string&& fileContent,
-        const std::filesystem::path& relPath
+        const std::filesystem::path& relPath,
+        const Frontmatter& frontmatter
     );
 public:
     ~SiteGenerator() = default;
