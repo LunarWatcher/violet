@@ -32,6 +32,14 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 ** TODO Unicode handling
    I /suspect/ I don't need to care since all the unicode codepoints start with 1, and the ascii set does not, so all the standard markdown chars should be unambiguous
 
+* Bugs [0/2]
+** TODO page capitalisation is preserved
+   Not sure how much of a problem this is, but I'd assume the sane standard should be translating to lower-case.
+
+   This is more challenging for internal link parsing though, since this would require the generation context to be passed to the generator functions, which it currently isn't set up to do. Using a singleton would be a nice bypass, but not particularly thread-safe for separating the markdown parser from violet in the future
+** TODO Link translation doesn't account for the `README` rewrite
+   This probably falls into the same category as the previous section; there likely needs to be a proper registry that handles how the URL rewrites are done to maintain consistency and linkage. Plus, if there's other rewrites in the future, these can be linked up based on the source URL rather than doing in-place rewrites
+
 * Nice-to-have features [0/1]
 ** TODO Parse header IDs into a list for ToC generation support
 
