@@ -13,8 +13,10 @@ std::string stringifyAndTranslateUrl(
     // TODO: would be cleaner to do this with stream manipulation, but not sure how
     // This is also not perfect, but it's good enough for now
     if (
-        (!out.starts_with("http://")
-            || !out.starts_with("/")
+        !out.starts_with("http://")
+        && !out.starts_with("https://")
+        && (
+            !out.starts_with("/")
             || (out.starts_with("/") && !out.starts_with("//"))
         )
         && out.ends_with(".md")

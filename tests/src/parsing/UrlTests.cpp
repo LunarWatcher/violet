@@ -26,4 +26,24 @@ TEST_CASE("Link translation", "[markdown]") {
             R"(<p><a href="/test.html">Link</a></p>)"
         );
     }
+
+    SECTION(".md TLD should be untouched") {
+        std::stringstream ss;
+        ss << "[Link](//obsidian.md)";
+        REQUIRE(
+            violet::Markdown::parse(ss)
+            ==
+            R"(<p><a href="//obsidian.md">Link</a></p>)"
+        );
+    }
+
+    SECTION("External pages should be untouched") {
+        std::stringstream ss;
+        ss << "[Link](//example.com/page.md)";
+        REQUIRE(
+            violet::Markdown::parse(ss)
+            ==
+            R"(<p><a href="//example.com/page.md">Link</a></p>)"
+        );
+    }
 }
