@@ -415,7 +415,6 @@ void Markdown::parseParagraphContent(
                 throw std::runtime_error("Unexpected indent");
             }
         } else {
-            // TODO: determine when to escape a character
             content << ch;
         }
     }
