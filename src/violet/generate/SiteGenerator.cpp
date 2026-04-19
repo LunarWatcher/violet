@@ -105,7 +105,13 @@ bool SiteGenerator::processFile(
             content
         );
 
-        auto newPath = relPath.replace_extension(".html");
+        std::filesystem::path newPath;
+        if (relPath.filename() != "README.md") {
+            newPath = relPath.replace_extension(".html");
+        } else {
+            newPath = relPath.replace_filename("index.html");
+        }
+            
         handleTemplatesAndSave(
             std::move(fileContent),
             newPath
@@ -182,6 +188,17 @@ bool SiteGenerator::generate(
             auto ext = p.extension();
 
             if (ext == ".md") {
+
+                if (
+                    p.filename() == "README.md"
+                    && std::filesystem::is_regular_file(
+                        p.parent_path() / "index.md"
+                    )
+                ) {
+                    // index.md takes precedence, so skip README
+                    continue;
+                }
+
                 success &= processFile(rootDir, relPath, ProcessedFileType::Markdown);
                 continue;
             } else if (ext == ".html") {

@@ -19,3 +19,6 @@ Violet has a built-in server for local previews based on [magpie](https://codebe
 
 Due to limitations of the underlying socket library at the time of writing, magpie and by extension the `serve` command are Linux-only, and therefore require linux to work.
 
+## Documentation
+
+See the docs folder, or https://lunarwatcher.codeberg.page/violet/
