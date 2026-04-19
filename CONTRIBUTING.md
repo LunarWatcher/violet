@@ -55,3 +55,13 @@ If you're not sure how to write the specific tests you want, or you aren't sure 
 ### Enum values and constants
 
 To maintain support for Windows, PascalCase is used for enums and constants. `SCREAMING_SNAKE_CASE` is functionally unusable as long as Windows is part of the target operating systems, due to Windows defining fucking everything as a macro.
+
+
+## Maintainer-specific instructions
+
+### Publishing the doc page
+
+For now, the doc page is published manually using `scripts/publish.sh`. Running it uses the locally built violet (or one in the PATH if the local one isn't found) to generate and push the page to Codeberg pages.
+
+This script will eventually probably also publish to GitHub, but it's currently just a proof of concept.
+

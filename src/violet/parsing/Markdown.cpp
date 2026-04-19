@@ -339,6 +339,7 @@ void Markdown::parseParagraphContent(
 
             parseCodeBlockContent(in, node);
         } else if (ch == '[') {
+            commitContentNode(content, out);
             if (out->type == NodeType::Anchor
                 || out->type == NodeType::Footnote) {
                 throw SyntaxError(

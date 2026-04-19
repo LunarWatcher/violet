@@ -10,7 +10,15 @@ class FileManager {
 private:
     GenerateOpts& opts;
 public:
-    FileManager(GenerateOpts& opts) : opts(opts) {}
+    FileManager(
+        GenerateOpts& opts
+    ) : opts(opts) {}
+
+
+    void resolveTemplate(
+        const std::string& type,
+        const std::string& layout
+    );
 
     void copyRaw(
         const std::filesystem::path& root,

@@ -11,7 +11,7 @@ This page contains general information about the documentation itself. Failure t
 
 ## Violet uses json, but the documentation uses jsonc
 
-Json is not the best format for configuration, largely because of the lack of comments, but this limitation isn't really as bad for these kinds of applications. The technical reason for why json is used anyway is that there are very few alternative _parser implementations_ in C++. There is a YAML library, but it has some severe problems, and as of at least 2025-09-27, it has been enshittified with slop. There are far more JSON implementations, however, and through [inja](https://github.com/pantor/inja/), we're already using a JSON library (nlohmann/json; currently (to my knowledge) slop-free). Therefore, JSON _is_ the more convenient option.
+Json is not the best format for configuration, largely because of the lack of comments, but this limitation isn't really as bad for these kinds of applications. The technical reason for why json is used anyway is that there are very few alternative *parser implementations* in C++. There is a YAML library, but it has some severe problems, and as of at least 2025-09-27, it has been enshittified with slop. There are far more JSON implementations, however, and through [inja](https://github.com/pantor/inja/), we're already using a JSON library (nlohmann/json; currently (to my knowledge) slop-free). Therefore, JSON *is* the more convenient option.
 
 Comments are nice, sure, but they can always be substituted by a decent commit history and decent documentation in the tool. However, the one exception to this is in said decent documentation, where the JSON may need to be directly commented.
 
