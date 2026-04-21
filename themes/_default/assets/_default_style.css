@@ -47,3 +47,124 @@ header a, footer a {
 main {
     padding: 16px;
 }
+
+pre, code {
+    background-color: #eeeeee;
+    padding: 4px;
+}
+pre > code {
+    padding: 0px;
+}
+
+/* Highlight.js theme based on catgirl.el:*/
+/* https://codeberg.org/LunarWatcher/catgirl.el */
+/* Some alternations have been made due to hljs having a comparative potato renderer */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: #d70087;
+}
+
+.hljs-subst {
+  color: #000000;
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-name,
+.hljs-type,
+.hljs-attribute,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: #008700;
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  color: #179299;
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-meta,
+.hljs-doctag {
+  color: #878787;
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-variable {
+  color: #d75f00;
+}
+
+.hljs-template-variable,
+.hljs-template-tag {
+  color: #000000;
+}
+
+.hljs-attr,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #005faf;
+}
+
+.hljs-link {
+  color: #005faf;
+  text-decoration: underline;
+}
+
+.hljs-deletion {
+  background-color: #ffd7ff;
+  color: #000000;
+}
+
+.hljs-addition {
+  background-color: #afffaf;
+  color: #000000;
+}
+
+.hljs-change {
+  background-color: #ffd787;
+  color: #000000;
+}
+
+.hljs-meta {
+  color: #d70087;
+}
+
+.hljs-tag {
+  color: #3b2685;
+}
+
+.hljs-params {
+  color: #000000;
+}
+
+.hljs-header {
+  color: #d70087;
+  font-weight: bold;
+}
+
+.hljs-code,
+.hljs-inline-code {
+  color: #5f8700;
+}
+
+.hljs::selection, .hljs *::selection {
+  background-color: #b19cd9 !important;
+  color: #ffffff;
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+.hljs-strong {
+    font-weight: bold;
+}

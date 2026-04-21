@@ -10,3 +10,6 @@
 <link rel="stylesheet" href="{{ site.site_prefix }}/assets/style.css" />
 
 <title>{{ page.title }}</title>
+
+<script src="{{ site.site_prefix }}/assets/vendor/_default-highlightjs.js"></script>
+<script src="{{ site.site_prefix }}/assets/_default_page.js"></script>
