@@ -1,1 +1,12 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10"/>
+
+{% if existsIn(site.data, "language") %}
+<meta http-equiv="Content-language" content = "{{ site.data.language }}"/>
+{% endif %}
+
+<link rel="stylesheet" href="{{ site.site_prefix }}/assets/_default_style.css" />
 <link rel="stylesheet" href="{{ site.site_prefix }}/assets/style.css" />
+
+<title>{{ page.title }}</title>

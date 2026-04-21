@@ -1,9 +1,5 @@
 {
-    "mount": {
+    "mount": [
         "assets"
-    },
-    "data": {
-        "theme_name": "violet::_default",
-        "generator": "https://codeberg.org/LunarWatcher/violet"
-    }
+    ]
 }

@@ -22,6 +22,13 @@ int violet::cliMain(int argc, char** argv) {
         generateOpts.watch,
         "Whether or not to watch for changes. Not setting this will generate the site and then immediately exit."
     );
+    cmdGenerate->add_flag(
+        "-l,--local",
+        generateOpts.overridePrefixForLocalUse,
+        "Whether or not to enable local extensions in the build. This makes a build that's "
+        "incompatible with deployment outside your local machine."
+    )
+        ->default_val(generateOpts.overridePrefixForLocalUse);
 
     auto cmdServe = app.add_subcommand(
         "serve",

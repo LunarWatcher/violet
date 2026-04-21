@@ -16,6 +16,8 @@ struct GenerateOpts {
      * If the the folders or intermediate folders do not exist, they will be created on the fly.
      */
     std::string outputFolder = "pages";
+
+    bool overridePrefixForLocalUse = false;
 };
 
 }

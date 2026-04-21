@@ -1,5 +1,6 @@
-#include "Config.hpp"
+#include "violet/conf/Config.hpp"
 #include "violet/conf/Frontmatter.hpp"
+#include "violet/conf/ThemeConfig.hpp"
 #include "violet/parsing/DateTimeParsing.hpp"
 
 void violet::from_json(const nlohmann::json& src, Config& dest) {
@@ -101,4 +102,17 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
 void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {    
     dest["rss"] = src.rss;
     dest["recursive"] = src.recursive;
+}
+
+void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {
+    dest.data = src.value(
+        "data",
+        nlohmann::json::object()
+    );
+    dest.mount = src.value("mount", std::vector<std::string>());
+
+    dest.raw = {
+        {"data", dest.data},
+        {"mount", dest.mount},
+    };
 }

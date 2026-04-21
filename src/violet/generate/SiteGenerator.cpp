@@ -105,6 +105,7 @@ bool SiteGenerator::processFile(
         return false;
     }
     Frontmatter parsedFrontmatter = frontmatter;
+    parsedFrontmatter.withFilePath(relPath);
 
     std::stringstream content;
     content << in.rdbuf();
@@ -155,6 +156,13 @@ bool SiteGenerator::generate(
     if (!realOutputPath.is_absolute()) {
         realOutputPath = rootDir / opts.outputFolder;
     }
+    if (opts.overridePrefixForLocalUse) {
+        std::cout << "Overriding prefix: using " << realOutputPath.string() << std::endl;
+        cfg.raw["site_prefix"] = realOutputPath.string();
+    }
+
+
+    fileManager.copyThemeFiles();
 
     bool success = true;
     do {

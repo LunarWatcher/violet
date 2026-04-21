@@ -1,0 +1,3 @@
+<header>
+    <span id="site-title"><a href="{{ site.site_prefix }}/">{{ site.name }}</a></span>
+</header>

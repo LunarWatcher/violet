@@ -14,10 +14,20 @@ InjaManager::InjaManager(
     env.set_include_callback([this](
             const std::filesystem::path& path,
             const std::string& templateName
-    ) {
-        return env.parse_file(
-            this->fileManager.resolvePartial(templateName)
-        );
+    ) -> inja::Template {
+        auto partialPath = this->fileManager.resolvePartial(templateName);
+        if (partialPath) {
+            return env.parse_file(
+                *partialPath
+            );
+        }
+        if (!templateName.starts_with("partials")) {
+            return env.parse_file(
+                path / templateName
+            );
+        } else {
+            throw std::runtime_error("Failed to resolve partial");
+        }
     });
 }
 

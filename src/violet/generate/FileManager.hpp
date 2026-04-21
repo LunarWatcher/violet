@@ -30,7 +30,7 @@ public:
         const std::string& layout
     );
 
-    std::filesystem::path resolvePartial(
+    std::optional<std::filesystem::path> resolvePartial(
         const std::filesystem::path& path
     );
 
@@ -39,6 +39,8 @@ public:
         const std::filesystem::path& relPath,
         const std::filesystem::path& destName
     );
+
+    void copyThemeFiles();
 
     void imbueRoot(
         const std::filesystem::path& root

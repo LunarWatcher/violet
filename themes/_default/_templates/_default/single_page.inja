@@ -1,11 +1,4 @@
-<html>
-    <head>
-        {% include "partials/head.inja" %}
-    </head>
-    <body>
-        <main>
-            <p>Boop, I come from the single_page template</p>
-            {% include "content" %}
-        </main>
-    </body>
-</html>
+{% extends "base.inja" %}
+{% block content %}
+    {% include "content" %}
+{% endblock %}

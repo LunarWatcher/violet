@@ -17,12 +17,12 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
     Previously, type was used for both by accident, largely because the ~_templates/{type}~ was hacked in somewhat last minute. Any references left need to be updated
 ** TODO Render the documentation with violet
 
-* Core features [2/8]
-** TODO Templates
-** TODO Themes
-*** TODO General theme support
-*** TODO Built-in theme
-** TODO Basic rendering
+* Core features [5/9]
+** DONE Templates
+** DONE Themes
+*** DONE General theme support
+*** DONE Built-in theme
+** DONE Basic rendering
 ** DONE Link translation
    The links should be translated automagically so the raw markdown can contain links to other markdown files, while the rendered markdown can contain links to the corresponding HTML page without that being a whole fucking thing.
    This will likely need to be restricted to markdown rendering though, as I'm not sure where else you would be able to do it.
@@ -37,6 +37,10 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
    Conclusion: I do indeed not need to care
 ** TODO Parse header IDs into a list for ToC generation support
    This already needs to be done for duplicate ID resolution, so it can easily be exported along with the content.
+** TODO Figure out how to best approach page listing
+   This is outside just standard page lists: how do I want to deal with documentation pages where having a table of contents for the site available everywhere might be useful? Does this kind of design even make sense?
+** TODO Tangent: logging
+   I had a shower thought while writing a warning: a proper warning and error logging system also works rather well for creating a form of report for the build. Maybe not as efficient as just dumping straight to stdout, but negligible overhead (I'd imagine). Plus, better categorization of the log messages would be the excuse I need to properly render SyntaxErrors
 
 * Bugs [0/3]
 ** TODO page capitalisation is preserved

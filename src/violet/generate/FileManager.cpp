@@ -1,6 +1,8 @@
 #include "FileManager.hpp"
-#include "stc/Environment.hpp"
+#include "violet/conf/ThemeConfig.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <stc/FileUtil.hpp>
 
 namespace violet {
@@ -58,12 +60,52 @@ std::filesystem::path FileManager::resolveTemplate(
 
     return *filePath;
 }
+void FileManager::copyThemeFiles() {
+    assertReady();
+    if (!hasTheme) {
+        std::cout << "No theme set" << std::endl;
+        return;
+    }
+    std::ifstream confFile(themeDir / "violet.theme.json");
+    
+    if (!confFile) {
+        std::cout << "Warning: failed to open violet.theme.json for theme. Tried path: "
+                  << (themeDir / "violet.theme.json")
+                  << std::endl;
+        return;
+    }
 
-std::filesystem::path FileManager::resolvePartial(
+    std::cout << "Copying theme exports... " << std::endl;
+    // TODO: export ThemeConfig to the class
+    ThemeConfig themeCfg = nlohmann::json::parse(confFile);
+    for (const auto& m : themeCfg.mount) {
+        auto folder = themeDir / m;
+        if (!std::filesystem::is_directory(folder)) {
+            throw std::runtime_error("Misconfigured theme: tried to mount non-folder");
+        }
+        for (auto& file : std::filesystem::recursive_directory_iterator(folder)) {
+            if (std::filesystem::is_directory(file)) {
+                continue;
+            }
+            auto rel = std::filesystem::relative(
+                file.path(),
+                themeDir
+            );
+            std::cout << "COPY " << std::filesystem::weakly_canonical(themeDir / rel) << std::endl;
+            copyRaw(
+                themeDir,
+                rel,
+                rel
+            );
+        }
+    }
+}
+
+std::optional<std::filesystem::path> FileManager::resolvePartial(
     const std::filesystem::path& path
 ) {
     if (!path.string().starts_with("partials/")) {
-        throw std::runtime_error("Failed to resolve " + path.string());
+        return std::nullopt;
     }
 
     auto fn = path.filename().string();
@@ -84,8 +126,9 @@ std::filesystem::path FileManager::resolvePartial(
             return p;
         }
     }
+    std::cout << "Failed to resolve partial " << path << std::endl;
 
-    throw std::runtime_error("Failed to resolve " + path.string());
+    return std::nullopt;
 }
 
 }
