@@ -140,9 +140,19 @@ struct URLNode : public DOMTree {
     URLNode() : DOMTree(NodeType::Anchor) {}
 };
 
-// Reserved for future use: will be used to parse trailing links
+struct FootnoteNode : public DOMTree {
+    FootnoteNode() : DOMTree(NodeType::Footnote) {}
+};
+
 struct DocumentContext {
     std::unordered_map<std::string, std::string> externalLinkMap;
+    std::unordered_map<std::string, FootnoteNode*> footnotes;
+
+    ~DocumentContext() {
+        for (auto& [_, node] : footnotes) {
+            delete node;
+        }
+    }
 };
 
 /**
@@ -173,51 +183,63 @@ extern NodeType resolveMajorMode(
 extern bool nextMajorMode(
     std::stringstream& in,
     DOMTree* tree,
+    DocumentContext& context,
     bool bulletBoundries = true
 );
 
 extern void parseCodeBlockContent(
     std::stringstream& in,
-    CodeNode* out
+    CodeNode* out,
+    DocumentContext& context
 );
 
 extern void parseParagraphContent(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 extern void parseParagraph(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 extern void parseUnorderedList(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 extern void parseOrderedList(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 extern void parseQuote(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 extern void parseCodeBlock(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 extern void parseHeader(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 );
 
 
-extern std::string stringifyTree(const DOMTree& tree);
+extern std::string stringifyTree(
+    const DOMTree& tree,
+    DocumentContext& context
+);
 
 extern std::string parse(std::stringstream& in);
 

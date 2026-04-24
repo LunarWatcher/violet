@@ -39,6 +39,8 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
    This already needs to be done for duplicate ID resolution, so it can easily be exported along with the content.
 ** TODO Figure out how to best approach page listing
    This is outside just standard page lists: how do I want to deal with documentation pages where having a table of contents for the site available everywhere might be useful? Does this kind of design even make sense?
+
+   Not sure if I want to use a two-stage ingest system (scan all files -> accumulate list -> render), largely because this means risking a lot of memory use
 ** TODO Tangent: logging
    I had a shower thought while writing a warning: a proper warning and error logging system also works rather well for creating a form of report for the build. Maybe not as efficient as just dumping straight to stdout, but negligible overhead (I'd imagine). Plus, better categorization of the log messages would be the excuse I need to properly render SyntaxErrors
 

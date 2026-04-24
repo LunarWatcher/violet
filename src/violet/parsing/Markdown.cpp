@@ -181,7 +181,8 @@ bool Markdown::prepareStream(
 
 void Markdown::parseCodeBlockContent(
     std::stringstream& in,
-    CodeNode* out
+    CodeNode* out,
+    DocumentContext& context
 ) {
     char ch;
     std::stringstream content;
@@ -255,7 +256,8 @@ void Markdown::parseCodeBlockContent(
 
 void Markdown::parseParagraphContent(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 ) {
     char ch;
 
@@ -326,7 +328,7 @@ void Markdown::parseParagraphContent(
 
             commitContentNode(content, out);
             out->addChild(node);
-            parseParagraphContent(in, node);
+            parseParagraphContent(in, node, context);
         } else if (ch == '`') {
             commitContentNode(content, out);
             size_t boundry = 1;
@@ -338,7 +340,7 @@ void Markdown::parseParagraphContent(
             auto node = new CodeNode(boundry, true);
             out->addChild(node);
 
-            parseCodeBlockContent(in, node);
+            parseCodeBlockContent(in, node, context);
         } else if (ch == '[') {
             commitContentNode(content, out);
             if (out->type == NodeType::Anchor
@@ -353,7 +355,7 @@ void Markdown::parseParagraphContent(
             } else {
                 auto urlNode = new URLNode();
                 out->addChild(urlNode);
-                parseParagraphContent(in, urlNode);
+                parseParagraphContent(in, urlNode, context);
             }
         } else if (out->type == NodeType::Anchor && ch == ']') {
             auto node = static_cast<URLNode*>(out);
@@ -434,7 +436,8 @@ void Markdown::parseParagraphContent(
 
 void Markdown::parseHeader(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 ) {
     // TODO: This is not an elegant way to do this
     char ch;
@@ -461,22 +464,24 @@ void Markdown::parseHeader(
     out->addChild(
         node
     );
-    parseParagraphContent(in, node);
+    parseParagraphContent(in, node, context);
 }
 
 void Markdown::parseParagraph(
     std::stringstream& in,
-    DOMTree* tree
+    DOMTree* tree,
+    DocumentContext& context
 ) {
     DOMTree* root = new DOMTree(NodeType::Paragraph);
     tree->addChild(root);
-    parseParagraphContent(in, root);
+    parseParagraphContent(in, root, context);
 
 }
 
 void Markdown::parseCodeBlock(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 ) {
     prepareStream(in, out, true);
     size_t boundry = 0;
@@ -506,18 +511,19 @@ void Markdown::parseCodeBlock(
     );
     out->addChild(node);
 
-    parseCodeBlockContent(in, node);
+    parseCodeBlockContent(in, node, context);
 }
 
 void Markdown::parseQuote(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 ) {
     auto node = new BlockquoteNode();
     out->addChild(node);
 
     while (in) {
-        if (!nextMajorMode(in, node)) {
+        if (!nextMajorMode(in, node, context)) {
             break;
         }
     }
@@ -525,7 +531,8 @@ void Markdown::parseQuote(
 
 void Markdown::parseUnorderedList(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 ) {
     auto node = new UnorderedListNode();
     out->addChild(node);
@@ -534,7 +541,7 @@ void Markdown::parseUnorderedList(
         auto entry = new UnorderedListEntryNode();
         node->addChild(entry);
         bool bulletBoundries = true;
-        while (in && nextMajorMode(in, entry, bulletBoundries)) {
+        while (in && nextMajorMode(in, entry, context, bulletBoundries)) {
             bulletBoundries = false;
         }
     }
@@ -542,7 +549,8 @@ void Markdown::parseUnorderedList(
 
 void Markdown::parseOrderedList(
     std::stringstream& in,
-    DOMTree* out
+    DOMTree* out,
+    DocumentContext& context
 ) {
     auto node = new OrderedListNode();
     out->addChild(node);
@@ -551,7 +559,7 @@ void Markdown::parseOrderedList(
         auto entry = new OrderedListEntryNode();
         node->addChild(entry);
         bool bulletBoundries = true;
-        while (in && nextMajorMode(in, entry, bulletBoundries)) {
+        while (in && nextMajorMode(in, entry, context, bulletBoundries)) {
             bulletBoundries = false;
         }
     }
@@ -560,26 +568,27 @@ void Markdown::parseOrderedList(
 bool Markdown::nextMajorMode(
     std::stringstream& in,
     DOMTree* tree,
+    DocumentContext& context,
     bool bulletBoundries
 ) {
     switch (resolveMajorMode(in, tree, bulletBoundries)) {
     case NodeType::Paragraph: {
-        parseParagraph(in, tree);
+        parseParagraph(in, tree, context);
     } break;
     case NodeType::CodeBlock: {
-        parseCodeBlock(in, tree);
+        parseCodeBlock(in, tree, context);
     } break;
     case NodeType::Header: {
-        parseHeader(in, tree);
+        parseHeader(in, tree, context);
     } break;
     case NodeType::Quote: {
-        parseQuote(in, tree);
+        parseQuote(in, tree, context);
     } break;
     case NodeType::UnorderedList: {
-        parseUnorderedList(in, tree);
+        parseUnorderedList(in, tree, context);
     } break;
     case NodeType::OrderedList: {
-        parseOrderedList(in, tree);
+        parseOrderedList(in, tree, context);
     } break;
     case NodeType::BlockEnd:
         return false;
@@ -593,12 +602,13 @@ bool Markdown::nextMajorMode(
 
 std::string Markdown::parse(std::stringstream& in) {
     DOMTree rootTree(NodeType::DocumentRoot);
+    DocumentContext context;
 
     while (in) {
-        nextMajorMode(in, &rootTree);
+        nextMajorMode(in, &rootTree, context);
     }
 
-    return stringifyTree(rootTree);
+    return stringifyTree(rootTree, context);
 }
 
 void stringifyTreeImpl(const Markdown::DOMTree* tree, std::stringstream& ss) {
@@ -708,7 +718,10 @@ void stringifyTreeImpl(const Markdown::DOMTree* tree, std::stringstream& ss) {
     }
 }
 
-std::string Markdown::stringifyTree(const DOMTree& tree) {
+std::string Markdown::stringifyTree(
+    const DOMTree& tree,
+    DocumentContext& context
+) {
     std::stringstream ss;
     stringifyTreeImpl(&tree, ss);
     return ss.str();
