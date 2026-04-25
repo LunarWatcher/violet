@@ -142,7 +142,7 @@ bool Markdown::prepareStream(
 
     DOMTree* curr = tree;
     std::vector<NodeType> types;
-    while (curr->parent != nullptr) {
+    while (curr != nullptr) {
         switch (curr->type) {
         case NodeType::Quote:
         case NodeType::Callout:
@@ -221,6 +221,7 @@ bool Markdown::prepareStream(
                             if (in.peek() == ' ') {
                                 std::ignore = in.get();
                             }
+                            break;
                         }
                     }
                 } else if (
@@ -517,6 +518,7 @@ void Markdown::parseParagraphContent(
                 out,
                 false
             );
+            std::cout << "Next major mode: " << (int) mode << std::endl;
             // Re-check the mode to account for edge-cases like a single line of code being immediately followed by a
             // list, quote, or code block
             if (mode != NodeType::Paragraph) {
@@ -768,6 +770,7 @@ void Markdown::parseFootnoteDef(
     DOMTree* out,
     DocumentContext& context
 ) {
+    size_t start = in.tellg();
     if (in.peek() != '[') {
         throw std::runtime_error("Bad major mode parsing");
     }
@@ -791,17 +794,27 @@ void Markdown::parseFootnoteDef(
                 std::ignore = in.get();
             }
             break;
+        } else if (ch == '\n') {
+            throw SyntaxError("Newline in footnote def", in.tellg());
         }
 
         refName << ch;
     }
-    context.footnotes[refName.str()] = root;
 
+    in.seekg(start);
+    in.clear();
+
+    std::cout << "Footnote parsed" << std::endl;
     while (in) {
+        while (in.peek() == '\n') {
+            std::ignore = in.get();
+        }
         if (!nextMajorMode(in, root, context)) {
             break;
         }
     }
+    std::cout << "Footnote done" << std::endl;
+    context.footnotes[refName.str()] = root;
 }
 
 void Markdown::parseOrderedList(
@@ -830,6 +843,7 @@ bool Markdown::nextMajorMode(
 ) {
     switch (resolveMajorMode(in, tree, bulletBoundries)) {
     case NodeType::Paragraph: {
+        std::cout << "para" << std::endl;
         parseParagraph(in, tree, context);
     } break;
     case NodeType::CodeBlock: {
@@ -883,7 +897,7 @@ std::string Markdown::parse(std::stringstream& in) {
             break;
         }
 
-        nextMajorMode(in, &rootTree, context);
+        nextMajorMode(in, &rootTree, context, true);
     }
 
     return stringifyTree(rootTree, context);
