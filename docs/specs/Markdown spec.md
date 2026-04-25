@@ -186,6 +186,70 @@ Blockquotes are implemented with `>`
 > > This is a quote in a quote
 ````
 
+A single line without a > is enough to terminate a quote:
+
+```markdown
+> This is a quote
+> > This is a nested quote
+
+> This is a separate quote
+>
+> This is a continuation line
+```
+
+> This is a quote
+> > This is a nested quote
+
+> This is a separate quote
+>
+> This is a continuation line
+
+### Callouts
+
+Callouts are also supported. All the GitHub types are supported, as well as the extra `info` callout type. Note that these are strictly typed, and using an invalid callout type is a compile error.
+```markdown
+> [!note]
+> Content
+
+> [!info]
+> Content
+
+> [!tip]
+> Content
+
+> [!important]
+> Content
+
+> [!warning]
+> Content
+
+> [!caution]
+> Content
+```
+
+This is how they appear with the default theme:
+
+> [!note]
+> Content
+
+> [!info]
+> Content
+
+> [!tip]
+> Content
+
+> [!important]
+> Content
+
+> [!warning]
+> Content
+
+> [!caution]
+> Content
+
+Note that unlike other implementations, all the parser does is provide a callout type and a callout title paragraph object. The styling has to be manually implemented.
+
+
 ## Links
 
 All three standard link formats are implemented:

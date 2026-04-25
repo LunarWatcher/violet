@@ -1,5 +1,6 @@
 #include "Markdown.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
+#include "violet/exceptions/TracedException.hpp"
 #include "violet/parsing/Escaping.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
 #include <iomanip>
@@ -27,6 +28,17 @@ Markdown::NodeType Markdown::resolveMajorMode(
     if (in.peek() == '#') {
         mode = NodeType::Header;
     } else if (in.peek() == '>') {
+        std::ignore = in.get();
+        while (in.peek() == ' ') {
+            std::ignore = in.get();
+        }
+        if (in.peek() == '[') {
+            std::ignore = in.get();
+            if (in.peek() == '!') {
+                mode = NodeType::Callout;
+                goto done;
+            }
+        }
         // Quote
         mode = NodeType::Quote;
     } else if (in.peek() == '-' || in.peek() == '*') {
@@ -37,10 +49,10 @@ Markdown::NodeType Markdown::resolveMajorMode(
         } else {
             mode = NodeType::Paragraph;
         }
-    } else if (in.peek() == '\n') { // Consume and ignore empty lines not consumed by previous modes
-        std::ignore = in.get();
-        // TODO: if this causes stackoverflows, add another meta-mode so the iterative approach can continue to be used
-        return resolveMajorMode(in, tree, true);
+    // } else if (in.peek() == '\n') { // Consume and ignore empty lines not consumed by previous modes
+    //     std::ignore = in.get();
+    //     // TODO: if this causes stackoverflows, add another meta-mode so the iterative approach can continue to be used
+    //     return resolveMajorMode(in, tree, true);
     } else {
         // Paragraph or numbered list or code block
         if (in.peek() != ' ') {
@@ -66,27 +78,33 @@ Markdown::NodeType Markdown::resolveMajorMode(
                     goto done;
                 }
             } else if (in.peek() == '[') {
-                // Possible anchor or footnote def
+                // Possible anchor, footnote def, or callout def
                 std::ignore = in.get();
-                if (in.peek() == '^') {
-                    // Footnote; not implemented yet
-                } else {
-                    char ch;
-                    while (in && in >> std::noskipws >> ch) {
-                        if (ch == '\n' && ch == ' ') {
-                            break;
-                        } else if (ch == ']') {
-                            if (in.peek() == ':') {
-                                mode = NodeType::AnchorDef;
-                                goto done;
-                            }
-                            break;
+                if (in.peek() == '!') {
+                    goto paragraph;
+                }
+                auto isFootnote = in.peek() == '^';
+                if (isFootnote) {
+                    std::ignore = in.get();
+                }
+                NodeType setMode = isFootnote ? NodeType::FootnoteDef : NodeType::AnchorDef;
+
+                char ch;
+                while (in && in >> std::noskipws >> ch) {
+                    if (ch == '\n' && ch == ' ') {
+                        break;
+                    } else if (ch == ']') {
+                        // if no :, this is just a paragraph that starts with an [urlref] inline url
+                        if (in.peek() == ':') {
+                            mode = setMode;
+                            goto done;
                         }
+                        break;
                     }
                 }
             }
         }
-        
+    paragraph:
         mode = NodeType::Paragraph;
     }
  done:
@@ -127,8 +145,10 @@ bool Markdown::prepareStream(
     while (curr->parent != nullptr) {
         switch (curr->type) {
         case NodeType::Quote:
+        case NodeType::Callout:
         case NodeType::UnorderedList:
         case NodeType::OrderedList:
+        case NodeType::FootnoteDef:
             types.push_back(curr->type);
             break;
         default:
@@ -145,6 +165,7 @@ bool Markdown::prepareStream(
             auto type = *it;
             switch (type) {
             case NodeType::Quote:
+            case NodeType::Callout:
                 if (in.peek() != '>') {
                     goto rollback;
                 }
@@ -175,6 +196,32 @@ bool Markdown::prepareStream(
                     in.get();
                     if (in.peek() == ' ') {
                         in.get();
+                    }
+                } else if (
+                    !in.readsome(buff.data(), buff.size())
+                    || std::string_view{buff} != "  "
+                ) {
+                    goto rollback;
+                }
+                break;
+            case NodeType::FootnoteDef:
+                char ch;
+                if (includeBullets && in.peek() == '[') {
+                    std::ignore = in.get();
+                    if (in.peek() != '^') {
+                        goto rollback;
+                    }
+
+                    while (in && in >> std::noskipws >> ch) {
+                        if (ch == ']') {
+                            if (in.peek() != ':') {
+                                goto rollback;
+                            }
+                            std::ignore = in.get();
+                            if (in.peek() == ' ') {
+                                std::ignore = in.get();
+                            }
+                        }
                     }
                 } else if (
                     !in.readsome(buff.data(), buff.size())
@@ -370,9 +417,35 @@ void Markdown::parseParagraphContent(
                 );
             }
             if (in.peek() == '^') {
-                // TODO
+                std::ignore = in.get();
+                std::stringstream ref;
+                while (in >> std::noskipws >> ch) {
+                    if (ch == '\n') {
+                        throw SyntaxError(
+                            "Unterminated footnote reference",
+                            in.tellg()
+                        );
+                    }
+                    if (ch == ']') {
+                        break;
+                    }
+                    ref << ch;
+                }
+
+                if (in.tellp() == 0) {
+                    throw SyntaxError(
+                        "Empty footnote ref",
+                        in.tellg()
+                    );
+                }
+                auto footnoteRef = new FootnoteNode(ref.str());
+                out->addChild(footnoteRef);
+            
+            } else if (in.peek() == '!') {
+                content << "[";
+                std::cerr << "Paragraph consumed callout marker at " << in.tellg() << std::endl;
             } else {
-                auto urlNode = new URLNode();
+                auto urlNode = new URLNode;
                 out->addChild(urlNode);
                 parseParagraphContent(in, urlNode, context);
             }
@@ -419,7 +492,21 @@ void Markdown::parseParagraphContent(
                 break;
             } else if (in.peek() == '\n') {
                 // End of paragraph
-                std::ignore = in.get();
+                // If we're in a quote or callout, don't consume the newline. If the newline is consumed, the
+                // blockquotes cannot be separated by a single line, or they'll join together
+                // We can't unconditionally not consume if not under the document root, as this would break the
+                // intentional support for this in lists, i.e.
+                // * List
+                //
+                //   Continuation paragraph
+                if (
+                    out->type == NodeType::Paragraph
+                    && out->parent != nullptr
+                    && out->parent->type != NodeType::Quote
+                    && out->parent->type != NodeType::Callout
+                ) {
+                    std::ignore = in.get();
+                }
                 break;
             }
             hasDanglingNewline = true;
@@ -544,6 +631,67 @@ void Markdown::parseQuote(
     }
 }
 
+void Markdown::parseCallout(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+) {
+    std::stringstream calloutType;
+    char ch;
+
+    if (!prepareStream(in, out)) {
+        throw TracedException(
+            "prepareStream failed on leading callout line"
+        );
+    }
+    // The prepareStream above does not consume the current quote, so we need to deal with that too
+    if (in.peek() == '>') {
+        std::ignore = in.get();
+    }
+    while (in.peek() == ' ') {
+        std::ignore = in.get();
+    }
+
+    if (in.peek() != '[') {
+        [[unlikely]]
+        throw TracedException("Failed to parse callout");
+    }
+    std::ignore = in.get();
+    if (in.peek() != '!') {
+        [[unlikely]]
+        throw TracedException("Failed to parse callout");
+    }
+    std::ignore = in.get();
+    while (in >> std::noskipws >> ch) {
+        if (ch == '\n') {
+            throw SyntaxError(
+                "Callout terminated with newline",
+                in.tellg()
+            );
+        } else if (ch == ']') {
+            if (in.peek() != '\n' && in.peek() >= 0) {
+                throw SyntaxError(
+                    "Callout contains illegal trailing text",
+                    in.tellg()
+                );
+            }
+            std::ignore = in.get();
+            break;
+        }
+        calloutType << (char) std::tolower(ch);
+    }
+    auto node = new CalloutNode(
+        calloutType.str(), in.tellg()
+    );
+    out->addChild(node);
+
+    while (in) {
+        if (!nextMajorMode(in, node, context)) {
+            break;
+        }
+    }
+}
+
 void Markdown::parseUnorderedList(
     std::stringstream& in,
     DOMTree* out,
@@ -599,12 +747,53 @@ void Markdown::parseAnchorDef(
             false
         );
     }
-    
+
     if (refName.tellp() == 0 || url.tellp() == 0) {
         throw std::runtime_error("Cannot have urlref definition with no refname and/or url");
     }
 
     context.externalLinkMap[refName.str()] = url.str();
+}
+
+void Markdown::parseFootnoteDef(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+) {
+    if (in.peek() != '[') {
+        throw std::runtime_error("Bad major mode parsing");
+    }
+    std::ignore = in.get();
+    if (in.peek() != '^') {
+        throw std::runtime_error("Bad major mode parsing");
+    }
+    std::ignore = in.get();
+
+    std::stringstream refName;
+    auto root = new FootnoteDefNode;
+
+    char ch;
+    while (in && in >> std::noskipws >> ch) {
+        if (ch == ']') {
+            if (in.peek() != ':') {
+                throw std::runtime_error("Bad major mode parsing: ] not followed by :");
+            }
+            std::ignore = in.get();
+            while (in.peek() == ' ') {
+                std::ignore = in.get();
+            }
+            break;
+        }
+
+        refName << ch;
+    }
+    context.footnotes[refName.str()] = root;
+
+    while (in) {
+        if (!nextMajorMode(in, root, context)) {
+            break;
+        }
+    }
 }
 
 void Markdown::parseOrderedList(
@@ -644,6 +833,9 @@ bool Markdown::nextMajorMode(
     case NodeType::Quote: {
         parseQuote(in, tree, context);
     } break;
+    case NodeType::Callout: {
+        parseCallout(in, tree, context);
+    } break;
     case NodeType::UnorderedList: {
         parseUnorderedList(in, tree, context);
     } break;
@@ -652,6 +844,9 @@ bool Markdown::nextMajorMode(
     } break;
     case NodeType::AnchorDef: {
         parseAnchorDef(in, tree, context);
+    } break;
+    case NodeType::FootnoteDef: {
+        parseFootnoteDef(in, tree, context);
     } break;
     case NodeType::BlockEnd:
         return false;
@@ -676,9 +871,11 @@ std::string Markdown::parse(std::stringstream& in) {
         // We also need a redundant check to make sure there is a valid character, since eof doesn't seem to kick in
         // until we do an invalid read?
         // This may be an issue elsewhere as well; need to do further sanity checking on edge cases
-        if (in && in.peek() >= 0) {
-            nextMajorMode(in, &rootTree, context);
+        if (!in || in.peek() < 0) {
+            break;
         }
+
+        nextMajorMode(in, &rootTree, context);
     }
 
     return stringifyTree(rootTree, context);
@@ -714,6 +911,14 @@ void stringifyTreeImpl(
     case Markdown::NodeType::Quote: {
         ss << "<blockquote>";
     } break;
+    case Markdown::NodeType::Callout: {
+        auto type = std::string_view{
+            static_cast<const Markdown::CalloutNode*>(tree)->type
+        };
+        ss << "<blockquote class=\"callout-" << type << "\">";
+        ss << R"(<p class="callout-title">)" << (char) std::toupper(type[0])
+           << type.substr(1) << "</p>";
+    } break;
     case Markdown::NodeType::Anchor: {
         // TODO: actually parse refs
         auto* node = static_cast<const Markdown::URLNode*>(tree);
@@ -742,18 +947,47 @@ void stringifyTreeImpl(
     case Markdown::NodeType::UnorderedListEntry:
         ss << "<li>";
         break;
-
     default:
-      break;
+        break;
     }
 
-    for (size_t i = 0; i < tree->children.size(); ++i) {
-        auto& node = tree->children.at(i);
-        // if (i > 0 && tree->type == Markdown::NodeType::Paragraph) {
-        //     ss << " ";
-        // }
+    if (tree->type == Markdown::NodeType::Footnote) {
+        auto node = static_cast<const Markdown::FootnoteNode*>(tree);
+        size_t footnoteIdx = 0;
+        for (size_t i = 0; i < context.usedFootnotes.size(); ++i) {
+            if (
+                context.usedFootnotes.at(i) == node->ref
+            ) {
+                footnoteIdx = i + 1;
+                break;
+            }
+        }
+        if (footnoteIdx == 0) {
+            // Footnote has not been used yet
+            if (auto it = context.footnotes.find(node->ref); it != context.footnotes.end()) {
+                context.usedFootnotes.push_back(node->ref);
+                footnoteIdx = context.usedFootnotes.size();
+            } else {
+                throw SyntaxError(
+                    std::format(
+                        "Footnote ref \"{}\" has not been defined",
+                        node->ref
+                    ),
+                    0
+                );
+            }
+        }
 
-        stringifyTreeImpl(node, ss, context);
+        ss << "<sup><a href=\"#fn-" << footnoteIdx << "\">" << footnoteIdx << "</a></sup>";
+    } else {
+        for (size_t i = 0; i < tree->children.size(); ++i) {
+            auto& node = tree->children.at(i);
+            // if (i > 0 && tree->type == Markdown::NodeType::Paragraph) {
+            //     ss << " ";
+            // }
+
+            stringifyTreeImpl(node, ss, context);
+        }
     }
 
     switch (tree->type) {
@@ -769,7 +1003,8 @@ void stringifyTreeImpl(
     case Markdown::NodeType::Header: {
         ss << "</h" << static_cast<const Markdown::HeaderNode*>(tree)->level << ">";
     } break;
-    case Markdown::NodeType::Quote: {
+    case Markdown::NodeType::Quote:
+    case Markdown::NodeType::Callout: {
         ss << "</blockquote>";
     } break;
     case Markdown::NodeType::Anchor: {
@@ -809,6 +1044,25 @@ std::string Markdown::stringifyTree(
         ss,
         context
     );
+
+    if (!context.usedFootnotes.empty()) {
+        ss << "<div id=\"violet-footnotes\">";
+        ss << "<h2>Footnotes</h2>";
+        ss << "<ol>";
+        for (size_t i = 0; i < context.usedFootnotes.size(); ++i) {
+            auto& footnote = context.usedFootnotes.at(i);
+            ss << "<li id=\"fn-" << i + 1 << "\">";
+            stringifyTreeImpl(
+                context.footnotes.at(footnote),
+                ss,
+                context
+            );
+            ss << "</li>";
+        }
+        ss << "</ol>";
+        ss << "</div>";
+    }
+
     return ss.str();
 }
 

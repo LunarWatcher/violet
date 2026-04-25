@@ -7,6 +7,13 @@ https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE
     --violet-theme-default-dark-violet: #7F00FF;
     --violet-theme-default-lavender: #bf8bff;
     --violet-theme-default-grey: #1e1e1e;
+
+    --violet-colour-note: blue;
+    --violet-colour-info: var(--violet-theme-default-dark-violet);
+    --violet-colour-tip: green;
+    --violet-colour-important: var(--violet-theme-default-dark-violet);
+    --violet-colour-warning: #807918;
+    --violet-colour-caution: #EB1806;
 }
 
 body {
@@ -56,6 +63,57 @@ pre > code {
     padding: 0px;
 }
 
+blockquote {
+    margin-left: 8px;
+    margin-right: 0px;
+    margin-bottom: 8px;
+    margin-top: 8px;
+    background-color: #fef6ff;
+    padding: 11px 0px 9px 10px !important;
+    border-left: 4px solid var(--violet-theme-default-dark-violet);
+}
+blockquote p {
+    margin: 4px;
+}
+
+.callout-note > .callout-title {
+    color: var(--violet-colour-note);
+}
+.callout-info > .callout-title {
+    color: var(--violet-colour-info);
+}
+.callout-tip > .callout-title {
+    color: var(--violet-colour-tip);
+}
+.callout-important > .callout-title {
+    color: var(--violet-colour-important);
+}
+.callout-warning > .callout-title {
+    color: var(--violet-colour-warning);
+}
+.callout-caution > .callout-title {
+    color: var(--violet-colour-caution);
+}
+
+.callout-note > .callout-title::before {
+    content: "✏ ";
+}
+.callout-info > .callout-title::before {
+    content: "🛈 ";
+}
+.callout-tip > .callout-title::before {
+    content: "💡 ";
+}
+.callout-important > .callout-title::before {
+    content: "📝 ";
+}
+.callout-warning > .callout-title::before {
+    content: "⚠ ";
+}
+.callout-caution > .callout-title::before {
+    content: "⚠ ";
+}
+
 /* Highlight.js theme based on catgirl.el:*/
 /* https://codeberg.org/LunarWatcher/catgirl.el */
 /* Some alternations have been made due to hljs having a comparative potato renderer */
@@ -93,7 +151,7 @@ pre > code {
 .hljs-quote,
 .hljs-meta,
 .hljs-doctag {
-  color: #878787;
+  color: #666666;
 }
 
 .hljs-number,

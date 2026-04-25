@@ -24,5 +24,9 @@ target_link_libraries(violetsrc PUBLIC
     stc
 )
 
+if (LINUX)
+    target_link_libraries(violetsrc PUBLIC stdc++exp)
+endif()
+
 target_link_libraries(violet violetsrc)
 

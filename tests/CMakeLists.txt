@@ -3,8 +3,10 @@ add_executable(tests
 
     src/SelfTests.cpp
 
+    src/parsing/FootnoteTests.cpp
     src/parsing/MarkdownTests.cpp
     src/parsing/UrlTests.cpp
+    src/parsing/QuoteTests.cpp
 )
 
 Include(FetchContent)

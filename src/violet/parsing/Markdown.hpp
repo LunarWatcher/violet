@@ -1,8 +1,10 @@
 #pragma once
 
+#include "violet/exceptions/SyntaxError.hpp"
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 #include <unordered_map>
@@ -21,20 +23,22 @@ enum class NodeType {
     Paragraph = 3,
     CodeBlock = 4,
     Quote = 5,
-    UnorderedList = 6,
-    OrderedList = 7,
-    Header = 8,
-    AnchorDef = 9,
+    Callout = 6,
+    UnorderedList = 7,
+    OrderedList = 8,
+    Header = 9,
+    AnchorDef = 10,
+    FootnoteDef = 11,
     // Span styles
-    Bold = 10,
-    Italic = 11,
-    BoldItalic = 12,
-    InlineCode = 13,
-    Anchor = 14,
-    Footnote = 15,
+    Bold = 12,
+    Italic = 13,
+    BoldItalic = 14,
+    InlineCode = 15,
+    Anchor = 16,
+    Footnote = 17,
 
-    UnorderedListEntry = 16,
-    OrderedListEntry = 17,
+    UnorderedListEntry = 18,
+    OrderedListEntry = 19,
 };
 
 struct DOMTree {
@@ -73,6 +77,31 @@ struct HeaderNode : public DOMTree {
 
 struct BlockquoteNode : public DOMTree {
     BlockquoteNode() : DOMTree(NodeType::Quote) {}
+};
+
+struct CalloutNode : public DOMTree {
+    // TODO: not sure if I want to be this strict, or if I want to allow arbitrary types
+    static const inline std::unordered_set<std::string> legalCalloutTypes = {
+        "note", "info", "tip", "important", "warning", "caution"
+    };
+
+    const std::string type;
+    CalloutNode(
+        std::string&& type,
+        size_t errorIdx
+    )
+        : DOMTree(NodeType::Callout),
+          type(std::move(type))
+    {
+        if (auto it = legalCalloutTypes.find(this->type); it == legalCalloutTypes.end()) {
+            throw SyntaxError(
+                "Invalid callout type. Must be one of: "
+                "note, info, tip, important, warning, caution, but found "
+                + this->type,
+                errorIdx
+            );
+        }
+    }
 };
 
 struct CodeNode : public DOMTree {
@@ -129,12 +158,21 @@ struct OrderedListEntryNode : public DOMTree {
 };
 
 struct FootnoteNode : public DOMTree {
-    FootnoteNode() : DOMTree(NodeType::Footnote) {}
+    const std::string ref;
+    FootnoteNode(std::string&& ref)
+        : DOMTree(NodeType::Footnote),
+          ref(std::move(ref))
+    {}
+};
+
+struct FootnoteDefNode : public DOMTree {
+    FootnoteDefNode() : DOMTree(NodeType::FootnoteDef) {}
 };
 
 struct DocumentContext {
     std::unordered_map<std::string, std::string> externalLinkMap;
-    std::unordered_map<std::string, FootnoteNode*> footnotes;
+    std::vector<std::string> usedFootnotes;
+    std::unordered_map<std::string, FootnoteDefNode*> footnotes;
 
     ~DocumentContext() {
         for (auto& [_, node] : footnotes) {
@@ -217,6 +255,12 @@ extern void parseAnchorDef(
     DocumentContext& context
 );
 
+extern void parseFootnoteDef(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+);
+
 extern void parseParagraphContent(
     std::stringstream& in,
     DOMTree* out,
@@ -242,6 +286,12 @@ extern void parseOrderedList(
 );
 
 extern void parseQuote(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+);
+
+extern void parseCallout(
     std::stringstream& in,
     DOMTree* out,
     DocumentContext& context

@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <string>
+#include <format>
 
 namespace violet {
 
