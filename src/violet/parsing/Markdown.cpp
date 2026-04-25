@@ -3,10 +3,16 @@
 #include "violet/exceptions/TracedException.hpp"
 #include "violet/parsing/Escaping.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
-#include <iomanip>
 #include <ios>
 #include <iostream>
 #include <stdexcept>
+
+#include "markdown/DOMTree.hpp"
+#include "markdown/DocumentContext.hpp"
+#include "markdown/ElementaryNodes.hpp"
+#include "markdown/ContextConsumingNodes.hpp"
+#include "markdown/ContextProvidingNodes.hpp"
+
 
 namespace violet {
 
@@ -942,11 +948,7 @@ void stringifyTreeImpl(
            << type.substr(1) << "</p>";
     } break;
     case Markdown::NodeType::Anchor: {
-        // TODO: actually parse refs
         auto* node = static_cast<const Markdown::URLNode*>(tree);
-        if (node->urlType == Markdown::URLNode::Type::ReferenceDefinition) {
-            return;
-        }
         ss << "<a href=\"" << node->getUrl(context) << "\">";
         break;
     }
