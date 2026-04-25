@@ -116,6 +116,11 @@ extern std::string stringifyTree(
     DocumentContext& context
 );
 
+extern void commitContentNode(
+    std::stringstream& content,
+    Markdown::DOMTree* out
+);
+
 extern std::string parse(
     std::stringstream& in,
     const LinkTranslator& translator = [](const std::string& in) {
