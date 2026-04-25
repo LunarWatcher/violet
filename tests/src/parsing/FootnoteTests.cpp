@@ -10,10 +10,13 @@ TEST_CASE("Footnotes should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">1</a></sup></p>)"
+            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">[1]</a></sup></p>)"
             R"(<div id="violet-footnotes">)"
             R"(<h2>Footnotes</h2>)"
-            R"(<ol><li id="fn-1"><p>This is, in fact, <strong>text</strong></p></li></ol>)"
+            R"(<ol><li id="fn-1">)"
+                R"(<p>This is, in fact, <strong>text</strong></p>)"
+                R"(<span class="footnote-backref">Usages: <a href="#fn-1-r1">[1]</a></span>)"
+            R"(</li></ol>)"
             R"(</div>)"
         );
 
@@ -29,12 +32,13 @@ TEST_CASE("Footnotes should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">1</a></sup></p>)"
+            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">[1]</a></sup></p>)"
             R"(<div id="violet-footnotes">)"
                 R"(<h2>Footnotes</h2>)"
                 R"(<ol><li id="fn-1">)"
                     R"(<p>This is, in fact, <strong>text</strong>.</p>)"
                     R"(<p>And this is a second paragraph</p>)"
+                    R"(<span class="footnote-backref">Usages: <a href="#fn-1-r1">[1]</a></span>)"
                 R"(</li></ol>)"
             R"(</div>)"
         );
@@ -51,13 +55,14 @@ TEST_CASE("Footnotes should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">1</a></sup></p>)"
+            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">[1]</a></sup></p>)"
             R"(<div id="violet-footnotes">)"
                 R"(<h2>Footnotes</h2>)"
                 R"(<ol><li id="fn-1">)"
                     R"(<p>This is, in fact, <strong>text</strong>. )"
                     R"(As a cursed extension of how my footnotes are parsed, this should also allow</p>)"
                     R"(<pre><code class="language-python">print("An entire god damn code block")</code></pre>)"
+                    R"(<span class="footnote-backref">Usages: <a href="#fn-1-r1">[1]</a></span>)"
                 R"(</li></ol>)"
             R"(</div>)"
         );

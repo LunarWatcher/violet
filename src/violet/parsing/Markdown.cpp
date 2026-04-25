@@ -1004,7 +1004,7 @@ void stringifyTreeImpl(
 
         ss << "<sup><a href=\"#fn-" << footnoteIdx << "\" "
            << std::format("id=\"fn-{}-r{}\"", footnoteIdx, usageCount)
-           << ">" << footnoteIdx << "</a></sup>";
+           << ">[" << footnoteIdx << "]</a></sup>";
     } else {
         for (size_t i = 0; i < tree->children.size(); ++i) {
             auto& node = tree->children.at(i);
@@ -1083,6 +1083,18 @@ std::string Markdown::stringifyTree(
                 ss,
                 context
             );
+            ss << "<span class=\"footnote-backref\">Usages: ";
+
+            for (size_t usageRef = 0; usageRef < context.footnoteUsageCounts.at(footnote); ++usageRef) {
+                ss << std::format(
+                    R"({2}<a href="#fn-{0}-r{1}">[{1}]</a>)",
+                    i + 1,
+                    usageRef + 1,
+                    usageRef > 0 ? ", " : ""
+                );
+            }
+            
+            ss << "</span>";
             ss << "</li>";
         }
         ss << "</ol>";

@@ -131,7 +131,7 @@ Text[^footnote-example-2]
 
   ```cpp
   int main() {
-      std::cout << "This is a C++ codeblock in a footnote" << std::endl;;
+      std::cout << "This is a C++ codeblock in a footnote" << std::endl;
   }
   ```
 ````
@@ -142,9 +142,12 @@ Text[^footnote-example-2]
 
   ```cpp
   int main() {
-      std::cout << "This is a C++ codeblock in a footnote" << std::endl;;
+      std::cout << "This is a C++ codeblock in a footnote" << std::endl;
   }
   ```
+  
+
+The references can also be reused. This line, for example, invokes `[^ref]`[^ref]
 
 ## Inline code and code blocks
 
