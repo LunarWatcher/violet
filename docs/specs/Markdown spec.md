@@ -107,6 +107,45 @@ Supporting mixed emphasis with three opens is a goal eventually, but not right n
 
 ## Footnotes
 
+Footnotes use this fairly standard syntax:
+
+```markdown
+Text[^ref]
+
+[^ref]: This is a footnote
+```
+
+> Text[^ref]
+
+[^ref]: This is a footnote
+
+There are no restrictions on what the ref can be, but the standard convention is to use numbers. The numbers themselves are not respected in the output, as the footnotes are numbered by order of appearance.
+
+The footnotes are appended to the end of the document, and only use an inline link.
+
+Like lists, footnote continuations are indented by two lines. If you want to include code in a footnote, for example, you can do it like this:
+````markdown
+Text[^footnote-example-2]
+
+[^footnote-example-2]: This is a line of text
+
+  ```cpp
+  int main() {
+      std::cout << "This is a C++ codeblock in a footnote" << std::endl;;
+  }
+  ```
+````
+
+> Text[^footnote-example-2]
+
+[^footnote-example-2]: This is a line of text
+
+  ```cpp
+  int main() {
+      std::cout << "This is a C++ codeblock in a footnote" << std::endl;;
+  }
+  ```
+
 ## Inline code and code blocks
 
 Inline code is indicated with backticks:

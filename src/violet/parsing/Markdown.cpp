@@ -518,7 +518,6 @@ void Markdown::parseParagraphContent(
                 out,
                 false
             );
-            std::cout << "Next major mode: " << (int) mode << std::endl;
             // Re-check the mode to account for edge-cases like a single line of code being immediately followed by a
             // list, quote, or code block
             if (mode != NodeType::Paragraph) {
@@ -808,7 +807,6 @@ void Markdown::parseFootnoteDef(
     in.seekg(start);
     in.clear();
 
-    std::cout << "Footnote parsed" << std::endl;
     while (in) {
         while (in.peek() == '\n') {
             std::ignore = in.get();
@@ -817,7 +815,6 @@ void Markdown::parseFootnoteDef(
             break;
         }
     }
-    std::cout << "Footnote done" << std::endl;
     context.footnotes[refName.str()] = root;
 }
 
@@ -847,7 +844,6 @@ bool Markdown::nextMajorMode(
 ) {
     switch (resolveMajorMode(in, tree, bulletBoundries)) {
     case NodeType::Paragraph: {
-        std::cout << "para" << std::endl;
         parseParagraph(in, tree, context);
     } break;
     case NodeType::CodeBlock: {
