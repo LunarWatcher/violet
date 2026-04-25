@@ -241,5 +241,4 @@ void Markdown::parseParagraph(
 
 }
 
-
 }

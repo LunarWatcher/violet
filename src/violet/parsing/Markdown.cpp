@@ -656,7 +656,7 @@ std::string Markdown::parse(
     const LinkTranslator& linkTranslator
 ) {
     DOMTree rootTree(NodeType::DocumentRoot);
-    DocumentContext context;
+    DocumentContext context(linkTranslator);
 
     while (in) {
         while (in.peek() == '\n') {

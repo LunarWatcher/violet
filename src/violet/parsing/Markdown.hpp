@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/parsing/markdown/CommonDefs.hpp"
 #include "violet/parsing/markdown/DOMTree.hpp"
 #include "violet/parsing/markdown/DocumentContext.hpp"
 #include "violet/parsing/markdown/ElementaryNodes.hpp"
@@ -8,9 +9,6 @@
 #include <string>
 
 namespace violet::Markdown {
-
-// TODO: pass stringstream& instead?
-using LinkTranslator = std::function<std::string(const std::string& rawUrl)>;
 
 /**
  * Prepares the stream by removing indent levels to pretend like it's being handled at the root level. Only takes effect
