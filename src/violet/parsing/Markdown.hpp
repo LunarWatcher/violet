@@ -172,6 +172,7 @@ struct FootnoteDefNode : public DOMTree {
 struct DocumentContext {
     std::unordered_map<std::string, std::string> externalLinkMap;
     std::vector<std::string> usedFootnotes;
+    std::unordered_map<std::string, size_t> footnoteUsageCounts;
     std::unordered_map<std::string, FootnoteDefNode*> footnotes;
 
     ~DocumentContext() {

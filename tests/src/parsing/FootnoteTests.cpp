@@ -10,7 +10,7 @@ TEST_CASE("Footnotes should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            R"(<p>This is text<sup><a href="#fn-1">1</a></sup></p>)"
+            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">1</a></sup></p>)"
             R"(<div id="violet-footnotes">)"
             R"(<h2>Footnotes</h2>)"
             R"(<ol><li id="fn-1"><p>This is, in fact, <strong>text</strong></p></li></ol>)"
@@ -29,7 +29,7 @@ TEST_CASE("Footnotes should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            R"(<p>This is text<sup><a href="#fn-1">1</a></sup></p>)"
+            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">1</a></sup></p>)"
             R"(<div id="violet-footnotes">)"
                 R"(<h2>Footnotes</h2>)"
                 R"(<ol><li id="fn-1">)"
@@ -51,7 +51,7 @@ TEST_CASE("Footnotes should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            R"(<p>This is text<sup><a href="#fn-1">1</a></sup></p>)"
+            R"(<p>This is text<sup><a href="#fn-1" id="fn-1-r1">1</a></sup></p>)"
             R"(<div id="violet-footnotes">)"
                 R"(<h2>Footnotes</h2>)"
                 R"(<ol><li id="fn-1">)"

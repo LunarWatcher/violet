@@ -1000,7 +1000,11 @@ void stringifyTreeImpl(
             }
         }
 
-        ss << "<sup><a href=\"#fn-" << footnoteIdx << "\">" << footnoteIdx << "</a></sup>";
+        size_t usageCount = ++context.footnoteUsageCounts[node->ref];
+
+        ss << "<sup><a href=\"#fn-" << footnoteIdx << "\" "
+           << std::format("id=\"fn-{}-r{}\"", footnoteIdx, usageCount)
+           << ">" << footnoteIdx << "</a></sup>";
     } else {
         for (size_t i = 0; i < tree->children.size(); ++i) {
             auto& node = tree->children.at(i);
