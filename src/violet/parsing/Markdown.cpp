@@ -801,6 +801,10 @@ void Markdown::parseFootnoteDef(
         refName << ch;
     }
 
+    // TODO: I don't think rewinding here is necessary, but I included it for troubleshooting what became the fix in
+    // 1d30477, and now I don't feel like removing it again.
+    // All this does is make the prepareStream call at the start of parseParagraph to actually work. More research
+    // required.
     in.seekg(start);
     in.clear();
 
