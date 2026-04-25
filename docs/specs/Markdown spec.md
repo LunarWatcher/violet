@@ -256,7 +256,7 @@ All three standard link formats are implemented:
 
 ```markdown
 # Named links
-[link text](//example.com)
+[link text](https://example.com/inline)
 
 # Reference links
 [link text][link-ref]
@@ -264,7 +264,17 @@ All three standard link formats are implemented:
 [link-ref]
 
 ## Reference link definition
-[link-ref]: //example.com
+[link-ref]: https://example.com/ref
 ```
+
+Rendered (excl. headers):
+
+> [link text](https://example.com/inline)
+>
+> [link text][link-ref]
+>
+> [link-ref]
+
+[link-ref]: https://example.com/ref
 
 [^1]: will be

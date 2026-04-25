@@ -490,7 +490,8 @@ void Markdown::parseParagraphContent(
             } else if (out->type != NodeType::Paragraph) {
                 // Non-paragraph invoking types are likely just using this function for core markdown parsing
                 break;
-            } else if (in.peek() == '\n') {
+            }
+            if (in.peek() == '\n') {
                 // End of paragraph
                 // If we're in a quote or callout, don't consume the newline. If the newline is consumed, the
                 // blockquotes cannot be separated by a single line, or they'll join together
@@ -527,6 +528,13 @@ void Markdown::parseParagraphContent(
                 false
             )) {
                 throw std::runtime_error("Unexpected indent");
+            }
+
+            // equivalent to the last \n check, but in the context of the block. We have a block continuation that is
+            // also a paragraph end
+            if (in.peek() == '\n') {
+                std::ignore = in.get();
+                break;
             }
         } else {
             content << ch;
