@@ -14,6 +14,8 @@ add_library(violetsrc STATIC
     violet/parsing/DateTimeParsing.cpp
     violet/parsing/Markdown.cpp
     violet/parsing/Escaping.cpp
+
+    violet/parsing/markdown/impl/Render.cpp
 )
 
 target_include_directories(violetsrc PUBLIC .)
