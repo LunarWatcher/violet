@@ -55,6 +55,10 @@ main {
     padding: 16px;
 }
 
+pre {
+    overflow: scroll;
+}
+
 pre, code {
     background-color: #eeeeee;
     padding: 4px;
