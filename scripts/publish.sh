@@ -12,7 +12,7 @@ fi
 cd docs
 rm -rf pages
 
-"$violet_exe" generate
+time --verbose "$violet_exe" generate
 
 if [[ $? != 0 ]]; then
     echo "Generation failed"
