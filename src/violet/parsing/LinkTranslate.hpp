@@ -5,7 +5,7 @@
 
 namespace violet {
 
-std::string stringifyAndTranslateUrl(
+inline std::string stringifyAndTranslateUrl(
     std::stringstream& url
 ) {
     std::string out = url.str();
