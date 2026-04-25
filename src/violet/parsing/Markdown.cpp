@@ -65,9 +65,28 @@ Markdown::NodeType Markdown::resolveMajorMode(
                     mode = NodeType::CodeBlock;
                     goto done;
                 }
+            } else if (in.peek() == '[') {
+                // Possible anchor or footnote def
+                std::ignore = in.get();
+                if (in.peek() == '^') {
+                    // Footnote; not implemented yet
+                } else {
+                    char ch;
+                    while (in && in >> std::noskipws >> ch) {
+                        if (ch == '\n' && ch == ' ') {
+                            break;
+                        } else if (ch == ']') {
+                            if (in.peek() == ':') {
+                                mode = NodeType::AnchorDef;
+                                goto done;
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         }
-
+        
         mode = NodeType::Paragraph;
     }
  done:
@@ -382,10 +401,6 @@ void Markdown::parseParagraphContent(
                 }
                 node->urlType = open == '(' ? URLNode::Type::Standard : URLNode::Type::Reference;
                 node->urlOrRef = open == '(' ? stringifyAndTranslateUrl(urlOrRef) : urlOrRef.str();
-                
-            } else if (in.peek() == ':') {
-                // TODO: how should this work with the tree? These nodes should technically disappear from the tree
-                // itself, since they'd be converted to a context object.
             } else {
                 node->urlType = URLNode::Type::Reference;
                 node->urlOrRef = content.str();
@@ -547,6 +562,51 @@ void Markdown::parseUnorderedList(
     }
 }
 
+void Markdown::parseAnchorDef(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+) {
+    if (in.peek() != '[') {
+        throw std::runtime_error("Bad major mode parsing");
+    }
+    std::ignore = in.get();
+    std::stringstream refName;
+    std::stringstream url;
+
+    char ch;
+    while (in && in >> std::noskipws >> ch) {
+        if (ch == ']') {
+            if (in.peek() != ':') {
+                throw std::runtime_error("Bad major mode parsing: ] not followed by :");
+            }
+            std::ignore = in.get();
+            while (in.peek() == ' ') {
+                std::ignore = in.get();
+            }
+            break;
+        }
+
+        refName << ch;
+    }
+    while (in && in >> std::noskipws >> ch) {
+        if (ch == '\n') {
+            break;
+        }
+        urlEncode(
+            ch,
+            url,
+            false
+        );
+    }
+    
+    if (refName.tellp() == 0 || url.tellp() == 0) {
+        throw std::runtime_error("Cannot have urlref definition with no refname and/or url");
+    }
+
+    context.externalLinkMap[refName.str()] = url.str();
+}
+
 void Markdown::parseOrderedList(
     std::stringstream& in,
     DOMTree* out,
@@ -590,6 +650,9 @@ bool Markdown::nextMajorMode(
     case NodeType::OrderedList: {
         parseOrderedList(in, tree, context);
     } break;
+    case NodeType::AnchorDef: {
+        parseAnchorDef(in, tree, context);
+    } break;
     case NodeType::BlockEnd:
         return false;
     default:
@@ -605,13 +668,27 @@ std::string Markdown::parse(std::stringstream& in) {
     DocumentContext context;
 
     while (in) {
-        nextMajorMode(in, &rootTree, context);
+        while (in.peek() == '\n') {
+            std::ignore = in.get();
+        }
+
+        // the loop condition may be invalidated by the previous while loop, so need to recheck again
+        // We also need a redundant check to make sure there is a valid character, since eof doesn't seem to kick in
+        // until we do an invalid read?
+        // This may be an issue elsewhere as well; need to do further sanity checking on edge cases
+        if (in && in.peek() >= 0) {
+            nextMajorMode(in, &rootTree, context);
+        }
     }
 
     return stringifyTree(rootTree, context);
 }
 
-void stringifyTreeImpl(const Markdown::DOMTree* tree, std::stringstream& ss) {
+void stringifyTreeImpl(
+    const Markdown::DOMTree* tree,
+    std::stringstream& ss,
+    Markdown::DocumentContext& context
+) {
 
     switch (tree->type) {
     case Markdown::NodeType::Content: {
@@ -639,7 +716,11 @@ void stringifyTreeImpl(const Markdown::DOMTree* tree, std::stringstream& ss) {
     } break;
     case Markdown::NodeType::Anchor: {
         // TODO: actually parse refs
-        ss << "<a href=\"" << static_cast<const Markdown::URLNode*>(tree)->urlOrRef << "\">";
+        auto* node = static_cast<const Markdown::URLNode*>(tree);
+        if (node->urlType == Markdown::URLNode::Type::ReferenceDefinition) {
+            return;
+        }
+        ss << "<a href=\"" << node->getUrl(context) << "\">";
         break;
     }
     case Markdown::NodeType::Bold: {
@@ -672,7 +753,7 @@ void stringifyTreeImpl(const Markdown::DOMTree* tree, std::stringstream& ss) {
         //     ss << " ";
         // }
 
-        stringifyTreeImpl(node, ss);
+        stringifyTreeImpl(node, ss, context);
     }
 
     switch (tree->type) {
@@ -723,7 +804,11 @@ std::string Markdown::stringifyTree(
     DocumentContext& context
 ) {
     std::stringstream ss;
-    stringifyTreeImpl(&tree, ss);
+    stringifyTreeImpl(
+        &tree,
+        ss,
+        context
+    );
     return ss.str();
 }
 

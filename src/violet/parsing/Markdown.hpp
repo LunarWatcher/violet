@@ -3,6 +3,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 
@@ -23,16 +24,17 @@ enum class NodeType {
     UnorderedList = 6,
     OrderedList = 7,
     Header = 8,
+    AnchorDef = 9,
     // Span styles
-    Bold = 9,
-    Italic = 10,
-    BoldItalic = 11,
-    InlineCode = 12,
-    Anchor = 13,
-    Footnote = 14,
+    Bold = 10,
+    Italic = 11,
+    BoldItalic = 12,
+    InlineCode = 13,
+    Anchor = 14,
+    Footnote = 15,
 
-    UnorderedListEntry = 15,
-    OrderedListEntry = 16,
+    UnorderedListEntry = 16,
+    OrderedListEntry = 17,
 };
 
 struct DOMTree {
@@ -126,20 +128,6 @@ struct OrderedListEntryNode : public DOMTree {
     OrderedListEntryNode() : DOMTree(NodeType::OrderedListEntry) {}
 };
 
-struct URLNode : public DOMTree {
-    std::string urlOrRef;
-    enum class Type {
-        // [text](url)
-        Standard,
-        // [text][urlref] or [urlref]
-        Reference,
-    };
-
-    Type urlType;
-
-    URLNode() : DOMTree(NodeType::Anchor) {}
-};
-
 struct FootnoteNode : public DOMTree {
     FootnoteNode() : DOMTree(NodeType::Footnote) {}
 };
@@ -152,6 +140,36 @@ struct DocumentContext {
         for (auto& [_, node] : footnotes) {
             delete node;
         }
+    }
+};
+
+struct URLNode : public DOMTree {
+    std::string urlOrRef;
+    enum class Type {
+        // [text](url)
+        Standard,
+        // [text][urlref] or [urlref]
+        Reference,
+
+        // [name]: url; these are not rendered
+        ReferenceDefinition,
+    };
+
+    Type urlType;
+
+    URLNode() : DOMTree(NodeType::Anchor) {}
+
+    std::string getUrl(DocumentContext& context) const {
+        switch (urlType) {
+        case Type::Standard:
+            return urlOrRef;
+        case Type::Reference:
+            return context.externalLinkMap.at(urlOrRef);
+        case Type::ReferenceDefinition:
+            throw std::runtime_error("This should never trigger");
+            break;
+        }
+        std::unreachable();
     }
 };
 
@@ -190,6 +208,12 @@ extern bool nextMajorMode(
 extern void parseCodeBlockContent(
     std::stringstream& in,
     CodeNode* out,
+    DocumentContext& context
+);
+
+extern void parseAnchorDef(
+    std::stringstream& in,
+    DOMTree* out,
     DocumentContext& context
 );
 

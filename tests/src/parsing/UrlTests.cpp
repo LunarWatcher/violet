@@ -15,6 +15,23 @@ TEST_CASE("Ensure inline links are parsed inline", "[markdown][regression]") {
     }
 }
 
+TEST_CASE("Link references should work", "[markdown]") {
+    std::stringstream ss;
+    ss << R"([Hello world][cb]
+
+[cb]
+
+[cb]: https://lunarwatcher.codeberg.page
+)";
+
+    REQUIRE(
+        violet::Markdown::parse(ss)
+        ==
+        R"(<p><a href="https://lunarwatcher.codeberg.page">Hello world</a></p>)"
+        R"(<p><a href="https://lunarwatcher.codeberg.page">cb</a></p>)"
+    );
+}
+
 TEST_CASE("Link translation", "[markdown]") {
     SECTION("Root-relative link") {
         std::stringstream ss;
