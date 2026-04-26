@@ -1,6 +1,7 @@
 #include "SiteGenerator.hpp"
 
 #include "ProcessedFileType.hpp"
+#include "violet/parsing/LinkTranslate.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -122,12 +123,25 @@ bool SiteGenerator::processFile(
     } break;
     case ProcessedFileType::Markdown: {
         std::string fileContent = Markdown::parse(
-            content
+            content,
+            std::bind(
+                projectBasedTranslator,
+                this->cfg.site_prefix.value_or(""),
+                rootDir,
+                relPath,
+                std::placeholders::_1
+            )
         );
 
+        auto origPath = relPath;
         std::filesystem::path newPath;
         if (relPath.filename() != "README.md") {
             newPath = relPath.replace_extension(".html");
+            newPath = relPath.replace_filename(
+                renameFile(
+                    relPath.filename().string()
+                )
+            );
         } else {
             newPath = relPath.replace_filename("index.html");
         }
@@ -159,6 +173,7 @@ bool SiteGenerator::generate(
     if (opts.overridePrefixForLocalUse) {
         std::cout << "Overriding prefix: using " << realOutputPath.string() << std::endl;
         cfg.raw["site_prefix"] = realOutputPath.string();
+        cfg.site_prefix = realOutputPath.string();
     }
 
 

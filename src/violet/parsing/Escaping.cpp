@@ -74,3 +74,17 @@ void violet::urlEncode(
            << (int) ch
            << std::dec;
 }
+
+void violet::urlEncode(
+    const std::string& str,
+    std::stringstream& target,
+    bool includeReserved
+) {
+    for (auto ch : str) {
+        urlEncode(
+            ch,
+            target,
+            includeReserved
+        );
+    }
+}

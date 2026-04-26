@@ -146,20 +146,16 @@ void Markdown::parseParagraphContent(
                 while (in >> std::noskipws >> ch) {
                     if (ch == close) {
                         break;
-                    }
-                    if (open == '(') {
-                        urlEncode(
-                            ch,
-                            urlOrRef,
-                            false
+                    } else if (ch == '\n') {
+                        throw SyntaxError(
+                            "Unclosed url",
+                            in.tellg()
                         );
-                    } else {
-                        // references have to be unmodified
-                        urlOrRef << ch;
                     }
+                    urlOrRef << ch;
                 }
-                node->urlType = open == '(' ? URLNode::Type::Standard : URLNode::Type::Reference;
-                node->urlOrRef = open == '(' ? stringifyAndTranslateUrl(urlOrRef) : urlOrRef.str();
+                node->urlType  = open == '(' ? URLNode::Type::Standard                  : URLNode::Type::Reference;
+                node->urlOrRef = open == '(' ? context.linkTranslator(urlOrRef.str()) : urlOrRef.str();
             } else {
                 node->urlType = URLNode::Type::Reference;
                 node->urlOrRef = content.str();

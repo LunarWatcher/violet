@@ -4,7 +4,7 @@
 
 namespace violet {
 
-void htmlEscape(
+extern void htmlEscape(
     char ch,
     std::stringstream& target
 );
@@ -21,10 +21,16 @@ void htmlEscape(
  *                              it's passed as a part of a URL, but not if it _is_ the URL.
  *                              This is as defined by RFC 3986 (jan. 2005)
  */
-void urlEncode(
+extern void urlEncode(
     char ch,
     std::stringstream& target,
     bool includeReserved = false
+);
+
+extern void urlEncode(
+    const std::string& str,
+    std::stringstream& target,
+    bool includeReserved = true
 );
 
 }

@@ -17,7 +17,7 @@ struct DocumentContext {
     LinkTranslator linkTranslator;
 
     DocumentContext(
-        const LinkTranslator linkTranslator
+        const LinkTranslator& linkTranslator
     ) : linkTranslator(linkTranslator) {}
 
     ~DocumentContext() {

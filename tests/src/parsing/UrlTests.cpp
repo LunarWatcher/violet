@@ -38,7 +38,17 @@ TEST_CASE("Link translation", "[markdown]") {
         ss << "[Link](/test.md)";
 
         REQUIRE(
-            violet::Markdown::parse(ss)
+            violet::Markdown::parse(
+                ss,
+                // We're using a mock converter here, since proper testing requires fucking around with a proper test site.
+                [](const auto& str) {
+                    if (str.ends_with(".md")) {
+                        return str.substr(0, str.size() - 3) + ".html";
+                    } else {
+                        return str;
+                    }
+                }
+            )
             ==
             R"(<p><a href="/test.html">Link</a></p>)"
         );

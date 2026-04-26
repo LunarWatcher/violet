@@ -6,6 +6,7 @@ add_executable(tests
     src/parsing/FootnoteTests.cpp
     src/parsing/MarkdownTests.cpp
     src/parsing/UrlTests.cpp
+    src/parsing/UrlTranslationTests.cpp
     src/parsing/QuoteTests.cpp
 )
 
