@@ -7,12 +7,20 @@
     </head>
     <body>
         {% include "partials/header.inja" %}
-        <div class="flag"></div>
+        <div class="flag start-flag"></div>
+        <aside>
+            <h2>Pages in this section</h2>
+            <ul>
+                {% for neighbour in listPages(site, ".") %}
+                    <li><a href="{{site.site_prefix}}/{{ neighbour.url }}">{{ neighbour.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </aside>
         <main>
             {% block content %}
             {% endblock %}
         </main>
-        <div class="flag"></div>
+        <div class="flag end-flag"></div>
         {% include "partials/footer.inja" %}
     </body>
 </html>

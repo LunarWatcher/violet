@@ -16,15 +16,52 @@ https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE
     --violet-colour-caution: #EB1806;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-columns: 25% 75%;
+    grid-template-areas:
+        "head head"
+        "hflag hflag"
+        "aside main"
+        "fflag fflag"
+        "foot foot";
+}
+
+@media (max-width: 750px) {
+    body {
+        grid-template-rows: auto auto auto 1fr auto auto;
+        grid-template-columns: 100%;
+        grid-template-areas:
+            "head"
+            "hflag"
+            "aside"
+            "main"
+            "fflag"
+            "foot";
+    }
+}
+
+header { grid-area: head; }
+footer { grid-area: foot; }
+.start-flag { grid-area: hflag; }
+.end-flag { grid-area: fflag; }
+
+aside {
+    grid-area: aside;
+    overflow: scroll;
+    padding: 16px;
 }
 
 main {
-    flex: 1 0 auto;
+    grid-area: main;
+    padding: 16px;
 }
 
 header, footer {
@@ -49,10 +86,6 @@ header a, footer a {
     );
     height: 8px;
     width: 100%;
-}
-
-main {
-    padding: 16px;
 }
 
 pre {

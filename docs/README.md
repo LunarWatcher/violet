@@ -9,6 +9,7 @@
 
 [Violet](https://codeberg.org/LunarWatcher/violet) is a C++-based, minimal static site generator. This website contains the documentation for it - and also a proof-of-concept, as this entire site is generated with violet.
 
+
 ## Features
 
 * Is and will remain AI slop-free

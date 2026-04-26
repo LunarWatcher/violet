@@ -15,7 +15,7 @@
     },
     // Only supported if type == page_list. See Page lists for more info
     "listing": {
-        // Path to where the RSS file is rendered.
+        // Path to where the RSS file is rendered. Optional
         "rss": "/path/to/rss-file.xml",
         // Whether or not the list page is recursive, i.e. whether subfolders should be included
         "recursive": false

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/parsing/LinkTranslate.hpp"
 #include <filesystem>
 
 #include <nlohmann/json.hpp>
@@ -23,12 +24,29 @@ struct Frontmatter {
 
     nlohmann::json data;
 
+    std::string internalUrl;
+    std::string internalPath;
+
     void withFilePath(
         const std::filesystem::path& source
     ) {
         if (!title) {
             title = source.filename().replace_extension();
         }
+
+        internalPath = source.string();
+        std::filesystem::path newPath = source;
+        if (newPath.filename() != "README.md") {
+            newPath = newPath.replace_extension(".html");
+            newPath = newPath.replace_filename(
+                renameFile(
+                    newPath.filename().string()
+                )
+            );
+        } else {
+            newPath = newPath.replace_filename("index.html");
+        }
+        internalUrl = newPath;
     }
 };
 

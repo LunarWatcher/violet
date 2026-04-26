@@ -74,6 +74,11 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     if (auto it = src.find("data"); it != src.end()) {
         dest.data = *it;
     }
+    // TODO: not sure if we want this
+    if (auto it = src.find("violet_internals.path"); it != src.end()) {
+        dest.internalPath = *it;
+    }
+
 }
 
 void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
@@ -97,6 +102,8 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     }
 
     dest["data"] = src.data;
+    dest["violet_internals.path"] = src.internalPath;
+    dest["url"] = src.internalUrl;
 }
 
 void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {    

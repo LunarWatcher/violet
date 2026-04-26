@@ -20,6 +20,10 @@ struct Config {
      * Contains a copy of the raw JSON object that created the rest of this struct; used for forwarding to inja.
      */
     nlohmann::json raw;
+
+    void imbueRoot(const std::filesystem::path& root) {
+        raw["violet_internals.path"] = root.string();
+    }
 };
 
 extern void from_json(const nlohmann::json& src, Config& dest);

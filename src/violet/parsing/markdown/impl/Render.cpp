@@ -18,6 +18,10 @@ void stringifyTreeImpl(
         ss << static_cast<const Markdown::ContentNode*>(tree)->paragraph;
     } break;
     case Markdown::NodeType::Paragraph: {
+        // Avoid including empty paragraphs. Largely useful for avoiding weird shit with in-file inja markup
+        if (tree->children.size() == 0) {
+            return;
+        }
         ss << "<p>";
     } break;
     case Markdown::NodeType::InlineCode: {

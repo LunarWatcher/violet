@@ -6,10 +6,14 @@ Violet uses [inja](https://github.com/pantor/inja/) as its underlying template e
 
 ## Objects
 
-There are two available root-level objects:
+There are two root-level objects that are always available:
 
 * `page`: Contains options set by the page
 * `site`: Contains options set by the site
+
+Additionally, there are two that may be available depending on the page context:
+
+* `listing`: A special object for `page_list`s that contains all the page specified by a list
 * `theme`: Contains options set by the theme. Only available if a theme is set, and it defines variables. See [Themes](Themes.md).
 
 ## Functions

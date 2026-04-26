@@ -5,6 +5,7 @@
 #include "violet/generate/FileManager.hpp"
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
+#include "violet/generate/cache/MetadataCache.hpp"
 
 namespace violet {
 
@@ -12,13 +13,15 @@ class InjaManager {
     GenerateOpts& opts;
     Config& cfg;
     FileManager& fileManager;
+    MetadataCache& metaCache;
 
     inja::Environment env;
 public:
     InjaManager(
         GenerateOpts& opts,
         Config& cfg,
-        FileManager& fileManager
+        FileManager& fileManager,
+        MetadataCache& metaCache
     );
 
     std::string renderPage(

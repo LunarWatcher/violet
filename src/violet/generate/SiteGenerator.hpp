@@ -4,6 +4,7 @@
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/FileManager.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
+#include "violet/generate/cache/MetadataCache.hpp"
 #include "violet/generate/templates/InjaManager.hpp"
 
 #include <expected>
@@ -19,6 +20,7 @@ private:
     Config cfg;
 
     FileManager fileManager;
+    MetadataCache metadataCache;
     InjaManager injaManager;
 
     SiteGenerator(
@@ -26,7 +28,6 @@ private:
         Config&& workspaceConf
     );
 
-    nlohmann::json parseFrontmatter(std::ifstream& in);
     bool processFile(
         const std::filesystem::path& rootDir,
         std::filesystem::path relPath,
