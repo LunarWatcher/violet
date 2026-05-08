@@ -204,7 +204,7 @@ std::string Markdown::stringifyTree(
                     usageRef > 0 ? ", " : ""
                 );
             }
-            
+
             ss << "</span>";
             ss << "</li>";
         }
@@ -259,7 +259,7 @@ std::string Markdown::serializeHeaders(
                     ss << "</li></ol>";
                 }
             }
-            
+
             URLNode virtualURLNode;
             virtualURLNode.urlType = URLNode::Type::Standard;
             virtualURLNode.urlOrRef = std::format("#{}", headerNode->id);
@@ -267,7 +267,7 @@ std::string Markdown::serializeHeaders(
             for (auto& contentNodes : node->children) {
                 virtualURLNode.addChild(contentNodes);
             }
-                                                
+
             stringifyTreeImpl(&virtualURLNode, ss, ctx);
 
             lastLevel = correctedLevel;
