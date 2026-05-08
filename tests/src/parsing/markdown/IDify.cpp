@@ -4,7 +4,11 @@
 TEST_CASE("Test ID conversion") {
     violet::Markdown::DocumentContext ctx(nullptr);
 
-    SECTION("A")
+    SECTION("Codeberg-inspired problem") {
+        REQUIRE(ctx.idify("C") == "c");
+        REQUIRE(ctx.idify("C++") == "c-1");
+        REQUIRE(ctx.idify("C#") == "c-2");
+    }
 
     SECTION("Non-latin") {
         REQUIRE(ctx.idify("") == "-1");
