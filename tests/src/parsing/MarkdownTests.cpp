@@ -100,7 +100,7 @@ this is a code block
         std::stringstream ss;
         ss << R"(# This is a header
 This is a line)";
-        REQUIRE(violet::Markdown::parse(ss) == "<h1>This is a header</h1><p>This is a line</p>");
+        REQUIRE(violet::Markdown::parse(ss) == "<h1 id=\"this-is-a-header\">This is a header</h1><p>This is a line</p>");
     }
 }
 
@@ -239,19 +239,20 @@ Also, this is a paragraph split across multiple lines with no formatting.
 [This is a link](//example.com)
 )";
 
-    std::string expected = R"(<h1>Header</h1>)"
-        R"(<h2>Header 2</h2>)"
-        R"(<h3>Header 3</h3>)"
-        R"(<h4>Header 4</h4>)"
-        R"(<h5>Header 5</h5>)"
-        R"(<h6>Header 6</h6>)"
+    std::string expected =
+        R"(<h1 id="header">Header</h1>)"
+        R"(<h2 id="header-2">Header 2</h2>)"
+        R"(<h3 id="header-3">Header 3</h3>)"
+        R"(<h4 id="header-4">Header 4</h4>)"
+        R"(<h5 id="header-5">Header 5</h5>)"
+        R"(<h6 id="header-6">Header 6</h6>)"
         R"(<p><strong>Bold</strong>, <em>italic</em>, <strong><em>bold italic</em></strong></p>)"
         R"(<p><strong><code>bold code</code></strong>)"
         R"( <code>**code with stars**</code></p>)"
         R"(<pre><code>full code block</code></pre>)"
         R"(<blockquote><p>Quote</p></blockquote>)"
         R"(<blockquote><p>Multiline quote</p></blockquote>)"
-        R"(<h1>Header with <code>code</code> <strong>bold</strong></h1>)"
+        R"(<h1 id="header-with-code-bold">Header with <code>code</code> <strong>bold</strong></h1>)"
         R"(<p>It upsets me how few markdown implementations actually support syntax in headers. )"
         R"(Also, this is a paragraph split across multiple lines with no formatting.</p>)"
         R"(<p><a href="//example.com">This is a link</a></p>)";

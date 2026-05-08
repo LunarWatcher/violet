@@ -334,8 +334,6 @@ void Markdown::parseHeader(
 ) {
     // TODO: This is not an elegant way to do this
     char ch;
-    std::stringstream content;
-
     size_t level = 0;
     bool computingLevel = true;
     while (in >> std::noskipws >> ch) {
@@ -351,8 +349,18 @@ void Markdown::parseHeader(
     }
     level = std::min((size_t) 6, level);
 
+    size_t stored = in.tellg();
+    std::stringstream ss;
+    while (in >> std::noskipws >> ch) {
+        if (ch == '\n') {
+            break;
+        }
+        ss << ch;
+    }
+    in.seekg(stored);
     auto node = new HeaderNode(
-        level
+        level,
+        context.idify(ss.str())
     );
     out->addChild(
         node

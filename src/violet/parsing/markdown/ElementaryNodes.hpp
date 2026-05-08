@@ -17,10 +17,14 @@ struct ContentNode : public DOMTree {
 
 struct HeaderNode : public DOMTree {
     const size_t level;
+    std::string id;
 
     HeaderNode(
-        size_t level
-    ) : DOMTree(NodeType::Header), level(level) {}
+        size_t level,
+        std::string&& id
+    ) : DOMTree(NodeType::Header),
+        level(level),
+        id(std::move(id)) {}
 };
 
 struct BlockquoteNode : public DOMTree {

@@ -8,6 +8,8 @@ add_executable(tests
     src/parsing/UrlTests.cpp
     src/parsing/UrlTranslationTests.cpp
     src/parsing/QuoteTests.cpp
+
+    src/parsing/markdown/IDify.cpp
 )
 
 Include(FetchContent)

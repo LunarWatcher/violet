@@ -36,7 +36,10 @@ void stringifyTreeImpl(
         ss << ">";
     } break;
     case Markdown::NodeType::Header: {
-        ss << "<h" << static_cast<const Markdown::HeaderNode*>(tree)->level << ">";
+        auto* headerNode = static_cast<const Markdown::HeaderNode*>(tree);
+        ss << "<h" << headerNode->level
+           << " id=\"" << headerNode->id << "\""
+           << ">";
     } break;
     case Markdown::NodeType::Quote: {
         ss << "<blockquote>";

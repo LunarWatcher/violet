@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <string>
+
 namespace violet::Markdown {
 
 // TODO: pass stringstream& instead?

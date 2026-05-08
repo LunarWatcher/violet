@@ -25,17 +25,7 @@ No pages are forced into being page lists, as it's perfectly normal to have fold
 
 ### RSS
 
-If you want to generate an RSS feed for a given page list, you can opt into this with:
-```markdown
----
-{
-    "layout": "page_list",
-    "rss": "/feed.xml"
-}
----
-```
-
-The value of `rss` is the path it's mounted on in the rendered view. `/feed.xml` would mean `https://example.com/feed.xml` would be generated.
+TBA
 
 ## Writing page list templates
 
