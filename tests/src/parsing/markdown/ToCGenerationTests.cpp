@@ -64,7 +64,7 @@ TEST_CASE("ToC feature tests") {
             "</ol>"
         );
     }
-    SECTION("Invalid ierarchy") {
+    SECTION("Invalid hierarchy") {
         ss << R"(# Header
 ### Header 2
 )";
