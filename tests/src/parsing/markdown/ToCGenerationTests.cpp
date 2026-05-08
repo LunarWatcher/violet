@@ -64,6 +64,39 @@ TEST_CASE("ToC feature tests") {
             "</ol>"
         );
     }
+    SECTION("Offset hierarchy") {
+        ss << R"(## Header
+### Header 2
+#### Header 3)";
+
+        auto res = std::move(
+            violet::Markdown::parseWithContentPostprocessing(ss)
+        );
+
+        REQUIRE(
+            res.parsedContents
+            ==
+            R"(<h2 id="header">Header</h2>)"
+            R"(<h3 id="header-2">Header 2</h3>)"
+            R"(<h4 id="header-3">Header 3</h4>)"
+        );
+
+        REQUIRE(
+            res.tableOfContents
+            ==
+            "<ol>"
+                R"(<li><a href="#header">Header</a>)"
+                    "<ol>"
+                        R"(<li><a href="#header-2">Header 2</a>)"
+                            "<ol>"
+                                R"(<li><a href="#header-3">Header 3</a></li>)"
+                            "</ol>"
+                        "</li>"
+                    "</ol>"
+                "</li>"
+            "</ol>"
+        );
+    }
     SECTION("Invalid hierarchy") {
         ss << R"(# Header
 ### Header 2

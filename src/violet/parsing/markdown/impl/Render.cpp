@@ -219,22 +219,43 @@ std::string Markdown::serializeHeaders(
     DOMTree& root,
     DocumentContext& ctx
 ) {
-    size_t lastLevel = 0;
+    size_t baseLevel = 90;
 
     std::stringstream ss;
+    // This is not optimal, but here we filter to find the actual root level. If the file only contains ## and down (up?
+    // whatever we count more #'s as), there's no point in treating h1 as missing. It'll likely be set by the page, and
+    // we don't necessarily want to include it.
+    // TODO: add an option to explicitly exclude levels (instead?) - would that be a site setting?
+    // Could probably also defer to JS or something on the page
+    for (size_t i = 0; i < root.children.size(); ++i) {
+        auto* node = root.children.at(i);
+        if (node->type == NodeType::Header) {
+            baseLevel = std::min(baseLevel, static_cast<HeaderNode*>(node)->level - 1);
+        }
+    }
+
+    // No headers
+    if (baseLevel == 90) {
+        [[unlikely]]
+        return "";
+    }
+
+    auto lastLevel = 0;
+
     for (size_t i = 0; i < root.children.size(); ++i) {
         auto* node = root.children.at(i);
 
         if (node->type == NodeType::Header) {
             auto* headerNode = static_cast<HeaderNode*>(node);
-            if (headerNode->level > lastLevel) {
-                for (size_t i = 0; i < headerNode->level - lastLevel; ++i) {
+            auto correctedLevel = headerNode->level - baseLevel;
+            if (correctedLevel > lastLevel) {
+                for (size_t i = 0; i < correctedLevel - lastLevel; ++i) {
                     ss << "<ol><li>";
                 }
-            } else if (headerNode->level == lastLevel) {
+            } else if (correctedLevel == lastLevel) {
                 ss << "</li><li>";
             } else {
-                for (size_t i = 0; i < lastLevel - headerNode->level; ++i) {
+                for (size_t i = 0; i < lastLevel - correctedLevel; ++i) {
                     ss << "</li></ol>";
                 }
             }
@@ -249,7 +270,7 @@ std::string Markdown::serializeHeaders(
                                                 
             stringifyTreeImpl(&virtualURLNode, ss, ctx);
 
-            lastLevel = headerNode->level;
+            lastLevel = correctedLevel;
         }
     }
     for (size_t i = 0; i < lastLevel; ++i) {
