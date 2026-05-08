@@ -24,6 +24,11 @@ TEST_CASE("Test ID conversion") {
         for (size_t i = 0; i < 10; ++i) {
             REQUIRE(ctx.idify("test") == std::format("test-{}", i + 1));
         }
+
+        // No prefix stripping should happen, so this should act like the previous one
+        for (size_t i = 0; i < 10; ++i) {
+            REQUIRE(ctx.idify("test-1") == std::format("test-1-{}", i + 1));
+        }
     }
 
     SECTION("Numbers") {
