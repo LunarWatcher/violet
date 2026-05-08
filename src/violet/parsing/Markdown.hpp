@@ -4,6 +4,7 @@
 #include "violet/parsing/markdown/DOMTree.hpp"
 #include "violet/parsing/markdown/DocumentContext.hpp"
 #include "violet/parsing/markdown/ElementaryNodes.hpp"
+#include "violet/parsing/markdown/output/ContentDeclaration.hpp"
 #include <functional>
 #include <sstream>
 #include <string>
@@ -110,7 +111,7 @@ extern void parseHeader(
 
 
 extern std::string stringifyTree(
-    const DOMTree& tree,
+    const DOMTree* tree,
     DocumentContext& context
 );
 
@@ -119,9 +120,21 @@ extern void commitContentNode(
     Markdown::DOMTree* out
 );
 
+extern std::string serializeHeaders(
+    DOMTree& root,
+    DocumentContext& ctx
+);
+
 extern std::string parse(
     std::stringstream& in,
-    const LinkTranslator& translator = [](const std::string& in) {
+    const LinkTranslator& linkTranslator = [](const std::string& in) {
+        return in;
+    }
+);
+
+extern ContentDeclaration parseWithContentPostprocessing(
+    std::stringstream& in,
+    const LinkTranslator& linkTranslator = [](const std::string& in) {
         return in;
     }
 );

@@ -9,7 +9,8 @@ add_executable(tests
     src/parsing/UrlTranslationTests.cpp
     src/parsing/QuoteTests.cpp
 
-    src/parsing/markdown/IDify.cpp
+    src/parsing/markdown/IDifyTests.cpp
+    src/parsing/markdown/ToCGenerationTests.cpp
 )
 
 Include(FetchContent)

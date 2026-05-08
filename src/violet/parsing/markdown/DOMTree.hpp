@@ -12,25 +12,26 @@ enum class NodeType {
     BlockEnd = 2,
 
     // Root nodes
-    Paragraph = 3,
-    CodeBlock = 4,
-    Quote = 5,
-    Callout = 6,
-    UnorderedList = 7,
-    OrderedList = 8,
-    Header = 9,
-    AnchorDef = 10,
-    FootnoteDef = 11,
+    Paragraph = 4,
+    CodeBlock = 5,
+    Quote = 6,
+    Callout = 7,
+    UnorderedList = 8,
+    OrderedList = 9,
+    Header = 10,
+    AnchorDef = 11,
+    FootnoteDef = 12,
     // Span styles
-    Bold = 12,
-    Italic = 13,
-    BoldItalic = 14,
-    InlineCode = 15,
-    Anchor = 16,
-    Footnote = 17,
+    Bold = 13,
+    Italic = 14,
+    BoldItalic = 15,
+    InlineCode = 16,
+    Anchor = 17,
+    Footnote = 18,
 
-    UnorderedListEntry = 18,
-    OrderedListEntry = 19,
+    UnorderedListEntry = 19,
+    OrderedListEntry = 20,
+
 };
 
 struct DOMTree {
@@ -39,16 +40,22 @@ struct DOMTree {
     std::vector<DOMTree*> children;
     NodeType type;
 
+    bool isVirtual = false;
+
     DOMTree(NodeType type) : type(type) {}
 
     virtual ~DOMTree() {
-        for (auto child : children) {
-            delete child;
+        if (!isVirtual) {
+            for (auto child : children) {
+                delete child;
+            }
         }
     }
 
-    void addChild(DOMTree* node) {
-        node->parent = this;
+    virtual void addChild(DOMTree* node) {
+        if (!isVirtual) {
+            node->parent = this;
+        }
         children.push_back(node);
     }
 };

@@ -3,6 +3,7 @@
 #include "violet/parsing/markdown/ContextConsumingNodes.hpp"
 #include "violet/parsing/markdown/DOMTree.hpp"
 #include "violet/parsing/markdown/DocumentContext.hpp"
+#include "violet/parsing/markdown/ElementaryNodes.hpp"
 #include <sstream>
 
 namespace violet {
@@ -168,17 +169,20 @@ void stringifyTreeImpl(
 }
 
 std::string Markdown::stringifyTree(
-    const DOMTree& tree,
+    const DOMTree* tree,
     DocumentContext& context
 ) {
     std::stringstream ss;
     stringifyTreeImpl(
-        &tree,
+        tree,
         ss,
         context
     );
 
-    if (!context.usedFootnotes.empty()) {
+    if (
+        tree->type == NodeType::DocumentRoot &&
+        !context.usedFootnotes.empty()
+    ) {
         ss << "<div id=\"violet-footnotes\">";
         ss << "<h2>Footnotes</h2>";
         ss << "<ol>";
@@ -208,6 +212,49 @@ std::string Markdown::stringifyTree(
         ss << "</div>";
     }
 
+    return ss.str();
+}
+
+std::string Markdown::serializeHeaders(
+    DOMTree& root,
+    DocumentContext& ctx
+) {
+    size_t lastLevel = 0;
+
+    std::stringstream ss;
+    for (size_t i = 0; i < root.children.size(); ++i) {
+        auto* node = root.children.at(i);
+
+        if (node->type == NodeType::Header) {
+            auto* headerNode = static_cast<HeaderNode*>(node);
+            if (headerNode->level > lastLevel) {
+                for (size_t i = 0; i < headerNode->level - lastLevel; ++i) {
+                    ss << "<ol><li>";
+                }
+            } else if (headerNode->level == lastLevel) {
+                ss << "</li><li>";
+            } else {
+                for (size_t i = 0; i < lastLevel - headerNode->level; ++i) {
+                    ss << "</li></ol>";
+                }
+            }
+            
+            URLNode virtualURLNode;
+            virtualURLNode.urlType = URLNode::Type::Standard;
+            virtualURLNode.urlOrRef = std::format("#{}", headerNode->id);
+            virtualURLNode.isVirtual = true;
+            for (auto& contentNodes : node->children) {
+                virtualURLNode.addChild(contentNodes);
+            }
+                                                
+            stringifyTreeImpl(&virtualURLNode, ss, ctx);
+
+            lastLevel = headerNode->level;
+        }
+    }
+    for (size_t i = 0; i < lastLevel; ++i) {
+        ss << "</li></ol>";
+    }
     return ss.str();
 }
 

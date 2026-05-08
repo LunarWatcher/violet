@@ -6,18 +6,19 @@ add_library(violetsrc STATIC
 
     violet/conf/ToJsonImpl.cpp
 
-    violet/generate/SiteGenerator.cpp
     violet/generate/FileManager.cpp
+    violet/generate/SiteGenerator.cpp
 
     violet/generate/templates/InjaManager.cpp
 
     violet/parsing/DateTimeParsing.cpp
-    violet/parsing/Markdown.cpp
     violet/parsing/Escaping.cpp
+    violet/parsing/Markdown.cpp
 
     violet/parsing/markdown/DocumentContext.cpp
-    violet/parsing/markdown/impl/Render.cpp
     violet/parsing/markdown/impl/ParagraphParsing.cpp
+    violet/parsing/markdown/impl/ParserCore.cpp
+    violet/parsing/markdown/impl/Render.cpp
 )
 
 target_include_directories(violetsrc PUBLIC .)

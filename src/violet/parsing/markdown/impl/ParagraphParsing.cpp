@@ -222,7 +222,6 @@ void Markdown::parseParagraphContent(
             content << ch;
         }
     }
-
     commitContentNode(content, out);
 }
 

@@ -4,7 +4,6 @@
 
 namespace violet::Markdown {
 
-
 struct FootnoteDefNode : public DOMTree {
     FootnoteDefNode() : DOMTree(NodeType::FootnoteDef) {}
 };

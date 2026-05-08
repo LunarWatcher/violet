@@ -115,8 +115,8 @@ Markdown::NodeType Markdown::resolveMajorMode(
     }
  done:
     // Reset the stream so the parsers can handle it properly
-    in.seekg(offset);
     in.clear();
+    in.seekg(offset);
     return mode;
 }
 
@@ -247,8 +247,8 @@ bool Markdown::prepareStream(
 
     return true;
  rollback:
-    in.seekg(start);
     in.clear();
+    in.seekg(start);
     return false;
 }
 
@@ -357,6 +357,7 @@ void Markdown::parseHeader(
         }
         ss << ch;
     }
+    in.clear();
     in.seekg(stored);
     auto node = new HeaderNode(
         level,
@@ -583,8 +584,8 @@ void Markdown::parseFootnoteDef(
     // 1d30477, and now I don't feel like removing it again.
     // All this does is make the prepareStream call at the start of parseParagraph to actually work. More research
     // required.
-    in.seekg(start);
     in.clear();
+    in.seekg(start);
 
     while (in) {
         while (in.peek() == '\n') {
@@ -657,32 +658,6 @@ bool Markdown::nextMajorMode(
         );
     }
     return true;
-}
-
-std::string Markdown::parse(
-    std::stringstream& in,
-    const LinkTranslator& linkTranslator
-) {
-    DOMTree rootTree(NodeType::DocumentRoot);
-    DocumentContext context(linkTranslator);
-
-    while (in) {
-        while (in.peek() == '\n') {
-            std::ignore = in.get();
-        }
-
-        // the loop condition may be invalidated by the previous while loop, so need to recheck again
-        // We also need a redundant check to make sure there is a valid character, since eof doesn't seem to kick in
-        // until we do an invalid read?
-        // This may be an issue elsewhere as well; need to do further sanity checking on edge cases
-        if (!in || in.peek() < 0) {
-            break;
-        }
-
-        nextMajorMode(in, &rootTree, context, true);
-    }
-
-    return stringifyTree(rootTree, context);
 }
 
 }
