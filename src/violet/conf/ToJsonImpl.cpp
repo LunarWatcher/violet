@@ -104,9 +104,10 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     dest["data"] = src.data;
     dest["violet_internals.path"] = src.internalPath;
     dest["url"] = src.internalUrl;
+    dest["table_of_contents"] = src.tableOfContents;
 }
 
-void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {    
+void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {
     dest["rss"] = src.rss;
     dest["recursive"] = src.recursive;
 }

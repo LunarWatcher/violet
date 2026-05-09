@@ -24,6 +24,8 @@ struct Frontmatter {
 
     nlohmann::json data;
 
+    std::string tableOfContents;
+
     std::string internalUrl;
     std::string internalPath;
 

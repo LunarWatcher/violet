@@ -2,6 +2,7 @@
 
 #include "ProcessedFileType.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
+#include "violet/parsing/markdown/ElementaryNodes.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -88,7 +89,7 @@ bool SiteGenerator::processFile(
         );
     } break;
     case ProcessedFileType::Markdown: {
-        std::string fileContent = Markdown::parse(
+        auto parsedPage = Markdown::parseWithContentPostprocessing(
             content,
             std::bind(
                 projectBasedTranslator,
@@ -99,10 +100,17 @@ bool SiteGenerator::processFile(
             )
         );
 
+        // TODO: this isn't elegant, but it seems to be the easiest option for now. The alternative is injecting a
+        // fourth data object that's only present for markdown pages, but that just sucks.
+        // Also not sure how I want to indicate that a ToC exists, but I don't think that level of markdown mixing is
+        // ever going to be a problem.
+        Frontmatter fm = parsedFrontmatter;
+        fm.tableOfContents = std::move(parsedPage.tableOfContents);
+
         handleTemplatesAndSave(
-            std::move(fileContent),
-            parsedFrontmatter.internalUrl,
-            parsedFrontmatter
+            std::move(parsedPage.parsedContents),
+            fm.internalUrl,
+            fm
         );
     } break;
     }

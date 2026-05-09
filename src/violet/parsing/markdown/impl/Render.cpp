@@ -258,6 +258,7 @@ std::string Markdown::serializeHeaders(
                 for (size_t i = 0; i < lastLevel - correctedLevel; ++i) {
                     ss << "</li></ol>";
                 }
+                ss << "</li><li>";
             }
 
             URLNode virtualURLNode;

@@ -125,4 +125,41 @@ TEST_CASE("ToC feature tests") {
             "</ol>"
         );
     }
+
+    SECTION("Hierarchy with returns to previous levels") {
+        ss << R"(# Header
+## Header 2
+## Header 3
+### Header 4
+## Header 5
+# Header 6)";
+
+        auto res = std::move(
+            violet::Markdown::parseWithContentPostprocessing(ss)
+        );
+        REQUIRE(
+            res.tableOfContents
+            ==
+            "<ol>"
+                "<li>"
+                    R"(<a href="#header">Header</a>)"
+                    "<ol>"
+                        R"(<li><a href="#header-2">Header 2</a></li>)"
+                        "<li>"
+                            R"(<a href="#header-3">Header 3</a>)"
+                            "<ol>"
+                                "<li>"
+                                    R"(<a href="#header-4">Header 4</a>)"
+                                "</li>"
+                            "</ol>"
+                        "</li>"
+                        R"(<li><a href="#header-5">Header 5</a></li>)"
+                    "</ol>"
+                "</li>"
+                "<li>"
+                    R"(<a href="#header-6">Header 6</a>)"
+                "</li>"
+            "</ol>"
+        );
+    }
 }
