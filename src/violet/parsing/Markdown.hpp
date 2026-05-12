@@ -109,6 +109,12 @@ extern void parseHeader(
     DocumentContext& context
 );
 
+extern void parseTemplate(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+);
+
 
 extern std::string stringifyTree(
     const DOMTree* tree,

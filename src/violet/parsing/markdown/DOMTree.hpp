@@ -10,6 +10,8 @@ enum class NodeType {
     DocumentRoot = 1,
     // Special: The previous block has ended
     BlockEnd = 2,
+    // Special: used for lines with {{ templates }}
+    Template = 3,
 
     // Root nodes
     Paragraph = 4,

@@ -2,6 +2,8 @@
 ---
 # Markdown spec
 
+{{ page.table_of_contents }}
+
 This document describes the currently implemented features of markdown, any extensions added by violet, and any limitations of the parser. This can also serve as an intro to markdown, but only Violet's specific flavour.
 
 ## Short version

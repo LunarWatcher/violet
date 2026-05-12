@@ -16,6 +16,7 @@ add_library(violetsrc STATIC
     violet/parsing/Markdown.cpp
 
     violet/parsing/markdown/DocumentContext.cpp
+    violet/parsing/markdown/impl/MetaParser.cpp
     violet/parsing/markdown/impl/ParagraphParsing.cpp
     violet/parsing/markdown/impl/ParserCore.cpp
     violet/parsing/markdown/impl/Render.cpp

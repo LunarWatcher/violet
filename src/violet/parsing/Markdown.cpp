@@ -16,7 +16,6 @@
 
 namespace violet {
 
-
 Markdown::NodeType Markdown::resolveMajorMode(
     std::stringstream& in,
     DOMTree* tree,
@@ -110,8 +109,16 @@ Markdown::NodeType Markdown::resolveMajorMode(
                 }
             }
         }
-    paragraph:
-        mode = NodeType::Paragraph;
+        char ch;
+        while (in.peek() == ' ') {
+            std::ignore = in.get();
+        }
+        if (in.peek() == '{') {
+            mode = NodeType::Template;
+        } else {
+        paragraph:
+            mode = NodeType::Paragraph;
+        }
     }
  done:
     // Reset the stream so the parsers can handle it properly
@@ -649,6 +656,9 @@ bool Markdown::nextMajorMode(
     } break;
     case NodeType::FootnoteDef: {
         parseFootnoteDef(in, tree, context);
+    } break;
+    case NodeType::Template: {
+        parseTemplate(in, tree, context);
     } break;
     case NodeType::BlockEnd:
         return false;
