@@ -42,6 +42,7 @@ This is another line
 2. This is also a list
 )";
 
+        // TODO: maybe a line starting with a space (after indent) should mean raw mode?
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
@@ -57,7 +58,7 @@ This is another line
         std::stringstream ss;
         ss << R"(1. {% block whatever %}
     {% for whatever in listPages(site, ".") %}
-      <p>owo</p>
+      owo
     {% endfor %}
   {% end %}
 2. This is also a list
@@ -68,11 +69,11 @@ This is another line
             ==
             "<ol>"
                 "<li>\n"
-                "{{ page.table_of_contents }}\n\n"
-                    "  {% for whatever in listPages(site, \".\") %}\n\n"
-                    "<p>owo</p>\n"
-                    "  {% endfor %}\n\n"
-                    "{% end %}\n\n"
+                "{% block whatever %}\n\n"
+                    "    {% for whatever in listPages(site, \".\") %}\n"
+                    "<p>      owo</p>\n"
+                    "    {% endfor %}\n\n"
+                    "  {% end %}\n"
                 "</li>"
                 "<li><p>This is also a list</p></li>"
             "</ol>"
