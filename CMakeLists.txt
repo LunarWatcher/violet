@@ -45,8 +45,8 @@ FetchContent_Declare(stc
     GIT_REPOSITORY https://github.com/LunarWatcher/stc
 )
 FetchContent_Declare(cli11
-    GIT_REPOSITORY https://github.com/CLIUtils/CLI11
-    GIT_TAG v2.6.2
+    GIT_REPOSITORY https://codeberg.org/LunarWatcher/CLI11
+    GIT_TAG main
 )
 FetchContent_Declare(json
     GIT_REPOSITORY https://github.com/nlohmann/json
