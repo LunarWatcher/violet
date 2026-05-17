@@ -36,6 +36,9 @@ struct Frontmatter {
             title = source.filename().replace_extension();
         }
 
+        std::cout << *title << std::endl;
+        std::cout << source << std::endl;
+
         internalPath = source.string();
         std::filesystem::path newPath = source;
         if (newPath.filename() != "README.md") {
@@ -49,6 +52,7 @@ struct Frontmatter {
             newPath = newPath.replace_filename("index.html");
         }
         internalUrl = newPath;
+        std::cout << internalPath << ", " << internalUrl << std::endl;
     }
 };
 
