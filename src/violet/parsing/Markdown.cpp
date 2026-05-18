@@ -96,7 +96,9 @@ Markdown::NodeType Markdown::resolveMajorMode(
 
                 char ch;
                 while (in && in >> std::noskipws >> ch) {
-                    if (ch == '\n' && ch == ' ') {
+                    // TODO: this was typo'd to an && instead of a ||, but this had no effect. What bugs did this
+                    // introduce by accident?
+                    if (ch == '\n' || ch == ' ') {
                         break;
                     } else if (ch == ']') {
                         // if no :, this is just a paragraph that starts with an [urlref] inline url
@@ -262,7 +264,7 @@ bool Markdown::prepareStream(
 void Markdown::parseCodeBlockContent(
     std::stringstream& in,
     CodeNode* out,
-    DocumentContext& context
+    DocumentContext&
 ) {
     char ch;
     std::stringstream content;
@@ -508,7 +510,7 @@ void Markdown::parseUnorderedList(
 
 void Markdown::parseAnchorDef(
     std::stringstream& in,
-    DOMTree* out,
+    DOMTree*,
     DocumentContext& context
 ) {
     if (in.peek() != '[') {
@@ -553,7 +555,7 @@ void Markdown::parseAnchorDef(
 
 void Markdown::parseFootnoteDef(
     std::stringstream& in,
-    DOMTree* out,
+    DOMTree*,
     DocumentContext& context
 ) {
     size_t start = in.tellg();

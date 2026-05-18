@@ -8,7 +8,7 @@
 
 namespace violet {
 
-void stringifyTreeImpl(
+static void stringifyTreeImpl(
     const Markdown::DOMTree* tree,
     std::stringstream& ss,
     Markdown::DocumentContext& context

@@ -87,6 +87,7 @@ void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
 }
 
 void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): it's forced true by the time this is called.
     dest["title"] = *src.title;
     dest["type"] = src.type;
     dest["layout"] = src.layout;

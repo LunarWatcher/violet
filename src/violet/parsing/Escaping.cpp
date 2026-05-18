@@ -66,6 +66,7 @@ void violet::urlEncode(
         case '%':
             target << ch;
             return;
+        default:;
         }
     }
 

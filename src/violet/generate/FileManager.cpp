@@ -40,12 +40,12 @@ std::filesystem::path FileManager::resolveTemplate(
     // std::cout << file << std::endl;
 
     paths.push_back(root / "_templates" / type);
-    if (hasTheme) {
+    if (cfg.theme) {
         paths.push_back(themeDir / "_templates" / type);
     }
 
     paths.push_back(root / "_templates" / "_default");
-    if (hasTheme) {
+    if (cfg.theme) {
         paths.push_back(themeDir / "_templates" / "_default");
     }
 
@@ -62,7 +62,7 @@ std::filesystem::path FileManager::resolveTemplate(
 }
 void FileManager::copyThemeFiles() {
     assertReady();
-    if (!hasTheme) {
+    if (!cfg.theme) {
         std::cout << "No theme set" << std::endl;
         return;
     }
@@ -119,7 +119,7 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
         return p;
     }
 
-    if (hasTheme) {
+    if (cfg.theme) {
         if (auto p = this->themeDir / "_partials" / fn;
             std::filesystem::is_regular_file(p)
         ) {

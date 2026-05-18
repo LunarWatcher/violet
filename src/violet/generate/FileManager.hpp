@@ -14,15 +14,13 @@ private:
     std::filesystem::path root;
     std::filesystem::path themeDir;
 
-    bool hasTheme;
     bool ready = false;
 public:
     FileManager(
         GenerateOpts& opts,
         Config& cfg
     ) : opts(opts),
-        cfg(cfg), 
-        hasTheme(cfg.theme.has_value())
+        cfg(cfg)
     {}
 
     std::filesystem::path resolveTemplate(
@@ -47,14 +45,13 @@ public:
     ) {
         this->root = root;
 
-        // TODO: this is currently only valid for running in the git repo
-        if (this->hasTheme && (*cfg.theme)[0] == '_') {
+        if (this->cfg.theme && (*cfg.theme)[0] == '_') {
             this->themeDir = std::filesystem::path(
                 stc::executablePath()
             ).parent_path()
                 / "../share/violet/themes"
                 / *cfg.theme;
-        } else if (this->hasTheme) {
+        } else if (this->cfg.theme) {
             this->themeDir = root / "_themes" / *cfg.theme;
         }
         ready = true;

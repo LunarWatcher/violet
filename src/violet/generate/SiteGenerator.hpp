@@ -30,7 +30,7 @@ private:
 
     bool processFile(
         const std::filesystem::path& rootDir,
-        std::filesystem::path relPath,
+        const std::filesystem::path& relPath,
         ProcessedFileType type
     );
 

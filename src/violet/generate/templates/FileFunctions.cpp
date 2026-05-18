@@ -37,7 +37,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) {
-            auto entryPath = entry.path();
+            const auto& entryPath = entry.path();
             if (!entry.is_regular_file()
                 || (
                     entryPath.extension() != ".md"
@@ -84,7 +84,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) {
-            auto entryPath = entry.path();
+            const auto& entryPath = entry.path();
             if (!entry.is_regular_file()
                 || (
                     entryPath.extension() != ".md"

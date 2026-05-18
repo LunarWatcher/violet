@@ -42,7 +42,7 @@ InjaManager::InjaManager(
 
 std::string InjaManager::renderPage(
     const std::string& fileContent,
-    const std::filesystem::path& fileSource,
+    const std::filesystem::path&, // TODO: what was the idea with this arg?
     const Frontmatter& fm
 ) {
     nlohmann::json context = {

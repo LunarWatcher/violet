@@ -13,7 +13,7 @@ std::string DocumentContext::idify(const std::string& content) {
         } else if ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) {
             ss << ch;
         } else {
-            switch (ch) {
+            switch (ch) { // NOLINT(bugprone-switch-missing-default-case)
             case '_':
             case '-':
                 ss << ch;

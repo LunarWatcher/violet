@@ -64,7 +64,7 @@ void SiteGenerator::handleTemplatesAndSave(
 
 bool SiteGenerator::processFile(
     const std::filesystem::path& rootDir,
-    std::filesystem::path relPath,
+    const std::filesystem::path& relPath,
     ProcessedFileType type
 ) {
     std::cout << "Now reading " << relPath << std::endl;

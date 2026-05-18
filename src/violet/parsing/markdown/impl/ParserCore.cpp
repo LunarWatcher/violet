@@ -3,7 +3,7 @@
 #include <string>
 namespace violet {
 
-void delegateParse(
+static void delegateParse(
     std::stringstream& in,
     Markdown::DOMTree* rootTree,
     Markdown::DocumentContext& context

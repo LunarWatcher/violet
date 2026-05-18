@@ -7,7 +7,7 @@ namespace violet {
 void Markdown::parseTemplate(
     std::stringstream& in,
     DOMTree* out,
-    DocumentContext& context
+    DocumentContext&
 ) {
     prepareStream(in, out, true);
     std::stringstream ss;
