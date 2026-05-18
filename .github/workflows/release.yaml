@@ -39,4 +39,4 @@ jobs:
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v3
         with:
-          files: violet.tar.gz
+          files: build/violet.tar.gz
