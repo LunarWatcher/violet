@@ -1,0 +1,42 @@
+name: Build binaries for distribution
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-24.04
+    container: ubuntu:rolling
+    steps:
+      - name: Install deps
+        run: |
+          apt update && apt upgrade -y
+          apt install -y cmake gcc build-essential make git libssl-dev libcurl4-openssl-dev
+      - uses: actions/checkout@main
+      - name: Fix git ownership
+        run: |
+          git config --global --add safe.directory $(pwd)
+      - name: Print environment
+        run: |
+          cmake --version
+      - name: Run build
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=dist
+          make -j $(nproc)
+          make -j $(nproc) install
+
+      - name: Compress distribution
+        run: |
+          cd build
+          tar -cvzf violet.tar.gz dist/*
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: violet.tar.gz
