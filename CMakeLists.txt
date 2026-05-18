@@ -10,10 +10,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 option(VIOLET_COVERAGE "Whether or not to build with test coverage" OFF)
 option(VIOLET_SANITISE "Whether or not to -fsanitise=undefined. No effect on Windows" OFF)
+option(VIOLET_CLANG_TIDY "Whether or not to enable clang-tidy" OFF)
+option(VIOLET_WARNINGS_ARE_ERRORS "Whether or not to enable warnings are errors in linters" OFF)
 
 message(STATUS "Violet build configuration:")
 message(STATUS "\t- Sanitising: ${VIOLET_SANITISE}")
 message(STATUS "\t- Coverage: ${VIOLET_COVERAGE}")
+message(STATUS "\t- Linting (clang-tidy): ${VIOLET_CLANG_TIDY}")
 
 if (VIOLET_COVERAGE)
     string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" CMAKE_CXX_COMPILER_VERSION_REGEX_MATCH  ${CMAKE_CXX_COMPILER_VERSION})
@@ -70,5 +73,22 @@ add_custom_target(run
     COMMAND violet
     DEPENDS violet
     COMMENT "Run violet")
+
+if (VIOLET_CLANG_TIDY)
+    set (CLANG_TIDY_PROPS "clang-tidy;--use-color;--config-file=${CMAKE_SOURCE_DIR}/.clang-tidy")
+    if (VIOLET_WARNINGS_ARE_ERRORS)
+
+        set (CLANG_TIDY_PROPS "${CLANG_TIDY_PROPS};-warnings-as-errors=*")
+    endif()
+    
+    set_target_properties(violetsrc PROPERTIES
+            CXX_CLANG_TIDY "${CLANG_TIDY_PROPS}"
+    )
+    set_target_properties(violet PROPERTIES
+            CXX_CLANG_TIDY "${CLANG_TIDY_PROPS}"
+    )
+    # Currently can't set on tests because catch2 emits a bunch of errors because of C23 changes or whatever
+
+endif()
 
 # vim:ft=cmake

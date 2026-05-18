@@ -36,9 +36,45 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          # --config Release is required for Windows; shouldn't do anything on Linux
-          cmake --build . -j $(nproc) --config ${{ matrix.mode }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
+          cmake --build . -j $(nproc)
+      - name: Test
+        run: |
+          cd build
+          cmake --build . --target test
+  lint:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: g++
+            cxx: g++
+            cc: gcc
+            mode: Release
+          - compiler: g++
+            cxx: g++
+            cc: gcc
+            mode: Debug
+    runs-on: ubuntu-latest
+    container: ubuntu:rolling
+    name: Lint on ubuntu:rolling (${{ matrix.mode }})
+    steps:
+      - name: Install deps
+        run: |
+          apt update && apt upgrade -y
+          apt install -y cmake build-essential make git libcurl4-openssl-dev clang-tools
+          apt install -y ${{ matrix.compiler }}
+
+      - name: Environment information
+        run: |
+          ${{ matrix.compiler }} -v
+      - uses: actions/checkout@main
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.mode }} -DVIOLET_CLANG_TIDY=ON -DVIOLET_WARNINGS_ARE_ERRORS=ON
+          cmake --build . -j $(nproc)
       - name: Test
         run: |
           cd build
