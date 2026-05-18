@@ -11,6 +11,7 @@ private:
     InjaManager& man;
 
     nlohmann::json listPages(inja::Arguments& args);
+    nlohmann::json treePages(inja::Arguments& args);
 public:
     FileFunctions(InjaManager& man);
 };

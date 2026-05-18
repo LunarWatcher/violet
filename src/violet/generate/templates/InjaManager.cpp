@@ -17,7 +17,8 @@ InjaManager::InjaManager(
     cfg(cfg),
     fileManager(fileManager),
     metaCache(metaCache),
-    fileFuncs(*this)
+    fileFuncs(*this),
+    langFuncs(*this)
 {
     env.set_include_callback([this](
             const std::filesystem::path& path,

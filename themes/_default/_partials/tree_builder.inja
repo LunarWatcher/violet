@@ -1,0 +1,25 @@
+{# Direct root descendants #}
+{% if existsIn(currTree, "items") %}
+    {% for page in currTree.items %}
+        <li><a href="{{ site.site_prefix }}/{{ page.url }}">{{ page.title }}</a></li>
+    {% endfor %}
+{% endif %}
+
+{% if existsIn(currTree, "subfolders") %}
+    {% for folderName, nextTree in currTree.subfolders %}
+        <li>
+            {% if existsIn(nextTree, "index") %}
+                <a href="{{ site.site_prefix }}/{{ nextTree.index.url }}">{{ nextTree.index.title }}</a>
+            {% else %}
+                {{ folderName }}
+            {% endif %}
+            <ul>
+                {% set context = {} %}
+                {% set context.currTree = nextTree %}
+                {% set context.page = page %}
+                {% set context.site = site %}
+                {{ recurseInclude("partials/tree_builder.inja", context) }}
+            </ul>
+        </li>
+    {% endfor %}
+{% endif %}

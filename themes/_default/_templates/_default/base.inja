@@ -8,18 +8,28 @@
     <body>
         {% include "partials/header.inja" %}
         <div class="flag start-flag"></div>
+
         <aside>
-            <h2>Pages in this section</h2>
+            <h2>Index</h2>
+            {% set subtree = treePages(site, ".") %}
+            {# In theory, this should never trigger since every site _will_ have an index, but whatever #}
+            {% if existsIn(subtree, "index") %}
+            <p><a href="{{ site.site_prefix }}/{{ subtree.index.url }}">{{ subtree.index.title }}</a></p>
+            {% endif %}
             <ul>
-                {% for neighbour in listPages(site, ".") %}
-                    <li><a href="{{site.site_prefix}}/{{ neighbour.url }}">{{ neighbour.title }}</a></li>
-                {% endfor %}
+                {# For whatever reason, setting the context inline does not work and results in a syntax error #}
+                {% set context = {} %}
+                {% set context.currTree = subtree %}
+                {% set context.page = page %}
+                {% set context.site = site %}
+                {{ recurseInclude("partials/tree_builder.inja", context) }}
             </ul>
         </aside>
         <main>
             {% block content %}
             {% endblock %}
         </main>
+
         <div class="flag end-flag"></div>
         {% include "partials/footer.inja" %}
     </body>

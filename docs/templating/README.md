@@ -1,4 +1,7 @@
 ---
+{
+    "title": "Templating in Violet"
+}
 ---
 # Templating
 
