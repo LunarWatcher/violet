@@ -15,7 +15,7 @@ This function recursively lists pages from the provided `location`. The return v
 
 #### `object`
 
-Either `site` or `page`. This is used to get the root path. 
+Either `site` or `page`. This is used to get the root path.
 
 #### `location`
 
@@ -26,7 +26,7 @@ A location relative to the provided `object`. For example:
 * `listPages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
 
-## `listTree(object, location)`
+## `treePages(object, location)`
 
 Similar to `listPages`, but returns an object in the following format:
 ```json
@@ -60,7 +60,7 @@ Either `site` or `page`. This is used to get the root path.
 
 A location relative to the provided `object`. For example:
 
-* `listPages(site, ".")`: Lists pages relative to the site root. Useful for listing out the entire site
-* `listPages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
-* `listPages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
+* `treePages(site, ".")`: Lists pages relative to the site root. Useful for listing out the entire site
+* `treePages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
+* `treePages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
