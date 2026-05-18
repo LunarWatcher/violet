@@ -35,8 +35,8 @@ jobs:
       - name: Compress distribution
         run: |
           cd build
-          tar -cvzf violet.tar.gz dist/*
+          tar -cvzf violet-linux-x86_64.tar.gz dist/*
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v3
         with:
-          files: build/violet.tar.gz
+          files: build/violet-linux-x86_64.tar.gz
