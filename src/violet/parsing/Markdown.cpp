@@ -212,7 +212,10 @@ bool Markdown::prepareStream(
                     if (in.peek() == ' ') {
                         in.get();
                     }
-                } else if (
+                    break;
+                }
+                in.clear();
+                if (
                     !in.readsome(buff.data(), buff.size())
                     || std::string_view{buff} != "  "
                 ) {
@@ -508,6 +511,25 @@ void Markdown::parseUnorderedList(
     }
 }
 
+void Markdown::parseOrderedList(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+) {
+    auto node = new OrderedListNode();
+    out->addChild(node);
+
+    while(in && resolveMajorMode(in, out) == NodeType::OrderedList) {
+        auto entry = new OrderedListEntryNode();
+        node->addChild(entry);
+        bool bulletBoundries = true;
+        while (in && nextMajorMode(in, entry, context, bulletBoundries)) {
+            bulletBoundries = false;
+        }
+    }
+}
+
+
 void Markdown::parseAnchorDef(
     std::stringstream& in,
     DOMTree*,
@@ -605,24 +627,6 @@ void Markdown::parseFootnoteDef(
         }
     }
     context.footnotes[refName.str()] = root;
-}
-
-void Markdown::parseOrderedList(
-    std::stringstream& in,
-    DOMTree* out,
-    DocumentContext& context
-) {
-    auto node = new OrderedListNode();
-    out->addChild(node);
-
-    while(in && resolveMajorMode(in, out) == NodeType::OrderedList) {
-        auto entry = new OrderedListEntryNode();
-        node->addChild(entry);
-        bool bulletBoundries = true;
-        while (in && nextMajorMode(in, entry, context, bulletBoundries)) {
-            bulletBoundries = false;
-        }
-    }
 }
 
 bool Markdown::nextMajorMode(
