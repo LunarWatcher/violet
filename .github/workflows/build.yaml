@@ -65,9 +65,6 @@ jobs:
           apt install -y cmake build-essential make git libcurl4-openssl-dev clang-tidy
           apt install -y ${{ matrix.compiler }}
 
-          # Fuck you ubuntu
-          ln -sf /usr/bin/clang-tidy-* /usr/bin/clang-tidy
-
       - name: Environment information
         run: |
           ${{ matrix.compiler }} -v
