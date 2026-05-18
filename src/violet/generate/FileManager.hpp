@@ -52,7 +52,7 @@ public:
             this->themeDir = std::filesystem::path(
                 stc::executablePath()
             ).parent_path()
-                / "../../themes"
+                / "../share/violet/themes"
                 / *cfg.theme;
         } else if (this->hasTheme) {
             this->themeDir = root / "_themes" / *cfg.theme;

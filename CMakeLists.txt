@@ -59,6 +59,7 @@ FetchContent_Declare(inja
 FetchContent_MakeAvailable(stc cli11 json inja)
 
 add_subdirectory(src)
+add_subdirectory(themes)
 
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 add_custom_target(test

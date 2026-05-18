@@ -9,7 +9,7 @@
         {% include "partials/header.inja" %}
         <div class="flag start-flag"></div>
 
-        <aside>
+        <aside id="_default-index">
             <h2>Index</h2>
             {% set subtree = treePages(site, ".") %}
             {# In theory, this should never trigger since every site _will_ have an index, but whatever #}

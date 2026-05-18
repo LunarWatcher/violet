@@ -56,6 +56,11 @@ If you're not sure how to write the specific tests you want, or you aren't sure 
 
 To maintain support for Windows, PascalCase is used for enums and constants. `SCREAMING_SNAKE_CASE` is functionally unusable as long as Windows is part of the target operating systems, due to Windows defining fucking everything as a macro.
 
+## Modifying themes
+
+### In the event of new or removed files
+
+Because CMake:tm:, a manual list of files has to be maintained. Modify `themes/CMakeLists.txt` and add or remove the file(s) to the asset list so they're copied to the build directory.
 
 ## Maintainer-specific instructions
 

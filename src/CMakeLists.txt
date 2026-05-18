@@ -38,3 +38,4 @@ endif()
 
 target_link_libraries(violet violetsrc)
 
+install(TARGETS violet DESTINATION bin)
