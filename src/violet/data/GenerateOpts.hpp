@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 namespace violet {
@@ -18,6 +19,8 @@ struct GenerateOpts {
     std::string outputFolder = "pages";
 
     bool overridePrefixForLocalUse = false;
+
+    std::filesystem::path root = std::filesystem::current_path();
 };
 
 }

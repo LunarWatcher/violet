@@ -118,9 +118,10 @@ bool SiteGenerator::processFile(
     return true;
 }
 
-bool SiteGenerator::generate(
-    const std::filesystem::path& rootDir
-) {
+bool SiteGenerator::generate() {
+    const auto& rootDir = this->opts.root;
+
+    std::cout << "Using root directory " << rootDir << std::endl;
     this->fileManager.imbueRoot(rootDir);
     this->cfg.imbueRoot(rootDir);
 
@@ -211,7 +212,7 @@ std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::l
     const GenerateOpts& opts
 ) {
     nlohmann::json rawConf;
-    std::ifstream f("violet.json");
+    std::ifstream f(opts.root / "violet.json");
 
     if (!f) {
         return std::unexpected(

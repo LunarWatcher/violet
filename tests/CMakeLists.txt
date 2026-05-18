@@ -1,7 +1,7 @@
 add_executable(tests
     src/Main.cpp
 
-    src/SelfTests.cpp
+    src/integration/BasicSiteGenerationTests.cpp
 
     src/parsing/FootnoteTests.cpp
     src/parsing/MarkdownTests.cpp

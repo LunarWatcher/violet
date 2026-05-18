@@ -23,11 +23,13 @@ TEST_CASE("ToC feature tests") {
         REQUIRE(
             res.tableOfContents
             ==
+            R"(<div id="violet-toc">)"
             "<ol>"
                 R"(<li><a href="#header">Header</a></li>)"
                 R"(<li><a href="#header-2">Header 2</a></li>)"
                 R"(<li><a href="#header-3">Header 3</a></li>)"
             "</ol>"
+            "</div>"
         );
     }
     
@@ -51,6 +53,7 @@ TEST_CASE("ToC feature tests") {
         REQUIRE(
             res.tableOfContents
             ==
+            R"(<div id="violet-toc">)"
             "<ol>"
                 R"(<li><a href="#header">Header</a>)"
                     "<ol>"
@@ -62,6 +65,7 @@ TEST_CASE("ToC feature tests") {
                     "</ol>"
                 "</li>"
             "</ol>"
+            "</div>"
         );
     }
     SECTION("Offset hierarchy") {
@@ -84,6 +88,7 @@ TEST_CASE("ToC feature tests") {
         REQUIRE(
             res.tableOfContents
             ==
+            R"(<div id="violet-toc">)"
             "<ol>"
                 R"(<li><a href="#header">Header</a>)"
                     "<ol>"
@@ -95,6 +100,7 @@ TEST_CASE("ToC feature tests") {
                     "</ol>"
                 "</li>"
             "</ol>"
+            "</div>"
         );
     }
     SECTION("Invalid hierarchy") {
@@ -116,6 +122,7 @@ TEST_CASE("ToC feature tests") {
         REQUIRE(
             res.tableOfContents
             ==
+            R"(<div id="violet-toc">)"
             "<ol>"
                 R"(<li><a href="#header">Header</a>)"
                     "<ol><li><ol>"
@@ -123,6 +130,7 @@ TEST_CASE("ToC feature tests") {
                     "</ol></li></ol>"
                 "</li>"
             "</ol>"
+            "</div>"
         );
     }
 
@@ -140,6 +148,7 @@ TEST_CASE("ToC feature tests") {
         REQUIRE(
             res.tableOfContents
             ==
+            R"(<div id="violet-toc">)"
             "<ol>"
                 "<li>"
                     R"(<a href="#header">Header</a>)"
@@ -160,6 +169,7 @@ TEST_CASE("ToC feature tests") {
                     R"(<a href="#header-6">Header 6</a>)"
                 "</li>"
             "</ol>"
+            "</div>"
         );
     }
 }

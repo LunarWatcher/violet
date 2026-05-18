@@ -242,6 +242,8 @@ std::string Markdown::serializeHeaders(
 
     auto lastLevel = 0;
 
+    ss << "<div id=\"violet-toc\">";
+
     for (size_t i = 0; i < root.children.size(); ++i) {
         auto* node = root.children.at(i);
 
@@ -277,6 +279,7 @@ std::string Markdown::serializeHeaders(
     for (size_t i = 0; i < lastLevel; ++i) {
         ss << "</li></ol>";
     }
+    ss << "</div>";
     return ss.str();
 }
 
