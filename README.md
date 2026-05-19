@@ -22,3 +22,7 @@ Due to limitations of the underlying socket library at the time of writing, magp
 ## Documentation
 
 See the docs folder, or https://lunarwatcher.codeberg.page/violet/
+
+## License
+
+Violet itself is licensed under the [MIT license](LICENSE). The documentation is licensed under [CC-By-SA 4.0](docs/LICENSE)
