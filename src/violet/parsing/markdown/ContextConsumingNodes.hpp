@@ -15,9 +15,10 @@ struct LinkableNode : public DOMTree {
         Standard,
         // [text][urlref] or [urlref]
         Reference,
+        Uninitialized
     };
 
-    Type urlType;
+    Type urlType = Type::Uninitialized;
 
     LinkableNode(NodeType type) : DOMTree(type) {}
 
@@ -37,6 +38,10 @@ struct LinkableNode : public DOMTree {
             }
             return it->second;
         }
+        case Type::Uninitialized:
+            throw std::runtime_error(
+                "Developer error: LinkableNode made it to link resolution without a set type"
+            );
         }
         std::unreachable();
     }

@@ -148,7 +148,6 @@ bool Markdown::prepareStream(
 ) {
     LockStreamPos l(in);
     thread_local std::array<char, 2> buff;
-    size_t start = in.tellg();
 
     // if (in.peek() == '\n') {
     //     return true;
