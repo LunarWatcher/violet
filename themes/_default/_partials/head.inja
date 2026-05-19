@@ -6,10 +6,9 @@
 {% if existsIn(site.data, "language") %}
     <meta http-equiv="Content-language" content = "{{ site.data.language }}" />
 {% endif %}
-{% if exists("page.summary") %}
-    <meta name="description" content="{{ page.summary }}" />
+{% if existsIn(page, "summary") %}
+    <meta name="description" content="{{ htmlEscape(page.summary) }}" />
 {% endif %}
-
 
 <link rel="stylesheet" href="{{ site.site_prefix }}/assets/_default_style.css" />
 <link rel="stylesheet" href="{{ site.site_prefix }}/assets/style.css" />

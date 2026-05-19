@@ -6,7 +6,8 @@ namespace violet {
 
 extern void htmlEscape(
     char ch,
-    std::stringstream& target
+    std::stringstream& target,
+    bool extended = false
 );
 
 /**

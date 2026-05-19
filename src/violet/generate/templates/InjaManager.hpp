@@ -7,6 +7,7 @@
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
 #include "violet/generate/templates/FileFunctions.hpp"
+#include "violet/generate/templates/HtmlFunctions.hpp"
 #include "violet/generate/templates/LangFunctions.hpp"
 
 namespace violet {
@@ -23,6 +24,7 @@ public:
 private:
     FileFunctions fileFuncs;
     LangFunctions langFuncs;
+    HtmlFunctions htmlFuncs;
 
 public:
     InjaManager(

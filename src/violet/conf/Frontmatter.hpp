@@ -21,6 +21,7 @@ struct Frontmatter {
     std::optional<int64_t> last_modified;
 
     std::optional<ListingFrontmatter> listing;
+    std::optional<std::string> summary;
 
     nlohmann::json data;
 

@@ -1,3 +1,8 @@
+---
+{
+    "summary": "hi\"there"
+}
+---
 # Frontmatter schema
 
 ```markdown

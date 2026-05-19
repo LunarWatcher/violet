@@ -11,6 +11,7 @@ add_library(violetsrc STATIC
 
     violet/generate/templates/InjaManager.cpp
     violet/generate/templates/FileFunctions.cpp
+    violet/generate/templates/HtmlFunctions.cpp
     violet/generate/templates/LangFunctions.cpp
 
     violet/parsing/DateTimeParsing.cpp

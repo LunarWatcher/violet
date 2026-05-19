@@ -2,7 +2,8 @@
 
 void violet::htmlEscape(
     char ch,
-    std::stringstream& target
+    std::stringstream& target,
+    bool extended
 ) {
     switch (ch) {
     case '&':
@@ -17,8 +18,15 @@ void violet::htmlEscape(
     case '{':
     case '}':
     case '#':
-        target << "&#" << (int) ch;
+        target << "&#" << (int) ch << ";";
         break;
+    case '"':
+    case '\'':
+        if (extended) {
+            target << "&#" << (int) ch << ";";
+            break;
+        }
+        [[fallthrough]];
     default:
         target << ch;
     }

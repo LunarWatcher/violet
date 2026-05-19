@@ -18,7 +18,8 @@ InjaManager::InjaManager(
     fileManager(fileManager),
     metaCache(metaCache),
     fileFuncs(*this),
-    langFuncs(*this)
+    langFuncs(*this),
+    htmlFuncs(*this)
 {
     env.set_include_callback([this](
             const std::filesystem::path& path,
