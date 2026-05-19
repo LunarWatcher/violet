@@ -34,6 +34,8 @@ enum class NodeType {
     UnorderedListEntry = 19,
     OrderedListEntry = 20,
 
+    Image = 21,
+
 };
 
 struct DOMTree {

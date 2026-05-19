@@ -12,6 +12,7 @@
 #include "markdown/ElementaryNodes.hpp"
 #include "markdown/ContextConsumingNodes.hpp"
 #include "markdown/ContextProvidingNodes.hpp"
+#include "violet/util/LockStreamPos.hpp"
 
 
 namespace violet {
@@ -23,7 +24,7 @@ Markdown::NodeType Markdown::resolveMajorMode(
 ) {
     thread_local std::array<char, 3> next;
 
-    size_t offset = in.tellg();
+    LockStreamPos l(in);
     NodeType mode;
 
     if (!prepareStream(in, tree, bulletBoundries)) {
@@ -123,9 +124,6 @@ Markdown::NodeType Markdown::resolveMajorMode(
         }
     }
  done:
-    // Reset the stream so the parsers can handle it properly
-    in.clear();
-    in.seekg(offset);
     return mode;
 }
 
@@ -148,6 +146,7 @@ bool Markdown::prepareStream(
     DOMTree* tree,
     bool includeBullets
 ) {
+    LockStreamPos l(in);
     thread_local std::array<char, 2> buff;
     size_t start = in.tellg();
 
@@ -257,10 +256,10 @@ bool Markdown::prepareStream(
         }
     }
 
+    l.commit();
     return true;
  rollback:
-    in.clear();
-    in.seekg(start);
+    l.revert();
     return false;
 }
 
@@ -361,16 +360,16 @@ void Markdown::parseHeader(
     }
     level = std::min((size_t) 6, level);
 
-    size_t stored = in.tellg();
     std::stringstream ss;
-    while (in >> std::noskipws >> ch) {
-        if (ch == '\n') {
-            break;
+    {
+        LockStreamPos l(in);
+        while (in >> std::noskipws >> ch) {
+            if (ch == '\n') {
+                break;
+            }
+            ss << ch;
         }
-        ss << ch;
     }
-    in.clear();
-    in.seekg(stored);
     auto node = new HeaderNode(
         level,
         context.idify(ss.str())
@@ -580,7 +579,7 @@ void Markdown::parseFootnoteDef(
     DOMTree*,
     DocumentContext& context
 ) {
-    size_t start = in.tellg();
+    LockStreamPos l(in);
     if (in.peek() != '[') {
         throw std::runtime_error("Bad major mode parsing");
     }
@@ -615,8 +614,7 @@ void Markdown::parseFootnoteDef(
     // 1d30477, and now I don't feel like removing it again.
     // All this does is make the prepareStream call at the start of parseParagraph to actually work. More research
     // required.
-    in.clear();
-    in.seekg(start);
+    l.revert();
 
     while (in) {
         while (in.peek() == '\n') {

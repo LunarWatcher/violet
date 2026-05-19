@@ -2,6 +2,7 @@
 #include "violet/parsing/LinkTranslate.hpp"
 #include "violet/parsing/Markdown.hpp"
 #include "violet/parsing/markdown/ContextConsumingNodes.hpp"
+#include "violet/util/LockStreamPos.hpp"
 #include <iostream>
 
 namespace violet {
@@ -93,6 +94,67 @@ void Markdown::parseParagraphContent(
             out->addChild(node);
 
             parseCodeBlockContent(in, node, context);
+        } else if (ch == '!') {
+            if (in.peek() == '[') {
+                // Need a new ch to avoid overriding the outer ch
+                char ch;
+                LockStreamPos l(in);
+
+                std::ignore = in.get();
+
+                bool hasClose = false;
+                std::stringstream content;
+                while (in >> std::noskipws >> ch) {
+                    if (ch == ']') {
+                        hasClose = true;
+                        break;
+                    } else if (ch == '\n') {
+                        break;
+                    }
+                    htmlEscape(ch, content, true);
+                }
+
+                if (!hasClose) {
+                    l.revert();
+                } else {
+                    l.commit();
+
+                    if (in.peek() == '(' || in.peek() == '[') {
+                        auto type = in.peek() == '(' ? LinkableNode::Type::Standard : LinkableNode::Type::Reference;
+
+                        auto close = in.peek() == '(' ? ')' : ']';
+
+                        std::ignore = in.get();
+
+                        std::stringstream url;
+                        while (in >> std::noskipws >> ch) {
+                            if (ch == close) {
+                                break;
+                            } else if (ch == '\n') {
+                                throw SyntaxError(
+                                    "Illegal linebreak in image",
+                                    in.tellg()
+                                );
+                            }
+                            url << ch;
+                        }
+
+                        auto node = new ImageNode;
+                        out->addChild(node);
+                        node->urlType = type;
+                        node->urlOrRef = std::move(url.str());
+                        node->alt = std::move(content.str());
+                    } else {
+                        throw SyntaxError(
+                            "Invalid image: a ref or URL is undefined",
+                            in.tellg()
+                        );
+                    }
+                    continue;
+                }
+            }
+
+            content << ch;
         } else if (ch == '[') {
             commitContentNode(content, out);
             if (out->type == NodeType::Anchor
@@ -126,10 +188,6 @@ void Markdown::parseParagraphContent(
                 }
                 auto footnoteRef = new FootnoteNode(ref.str());
                 out->addChild(footnoteRef);
-            
-            } else if (in.peek() == '!') {
-                content << "[";
-                std::cerr << "Paragraph consumed callout marker at " << in.tellg() << std::endl;
             } else {
                 auto urlNode = new URLNode;
                 out->addChild(urlNode);

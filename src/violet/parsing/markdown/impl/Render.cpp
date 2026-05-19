@@ -77,6 +77,13 @@ static void stringifyTreeImpl(
     case Markdown::NodeType::UnorderedListEntry:
         ss << "<li>";
         break;
+    case Markdown::NodeType::Image: {
+        auto imgNode = static_cast<const Markdown::ImageNode*>(tree);
+        ss << "<img"
+           << " src=\"" << imgNode->getUrl(context) << "\""
+           << " alt=\"" << imgNode->alt << "\""
+           << " />";
+    } break;
     default:
         break;
     }
@@ -164,7 +171,7 @@ static void stringifyTreeImpl(
         ss << "</li>";
         break;
     default:
-      break;
+        break;
     }
 }
 

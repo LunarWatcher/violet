@@ -10,6 +10,7 @@ add_executable(tests
     src/parsing/QuoteTests.cpp
 
     src/parsing/markdown/IDifyTests.cpp
+    src/parsing/markdown/ImageTests.cpp
     src/parsing/markdown/TemplateParsing.cpp
     src/parsing/markdown/ToCGenerationTests.cpp
 )
