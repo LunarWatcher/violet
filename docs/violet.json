@@ -6,8 +6,12 @@
     "data": {
         "language": "en-GB",
         "repo": {
-            "name": "violet",
-            "url": "https://codeberg.org/LunarWatcher/violet"
+            "name": "LunarWatcher/violet",
+            "url": "https://codeberg.org/LunarWatcher/violet",
+            "license": "The documentation is licensed under CC-By-SA 4.0. Violet is licensed under the MIT license. See <a href=\"https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE\">the LICENSE file</a>"
         }
-    }
+    },
+    "exclude": [
+        "LICENSE"
+    ]
 }

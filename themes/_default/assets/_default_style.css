@@ -74,8 +74,49 @@ a {
     color: var(--violet-theme-default-dark-violet);
 }
 
+#site-title {
+    font-size: 2rem;
+}
+
 header a, footer a {
     color: var(--violet-theme-default-lavender);
+}
+
+header {
+    padding: 0px;
+}
+
+header > #site-title {
+    flex: 1 0 auto;
+    padding: 16px;
+}
+
+#repo-link {
+    padding: 16px;
+    border-left: 2px solid var(--violet-theme-default-dark-violet);
+    flex: 0 1 300px;
+}
+
+.flex-vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-shrink {
+    flex: 0 1 auto;
+}
+
+.flex-grow {
+    flex: 1 1 auto;
+}
+
+#footer-meta {
+    color: #aaaaaa;
 }
 
 .flag {

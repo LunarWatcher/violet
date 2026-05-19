@@ -24,8 +24,10 @@ The default theme vendors [highlightjs](https://github.com/highlightjs/highlight
         "language": "en-GB",
         // Enables a button that links to a git repo
         "repo": {
-            "name": "violet",
-            "url": "https://codeberg.org/LunarWatcher/violet"
+            // Both name and URL are required
+            "name": "LunarWatcher/violet",
+            "url": "https://codeberg.org/LunarWatcher/violet",
+            "license": "Optional text describing the license. <a href=\"https://example.com\">Supports HTML</a>"
         }
     }
 }
