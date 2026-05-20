@@ -52,6 +52,12 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 ** TODO The extension functions for inja providing file iteration have various traversal bugs
 ** TODO The site_prefix has traversal bugs
 *** TODO Consider providing a function for wrapping applying the site prefix so it can be done safely
+** TODO ~formatDate~ is very fragile and could allow arbitrary format strings
+   There's likely two related problems:
+   1. A problem that can be solved by ~htmlEscape~ing the output
+   2. The format string being insecure
+
+   Not actually sure if this matters, since the format string is usually going to be fixed, and it won't expose filesystem stuff or anything else important, unless `std::format` pulls a log4j. Should be fixed anyway.
 
 * Bugs [2/3]
 ** DONE page capitalisation is preserved
