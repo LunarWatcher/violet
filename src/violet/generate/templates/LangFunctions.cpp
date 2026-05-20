@@ -16,8 +16,8 @@ nlohmann::json LangFunctions::recurseInclude(inja::Arguments& args) {
     ss << "{% include " << std::quoted(templateName) << " %}";
 
     return this->man.env.render(
-            ss.str(),
-            context
+        ss.str(),
+        context
     );
 }
 

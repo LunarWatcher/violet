@@ -6,13 +6,13 @@
 namespace violet {
 
 class InjaManager;
-class LangFunctions {
+class DateTimeFunctions {
 private:
     InjaManager& man;
 
-    nlohmann::json recurseInclude(inja::Arguments& args);
+    nlohmann::json formatDate(inja::Arguments& args);
 public:
-    LangFunctions(InjaManager& man);
+    DateTimeFunctions(InjaManager& man);
 };
 
 }

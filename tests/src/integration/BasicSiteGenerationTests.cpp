@@ -81,5 +81,23 @@ TEST_CASE("Basic site tests") {
                 std::filesystem::exists(testGen.buildPath() / "assets" / "vendor" / "_default-highlightjs.js")
             );
         }
+
+        SECTION("formatDate() should work") {
+            std::ifstream f(
+                testGen.buildPath() / "tests/inja/formatdate.html"
+            );
+            REQUIRE(bool(f));
+
+            std::string contents, buff;
+            while (std::getline(f, buff)) {
+                contents += buff;
+            }
+
+            INFO(contents);
+            REQUIRE(contents.contains("Year: 2026"));
+            REQUIRE(contents.contains("YMD: 2026&05&20"));
+            REQUIRE(contents.contains("UTC+0: 2026-05-20 20:27:59+00:00"));
+            REQUIRE(contents.contains("UTC+2: 2026-05-20 22:27:59+02:00"));
+        }
     }
 }

@@ -6,6 +6,7 @@
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
+#include "violet/generate/templates/DateTimeFunctions.hpp"
 #include "violet/generate/templates/FileFunctions.hpp"
 #include "violet/generate/templates/HtmlFunctions.hpp"
 #include "violet/generate/templates/LangFunctions.hpp"
@@ -22,6 +23,7 @@ public:
     inja::Environment env;
 
 private:
+    DateTimeFunctions dateTimeFuncs;
     FileFunctions fileFuncs;
     LangFunctions langFuncs;
     HtmlFunctions htmlFuncs;
