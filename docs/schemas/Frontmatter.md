@@ -12,12 +12,18 @@
     "taxonomies": {
         // Contains taxonomies, such as tags. Unused, but reserved for future use once I figure out how to not make taxonomies utter crap for DevEx
     },
-    // Only supported if type == page_list. See Page lists for more info
+    // Only supported if type == page_list. See Page lists#Paginated page lists for more info
+    // A non-null listing enables pagination of the page.
+    // enables the global `listing` variable
     "listing": {
         // Path to where the RSS file is rendered. Optional
         "rss": "/path/to/rss-file.xml",
-        // Whether or not the list page is recursive, i.e. whether subfolders should be included
-        "recursive": false
+        // Whether or not the list page is recursive, i.e. whether subfolders should be included.
+        // This may affect the sort order of the pages
+        "recursive": false,
+        // The default value is 50; it must be strictly greater than 0, and less than the size of a 64 bit unsigned int (that said,
+        // bugs caused by absurdly high page counts will not be fixed. Use unpaginated lists instead)
+        "page_size": 50
     },
     "data": {
         // optional userdata. Can be referred through {{ page.data }} in templates. Anything non-standard goes here

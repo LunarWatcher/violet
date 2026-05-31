@@ -32,8 +32,8 @@ Paginated page lists are declared similarly to standard page lists, but are used
 {
     // we use the same layout, as the pagination is turned on via config options
     "layout": "page_list",
-    // Non-null pagination enables paginated page lists
-    "pagination": {
+    // Non-null listing enables paginated page lists
+    "listing": {
         // The default value is 50; it must be strictly greater than 0, and less than the size of a 64 bit unsigned int (that said,
         // bugs caused by absurdly high page counts will not be fixed. Use unpaginated lists instead)
         "page_size": 50,
@@ -42,7 +42,7 @@ Paginated page lists are declared similarly to standard page lists, but are used
 ---
 ```
 
-On paginated page lists, the pages are available under the [global `listing` variable](/templating/README.md#objects).
+On paginated page lists, the pages are available under the [global `listing` variable](/schemas/listing.md).
 
 ## Additional features
 
@@ -52,5 +52,5 @@ TBA
 
 ## Writing page list templates
 
-See [Templating](Templating.md)
+See [Templating](/templating/README.md)
 

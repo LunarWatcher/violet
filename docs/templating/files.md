@@ -9,7 +9,7 @@
 
 ## `listPages(object, location)`
 
-This function recursively lists pages from the provided `location`. The return value is a flat list of frontmatters (see [the frontmatter schema spec](/Frontmatter.md)).
+This function recursively lists pages from the provided `location`. The return value is a flat list of frontmatters (see [the frontmatter schema spec](/schemas/Frontmatter.md)).
 
 ### Arguments
 
