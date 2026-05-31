@@ -21,6 +21,29 @@ No pages are forced into being page lists, as it's perfectly normal to have fold
 > [!note]
 > This sources `_default/page_list.inja` as the template.
 
+### Paginated page lists
+
+Paginated page lists are a subset of page lists where pagination is enabled. Unlike page lists, this comes at the loss of control over how the pages are retrieved, and instead relies on standard methods for getting the pages. This primarily makes paginated page lists suitable for blogs or similar, where the list of pages may increase infinitely.
+
+Paginated page lists are declared similarly to standard page lists, but are used differently:
+
+```markdown
+---
+{
+    // we use the same layout, as the pagination is turned on via config options
+    "layout": "page_list",
+    // Non-null pagination enables paginated page lists
+    "pagination": {
+        // The default value is 50; it must be strictly greater than 0, and less than the size of a 64 bit unsigned int (that said,
+        // bugs caused by absurdly high page counts will not be fixed. Use unpaginated lists instead)
+        "page_size": 50,
+    }
+}
+---
+```
+
+On paginated page lists, the pages are available under the [global `listing` variable](/templating/README.md#objects).
+
 ## Additional features
 
 ### RSS
