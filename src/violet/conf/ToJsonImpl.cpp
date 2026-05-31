@@ -85,8 +85,16 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
 }
 
 void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
-    src.at("rss").get_to(dest.rss);
+    if (auto it = src.find("rss"); it != src.end() && !it->is_null()) {
+        dest.rss = it->get<std::string>();
+    }
+
     dest.recursive = src.value("recursive", false);
+    dest.pageSize = src.value("page_size", 50);
+    if (dest.pageSize == 0) {
+        // TODO: should have a separate exception type for these
+        throw std::runtime_error("pageSize must be at least 1");
+    }
 }
 
 void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
@@ -114,9 +122,13 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     }
 }
 
+// TODO: isn't this internal data that we don't want to re-expose again?
 void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {
-    dest["rss"] = src.rss;
+    if (src.rss) {
+        dest["rss"] = src.rss;
+    }
     dest["recursive"] = src.recursive;
+    dest["page_size"] = src.pageSize;
 }
 
 void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {

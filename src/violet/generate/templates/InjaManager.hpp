@@ -10,6 +10,7 @@
 #include "violet/generate/templates/FileFunctions.hpp"
 #include "violet/generate/templates/HtmlFunctions.hpp"
 #include "violet/generate/templates/LangFunctions.hpp"
+#include "violet/paginator/Paginator.hpp"
 
 namespace violet {
 
@@ -42,7 +43,8 @@ public:
     std::string renderPage(
         const std::string& fileContent,
         const std::filesystem::path& fileSource,
-        const Frontmatter& fm
+        const Frontmatter& fm,
+        Paginator::iterator* pag
     );
 };
 

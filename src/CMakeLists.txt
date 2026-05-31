@@ -15,6 +15,8 @@ add_library(violetsrc STATIC
     violet/generate/templates/HtmlFunctions.cpp
     violet/generate/templates/LangFunctions.cpp
 
+    violet/paginator/Paginator.cpp
+
     violet/parsing/DateTimeParsing.cpp
     violet/parsing/Escaping.cpp
     violet/parsing/Markdown.cpp

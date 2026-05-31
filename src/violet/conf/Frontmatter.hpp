@@ -8,8 +8,9 @@
 namespace violet {
 
 struct ListingFrontmatter {
-    std::string rss;
+    std::optional<std::string> rss;
     bool recursive;
+    uint64_t pageSize;
 };
 
 struct Frontmatter {

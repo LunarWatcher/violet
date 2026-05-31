@@ -1,6 +1,7 @@
 #include "SiteGenerator.hpp"
 
 #include "ProcessedFileType.hpp"
+#include "violet/paginator/Paginator.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
 #include "violet/parsing/markdown/ElementaryNodes.hpp"
 
@@ -32,6 +33,47 @@ SiteGenerator::SiteGenerator(
         this->metadataCache
     )
 {}
+
+
+std::filesystem::path SiteGenerator::resolvePagination(
+    const std::filesystem::path& contentRoot,
+    size_t page
+) {
+    auto target = contentRoot / "page" / std::to_string(page + 1) / "index.html";
+    std::filesystem::create_directories(
+        target.parent_path()
+    );
+    return std::move(target);
+}
+
+void SiteGenerator::renderAndWrite(
+    const std::filesystem::path& file,
+    const std::filesystem::path& relPath,
+    const std::string& fileContent,
+    const Frontmatter& frontmatter,
+    Paginator::iterator* pag
+) {
+    std::ofstream f(
+        file
+    );
+    if (!f) {
+        std::cerr << "Failed to open " << file << std::endl;
+        return;
+    }
+    auto renderedContent = injaManager.renderPage(
+        fileContent,
+        relPath,
+        frontmatter,
+        pag
+    );
+
+    std::cout << "Committing generated page " << file << std::endl;
+    f.write(
+        renderedContent.data(),
+        renderedContent.size()
+    );
+}
+
 void SiteGenerator::handleTemplatesAndSave(
     std::string&& fileContent,
     const std::filesystem::path& relPath,
@@ -41,25 +83,40 @@ void SiteGenerator::handleTemplatesAndSave(
     std::filesystem::create_directories(
         target.parent_path()
     );
-    std::ofstream f(
-        target
-    );
-    if (!f) {
-        std::cerr << "Failed to open " << target << std::endl;
-        return;
+
+    if (frontmatter.listing.has_value()) {
+        auto pag = Paginator { frontmatter, this->fileManager };
+        for (auto it = pag.begin(); it != pag.end(); ++it) {
+            if (it.getPage() == 0) {
+                // TODO: it should be possible for <prefix>/page/1/index.html to rel="canonical" to <prefix>/index.html
+                renderAndWrite(
+                    target,
+                    relPath,
+                    fileContent,
+                    frontmatter,
+                    &it
+                );
+            }
+            renderAndWrite(
+                resolvePagination(
+                    target.parent_path(),
+                    it.getPage()
+                ),
+                relPath,
+                fileContent,
+                frontmatter,
+                &it
+            );
+        }
+    } else {
+        renderAndWrite(
+            target,
+            relPath,
+            fileContent,
+            frontmatter,
+            nullptr
+        );
     }
-    
-    auto renderedContent = injaManager.renderPage(
-        fileContent,
-        relPath,
-        frontmatter
-    );
-    
-    std::cout << "Committing generated page " << target << std::endl;
-    f.write(
-        renderedContent.data(),
-        renderedContent.size()
-    );
 }
 
 bool SiteGenerator::processFile(

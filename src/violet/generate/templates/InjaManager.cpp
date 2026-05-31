@@ -1,6 +1,7 @@
 #include "InjaManager.hpp"
 #include "inja/environment.hpp"
 #include "violet/conf/Frontmatter.hpp"
+#include "violet/paginator/Paginator.hpp"
 
 #include <filesystem>
 #include <inja/inja.hpp>
@@ -45,12 +46,28 @@ InjaManager::InjaManager(
 std::string InjaManager::renderPage(
     const std::string& fileContent,
     const std::filesystem::path&, // TODO: what was the idea with this arg?
-    const Frontmatter& fm
+    const Frontmatter& fm,
+    Paginator::iterator* pag
 ) {
     nlohmann::json context = {
         {"page", fm},
         {"site", this->cfg.raw},
     };
+
+    if (pag != nullptr) {
+        std::vector<nlohmann::json> pages;
+
+        // TODO: This isn't great :/ But it work shaped
+        for (auto& page : **pag) {
+            pages.push_back(*page);
+        }
+
+        context["listing"] = nlohmann::json::object({
+            { "page", pag->getPage() },
+            { "total_pages", pag->getTotalPages() },
+            { "pages", std::move(pages) }
+        });
+    }
 
     inja::Template content = env.parse(fileContent);
     env.include_template("content", content);

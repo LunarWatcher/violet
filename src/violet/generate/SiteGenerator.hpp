@@ -39,6 +39,19 @@ private:
         const std::filesystem::path& relPath,
         const Frontmatter& frontmatter
     );
+
+    std::filesystem::path resolvePagination(
+        const std::filesystem::path& contentRoot,
+        size_t page
+    );
+
+    void renderAndWrite(
+        const std::filesystem::path& file,
+        const std::filesystem::path& relPath,
+        const std::string& fileContent,
+        const Frontmatter& frontmatter,
+        Paginator::iterator* pag
+    );
 public:
     ~SiteGenerator() = default;
 
