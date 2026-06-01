@@ -2,6 +2,7 @@
 
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/generate/FileManager.hpp"
+#include "violet/generate/cache/MetadataCache.hpp"
 
 namespace violet {
 
@@ -10,7 +11,7 @@ private:
     const Frontmatter& pageFm;
     FileManager& fileMan;
 
-    std::vector<Frontmatter*> fm;
+    std::vector<const Frontmatter*> fm;
     size_t offset = 0;
 
     friend class iterator;
@@ -19,17 +20,32 @@ public:
     public:
         using iterator_category = std::forward_iterator_tag;
 
-        using value_type = std::vector<Frontmatter*>;
-        using reference = const std::vector<Frontmatter*>&;
-        using pointer = const std::vector<Frontmatter*>*;
+        using value_type = std::vector<const Frontmatter*>;
+        using reference = const std::vector<const Frontmatter*>&;
+        using pointer = const std::vector<const Frontmatter*>*;
 
-        std::vector<Frontmatter*> fm;
+        std::vector<const Frontmatter*> fm;
     private:
         Paginator& pag;
         size_t offset = 0;
         size_t page;
+
+        void setFm() {
+            // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
+            auto pageSize = pag.pageFm.listing->pageSize;
+            fm = {};
+            fm.reserve(pageSize);
+
+            for (size_t i = offset; i < std::min(offset + pageSize, pag.fm.size()); ++i) {
+                fm.push_back(
+                    pag.fm.at(i)
+                );
+            }
+        }
     public:
-        iterator(Paginator& pag, size_t startBatch = 0) : pag(pag), offset(startBatch) {}
+        iterator(Paginator& pag, size_t startBatch = 0) : pag(pag), offset(startBatch) {
+            setFm();
+        }
 
         reference operator*() { return fm; }
         pointer operator->() { return &fm; }
@@ -40,14 +56,8 @@ public:
             offset += pageSize;
             ++page;
 
-            fm = {};
-            fm.reserve(pageSize);
+            setFm();
 
-            for (size_t i = offset; i <= std::min(offset + pageSize, pag.fm.size()); ++i) {
-                fm.push_back(
-                    pag.fm.at(i)
-                );
-            }
             return *this;
         }
 
@@ -79,7 +89,8 @@ public:
 
     Paginator(
         const Frontmatter& pageFm,
-        FileManager& fileMan
+        FileManager& fileMan,
+        MetadataCache& metaCache
     );
 
     iterator begin() { return iterator(*this, 0); }

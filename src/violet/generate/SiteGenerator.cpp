@@ -85,7 +85,11 @@ void SiteGenerator::handleTemplatesAndSave(
     );
 
     if (frontmatter.listing.has_value()) {
-        auto pag = Paginator { frontmatter, this->fileManager };
+        auto pag = Paginator {
+            frontmatter,
+            this->fileManager,
+            metadataCache
+        };
         for (auto it = pag.begin(); it != pag.end(); ++it) {
             if (it.getPage() == 0) {
                 // TODO: it should be possible for <prefix>/page/1/index.html to rel="canonical" to <prefix>/index.html
