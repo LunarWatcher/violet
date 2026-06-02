@@ -36,12 +36,15 @@ SiteGenerator::SiteGenerator(
 
 std::filesystem::path SiteGenerator::resolvePagination(
     const std::filesystem::path& contentRoot,
-    size_t page
+    size_t page,
+    bool createDirs
 ) {
     auto target = contentRoot / "page" / std::to_string(page + 1) / "index.html";
-    std::filesystem::create_directories(
-        target.parent_path()
-    );
+    if (createDirs) {
+        std::filesystem::create_directories(
+            target.parent_path()
+        );
+    }
     return std::move(target);
 }
 
@@ -107,7 +110,8 @@ void SiteGenerator::handleTemplatesAndSave(
             Frontmatter fmCopy = frontmatter;
             fmCopy.internalUrl = resolvePagination(
                 std::filesystem::path(fmCopy.internalUrl).parent_path(),
-                it.getPage()
+                it.getPage(),
+                false
             ).string();
             renderAndWrite(
                 resolvePagination(

@@ -42,7 +42,8 @@ private:
 
     std::filesystem::path resolvePagination(
         const std::filesystem::path& contentRoot,
-        size_t page
+        size_t page,
+        bool createDirs = true
     );
 
     void renderAndWrite(
