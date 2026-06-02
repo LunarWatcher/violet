@@ -8,14 +8,15 @@ namespace violet {
 
 class Paginator {
 private:
-    const Frontmatter& pageFm;
-    FileManager& fileMan;
 
     std::vector<const Frontmatter*> fm;
     size_t offset = 0;
 
     friend class iterator;
 public:
+    const Frontmatter& pageFm;
+    FileManager& fileMan;
+
     struct iterator {
     public:
         using iterator_category = std::forward_iterator_tag;
@@ -25,25 +26,25 @@ public:
         using pointer = const std::vector<const Frontmatter*>*;
 
         std::vector<const Frontmatter*> fm;
+        Paginator& paginator;
     private:
-        Paginator& pag;
         size_t offset = 0;
         size_t page;
 
         void setFm() {
             // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
-            auto pageSize = pag.pageFm.listing->pageSize;
+            auto pageSize = paginator.pageFm.listing->pageSize;
             fm = {};
             fm.reserve(pageSize);
 
-            for (size_t i = offset; i < std::min(offset + pageSize, pag.fm.size()); ++i) {
+            for (size_t i = offset; i < std::min(offset + pageSize, paginator.fm.size()); ++i) {
                 fm.push_back(
-                    pag.fm.at(i)
+                    paginator.fm.at(i)
                 );
             }
         }
     public:
-        iterator(Paginator& pag, size_t startBatch = 0) : pag(pag), offset(startBatch) {
+        iterator(Paginator& pag, size_t startBatch = 0) : paginator(pag), page(startBatch) {
             setFm();
         }
 
@@ -52,11 +53,13 @@ public:
 
         iterator& operator++() {
             // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
-            auto pageSize = pag.pageFm.listing->pageSize;
+            auto pageSize = paginator.pageFm.listing->pageSize;
             offset += pageSize;
             ++page;
 
-            setFm();
+            if (page != getTotalPages()) {
+                setFm();
+            }
 
             return *this;
         }
@@ -64,26 +67,12 @@ public:
         bool operator!=(const iterator& other) { return !(*this == other); }
         bool operator==(const iterator& other) {
             // TODO: this is ugly as fuck
-            return other.offset == this->offset
-                || (
-                    // TODO: this will likely cause off by one errors, but there's an off by 1 error we want: page 1
-                    // must always be generated, even if there are no pages, as this controls the generation of the
-                    // index page for page_lists. This needs to be tested when this->fm is populated
-                    other.offset == std::numeric_limits<size_t>::max() && this->offset > fm.size()
-                );
+            return other.page == this->page;
         }
 
         size_t getPage() { return page; }
         size_t getTotalPages() {
-            // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
-            auto pageSize = pag.pageFm.listing->pageSize;
-            // TODO: this isn't a great solution
-            return std::max<size_t>(
-                1,
-                std::ceil(
-                    (double) pag.fm.size() / (double) pageSize
-                )
-            );
+            return paginator.getTotalPages();
         }
     };
 
@@ -94,7 +83,19 @@ public:
     );
 
     iterator begin() { return iterator(*this, 0); }
-    iterator end() { return iterator(*this, std::numeric_limits<size_t>::max()); }
+    iterator end() { return iterator(*this, getTotalPages()); }
+
+    size_t getTotalPages() {
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
+        auto pageSize = pageFm.listing->pageSize;
+        // TODO: this isn't a great solution
+        return std::max<size_t>(
+            1,
+            std::ceil(
+                (double) fm.size() / (double) pageSize
+            )
+        );
+    }
 };
 
 }

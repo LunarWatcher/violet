@@ -4,6 +4,7 @@ set(ASSETS
     _default/_partials/footer.inja
     _default/_partials/head.inja
     _default/_partials/header.inja
+    _default/_partials/paginator.inja
     _default/_partials/tree_builder.inja
 
     _default/_templates/_default/base.inja

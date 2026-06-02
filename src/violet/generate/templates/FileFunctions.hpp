@@ -12,6 +12,7 @@ private:
 
     nlohmann::json listPages(inja::Arguments& args);
     nlohmann::json treePages(inja::Arguments& args);
+    nlohmann::json paginatedUrl(inja::Arguments& args);
 public:
     FileFunctions(InjaManager& man);
 };

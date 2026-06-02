@@ -48,6 +48,10 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 ** TODO Support syntax escaping
    I need my brackets to work again :(
 
+* Dumb decision refactor [0/1]
+** TODO It should not be necessary to use ~site.prefix~ everywhere in inja
+   This is potentially a footgun, and one I have done a few times myself. ~.url~ should be an absolute path automagically
+
 * Security [0/2]
 ** TODO The extension functions for inja providing file iteration have various traversal bugs
 ** TODO The site_prefix has traversal bugs

@@ -2,9 +2,12 @@
 {% block content %}
     {% include "content" %}
 
+    {{ page.url }}
     {% for page in listing.pages %}
         <article>
             <h2><a href="{{ site.site_prefix}}/{{ page.url }}">{{ page.title }}</a></h2>
         </article>
     {% endfor %}
+
+    {% include "partials/paginator.inja" %}
 {% endblock %}

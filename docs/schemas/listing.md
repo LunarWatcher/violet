@@ -19,7 +19,9 @@ The `listing` object is available exclusively in paginated page lists. For non-p
     "total_pages": 234,
     "pages": [
         { ... frontmatter, see the frontmatter schema }
-    ]
+    ],
+    // The path to the listing folder. Can be used to construct URLs
+    "base_path": "path/to/listing/folder"
 }
 ```
 

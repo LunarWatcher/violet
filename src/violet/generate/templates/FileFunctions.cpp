@@ -11,6 +11,9 @@ FileFunctions::FileFunctions(InjaManager& man) : man(man) {
     man.env.add_callback("treePages", 2, [this](inja::Arguments& args) -> nlohmann::json {
         return treePages(args);
     });
+    man.env.add_callback("paginatedUrl", 2, [this](inja::Arguments& args) -> nlohmann::json {
+        return paginatedUrl(args);
+    });
 }
 
 nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
@@ -121,6 +124,24 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
         }
     );
     return pages;
+}
+
+nlohmann::json FileFunctions::paginatedUrl(inja::Arguments& args) {
+    auto baseUrl = args.at(0)->get<std::string>();
+    auto page = args.at(1)->get<int64_t>();
+    // This restricts us to half the max uint64_t value, but no one will ever care
+    if (page <= 0) {
+        throw std::runtime_error("Invalid page number");
+    }
+
+    std::stringstream ss;
+    ss << baseUrl;
+    if (!baseUrl.ends_with('/')) {
+        ss << "/";
+    }
+
+    ss << "page/" << page << "/index.html";
+    return ss.str();
 }
 
 }

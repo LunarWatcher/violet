@@ -47,25 +47,26 @@ std::string InjaManager::renderPage(
     const std::string& fileContent,
     const std::filesystem::path&, // TODO: what was the idea with this arg?
     const Frontmatter& fm,
-    Paginator::iterator* pag
+    Paginator::iterator* pagIt
 ) {
     nlohmann::json context = {
         {"page", fm},
         {"site", this->cfg.raw},
     };
 
-    if (pag != nullptr) {
+    if (pagIt != nullptr) {
         std::vector<nlohmann::json> pages;
 
         // TODO: This isn't great :/ But it work shaped
-        for (auto& page : **pag) {
+        for (auto& page : **pagIt) {
             pages.push_back(*page);
         }
 
         context["listing"] = nlohmann::json::object({
-            { "page", pag->getPage() },
-            { "total_pages", pag->getTotalPages() },
-            { "pages", std::move(pages) }
+            { "page", pagIt->getPage() + 1 },
+            { "total_pages", pagIt->getTotalPages() },
+            { "pages", std::move(pages) },
+            { "base_path", std::filesystem::path(pagIt->paginator.pageFm.internalUrl).parent_path().string() },
         });
     }
 

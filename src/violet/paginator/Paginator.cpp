@@ -64,7 +64,7 @@ Paginator::Paginator(
         fm.end(),
         [](const Frontmatter* a, const Frontmatter* b) {
             if (a->date.has_value() && b->date.has_value() && a->date != b->date) {
-                return a->date > b->date ? 1 : -1;
+                return a->date > b->date;
             }
 
             std::filesystem::path aPath = a->internalPath,
@@ -73,7 +73,7 @@ Paginator::Paginator(
             auto aFn = aPath.filename();
             auto bFn = bPath.filename();
 
-            return aFn > bFn ? 1 : -1;
+            return aFn > bFn;
         }
     );
 }

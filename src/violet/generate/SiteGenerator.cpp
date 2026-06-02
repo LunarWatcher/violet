@@ -3,7 +3,6 @@
 #include "ProcessedFileType.hpp"
 #include "violet/paginator/Paginator.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
-#include "violet/parsing/markdown/ElementaryNodes.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -101,6 +100,15 @@ void SiteGenerator::handleTemplatesAndSave(
                     &it
                 );
             }
+            // Not great, but need to pass the URL through somehow. Would be better to pass it through the render
+            // context so we avoid this, especially considering `file` already contains all the context once the page
+            // generation directory is stripped. The metadata cache will still be an issue though, since other pages
+            // need to reference the page.
+            Frontmatter fmCopy = frontmatter;
+            fmCopy.internalUrl = resolvePagination(
+                std::filesystem::path(fmCopy.internalUrl).parent_path(),
+                it.getPage()
+            ).string();
             renderAndWrite(
                 resolvePagination(
                     target.parent_path(),
@@ -108,7 +116,7 @@ void SiteGenerator::handleTemplatesAndSave(
                 ),
                 relPath,
                 fileContent,
-                frontmatter,
+                fmCopy,
                 &it
             );
         }

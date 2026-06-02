@@ -2,6 +2,7 @@ add_executable(tests
     src/Main.cpp
 
     src/integration/BasicSiteGenerationTests.cpp
+    src/integration/PaginationTests.cpp
 
     src/parsing/FootnoteTests.cpp
     src/parsing/MarkdownTests.cpp

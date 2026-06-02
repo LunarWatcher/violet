@@ -10,7 +10,12 @@ enum class SiteVariant {
     /**
      * Standard test site with some fairly common defaults enabled. Most tests should use this site.  
      */
-    BaseTestSite
+    BaseTestSite,
+
+    /**
+     * Standard test site modelled after a blog  
+     */
+    BlogTestSite,
 };
 
 struct LoadWorkspace {
@@ -34,6 +39,8 @@ struct LoadWorkspace {
         switch(site) {
         case SiteVariant::BaseTestSite:
             return "test-site";
+        case SiteVariant::BlogTestSite:
+            return "test-blog";
         }
 
         throw std::runtime_error("Undefined");

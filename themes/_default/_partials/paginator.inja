@@ -1,0 +1,22 @@
+<div class="paginator" data-current-page="{{ listing.page }}" data-pages="{{ listing.total_pages }}" class="flex-vertical">
+    <ul class="flex-horizontal">
+        {% if listing.page != 1 %}
+            <li>
+                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
+                   id="prev-page"
+                   aria-label="Previous page">&laquo;</a>
+            </li>
+        {% endif %}
+        {% if listing.page + 1 <= listing.total_pages %}
+            <li>
+                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page + 1) }}"
+                   id="next-page"
+                   aria-label="Next page">&raquo;</a>
+            </li>
+        {% endif %}
+    </ul>
+    <form class="flex-horizontal" id="skip-to-page">
+        <input type="number" min="1" max="{{ listing.total_pages }}" name="page" required aria-label="Page number" />
+        <input type="submit" value="Go" />
+    </form>
+</div>

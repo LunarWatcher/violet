@@ -64,3 +64,26 @@ A location relative to the provided `object`. For example:
 * `treePages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
 * `treePages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
+## `paginatedUrl(base_url, page_number)`
+
+Given a paginated URL prefix, this function returns the paginated URL for page `page_number`.
+
+Example:
+```markdown
+Only valid in a paginated page list:
+{{ paginatedUrl(listing.base_path, 69) }}
+
+Valid anywhere:
+{{ paginatedUrl("/blog/posts", 69) }}
+```
+
+Output:
+
+> Only valid in a paginated page list: current/path/page/69/
+>
+> Valid anywhere: /blog/posts/page/69
+
+Standard practice in URLs is to chain it with `site.site_prefix` (this will change in the future):
+```html
+<a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, 69) }}>Text</a>"
+```
