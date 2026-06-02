@@ -1,14 +1,14 @@
 <div class="paginator" data-current-page="{{ listing.page }}" data-pages="{{ listing.total_pages }}" class="flex-vertical">
     <ul class="flex-horizontal inline-list">
-            <li>
-                {% if listing.page != 1 %}
-                    <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
-                       id="prev-page"
-                       aria-label="Previous page">&laquo;</a>
-                {% else %}
-                    <span>&laquo;</span>
-                {% endif %}
-            </li>
+        <li>
+            {% if listing.page != 1 %}
+                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
+                   id="prev-page"
+                   aria-label="Previous page">&laquo;</a>
+            {% else %}
+                <span>&laquo;</span>
+            {% endif %}
+        </li>
 
         {% set lastIdx = 0 %}
         {% for i in createPaginatedList(listing.page, listing.total_pages) %}
