@@ -8,5 +8,5 @@
 ---
 # Blog
 
-This page contains the list for the blog, and will be paginated into N pages depending on the number of posts. Currently, it's 2 pages
+This page contains the list for the blog, and will be paginated into N pages depending on the number of posts. Currently, it's {{ listing.total_pages }} pages
 

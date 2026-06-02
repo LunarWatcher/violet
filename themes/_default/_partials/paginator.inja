@@ -1,21 +1,42 @@
 <div class="paginator" data-current-page="{{ listing.page }}" data-pages="{{ listing.total_pages }}" class="flex-vertical">
-    <ul class="flex-horizontal">
-        {% if listing.page != 1 %}
+    <ul class="flex-horizontal inline-list">
             <li>
-                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
-                   id="prev-page"
-                   aria-label="Previous page">&laquo;</a>
+                {% if listing.page != 1 %}
+                    <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
+                       id="prev-page"
+                       aria-label="Previous page">&laquo;</a>
+                {% else %}
+                    <span>&laquo;</span>
+                {% endif %}
             </li>
-        {% endif %}
-        {% if listing.page + 1 <= listing.total_pages %}
-            <li>
-                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page + 1) }}"
+
+        {% set lastIdx = 0 %}
+        {% for i in createPaginatedList(listing.page, listing.total_pages) %}
+            {% if lastIdx + 1 != i %}
+                <li aria-hidden="true">&mldr;</li>
+            {% endif %}
+            <li title="Go to page {{ i }}">
+                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, i) }}"
                    id="next-page"
-                   aria-label="Next page">&raquo;</a>
+                   aria-label="Next page"
+                   {% if listing.page == i %}class="current"{% endif %}
+                >{{ i }}</a>
             </li>
-        {% endif %}
+            {% set lastIdx = i %}
+        {% endfor %}
+            <li>
+                {% if listing.page + 1 <= listing.total_pages %}
+                    <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page + 1) }}"
+                       id="next-page"
+                       aria-label="Next page">&raquo;</a>
+                {% else %}
+                    <span>&raquo;</span>
+                {% endif %}
+            </li>
     </ul>
-    <form class="flex-horizontal" id="skip-to-page">
+    <form class="flex-horizontal" id="skip-to-page"
+          onsubmit="event.preventDefault(); window.location.href = '{{ site.site_prefix}}/{{ listing.base_path }}/page/' + this.page.value + '/index.html'; return false;"
+    >
         <input type="number" min="1" max="{{ listing.total_pages }}" name="page" required aria-label="Page number" />
         <input type="submit" value="Go" />
     </form>

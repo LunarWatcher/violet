@@ -11,6 +11,7 @@ private:
     InjaManager& man;
 
     nlohmann::json recurseInclude(inja::Arguments& args);
+    nlohmann::json createPaginatedList(inja::Arguments& args);
 public:
     LangFunctions(InjaManager& man);
 };

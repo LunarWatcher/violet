@@ -146,6 +146,30 @@ pre > code {
     color: #666666;
 }
 
+.inline-list {
+    list-style: none;
+    padding: 0;
+}
+
+.inline-list > li {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.inline-list a, .inline-list span {
+    padding: 4px;
+}
+
+.inline-list span {
+    color: #666666;
+}
+
+.inline-list a.current {
+    background-color: var(--violet-theme-default-dark-violet);
+    border-radius: 2px;
+    color: white;
+}
+
 blockquote {
     margin-left: 8px;
     margin-right: 0px;
@@ -178,6 +202,7 @@ blockquote p {
     color: var(--violet-colour-caution);
 }
 
+/* TODO: replace with better-designed SVGs */
 .callout-note > .callout-title::before {
     content: "✏ ";
 }
