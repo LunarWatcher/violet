@@ -14,6 +14,50 @@ FileFunctions::FileFunctions(InjaManager& man) : man(man) {
     man.env.add_callback("paginatedUrl", 2, [this](inja::Arguments& args) -> nlohmann::json {
         return paginatedUrl(args);
     });
+    man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
+        return listPagesByTaxonomy(args);
+    });
+}
+
+nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
+    auto& root = man.fileManager.getRootFolder();
+    auto taxonomy = args.at(0)->get<std::string>();
+    auto value = args.at(1)->get<std::string>();
+
+    nlohmann::json pages;
+    man.fileManager.recursivelyIterateFiles(
+        root,
+        [&](auto& entry) {
+            const auto& entryPath = entry.path();
+            if (!entry.is_regular_file()
+                || (
+                    entryPath.extension() != ".md"
+                    && entryPath.extension() != ".html"
+                )
+                || entryPath.filename() == "404.html"
+            ) {
+                return;
+            }
+            // TODO: this does not handle HTML files without frontmatter. This could probably be resolved by an optional
+            // return from loadMetadata
+            auto filePath = std::filesystem::relative(
+                entryPath,
+                man.fileManager.getRootFolder()
+            );
+            auto& metadata = man.metaCache.loadMetadata(
+                filePath
+            );
+
+            const auto& taxonomies = metadata.frontmatter.taxonomies;
+            if (auto it = taxonomies.find(taxonomy); it != taxonomies.end()) {
+                auto& vec = it->second;
+                if (std::find(vec.begin(), vec.end(), value) != vec.end()) {
+                    pages.push_back(metadata.frontmatter);
+                }
+            }
+        }
+    );
+    return pages;
 }
 
 nlohmann::json FileFunctions::listPages(inja::Arguments& args) {

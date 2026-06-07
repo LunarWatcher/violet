@@ -64,6 +64,30 @@ A location relative to the provided `object`. For example:
 * `treePages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
 * `treePages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
+## `listPagesByTaxonomy(taxonomy, value)`
+
+Equivalent to `listPages`, but scoped to a provided `taxonomy` with a `value`
+
+For example, given the frontmatter
+```markdown
+---
+{
+    "taxonomies": {
+        "tags": ["tag"]
+    }
+}
+---
+```
+
+The following code:
+```markdown
+{{ listPagesByTaxonomy("series", "Series 1") }}
+```
+
+Will list the pages with the series `"Series 1"`.
+
+Note that the taxonomy functionality is underdeveloped at this time, and this has little use outside clear article relationships. This function is primarily intended for use with the `series` and similarly scoped taxonomies, and not tags. See [Taxonomies](/Taxonomies.md) for more info.
+
 ## `paginatedUrl(base_url, page_number)`
 
 Given a paginated URL prefix, this function returns the paginated URL for page `page_number`.
