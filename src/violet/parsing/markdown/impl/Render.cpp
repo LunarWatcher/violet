@@ -4,6 +4,7 @@
 #include "violet/parsing/markdown/DOMTree.hpp"
 #include "violet/parsing/markdown/DocumentContext.hpp"
 #include "violet/parsing/markdown/ElementaryNodes.hpp"
+#include <iostream>
 #include <sstream>
 
 namespace violet {
@@ -105,6 +106,10 @@ static void stringifyTreeImpl(
                 context.usedFootnotes.push_back(node->ref);
                 footnoteIdx = context.usedFootnotes.size();
             } else {
+                std::cout << "Failed to match " << node->ref << ". Found:" << std::endl;
+                for (auto& [k, _] : context.footnotes) {
+                    std::cout << "Footnote ref: " << k << std::endl;
+                }
                 throw SyntaxError(
                     std::format(
                         "Footnote ref \"{}\" has not been defined",
