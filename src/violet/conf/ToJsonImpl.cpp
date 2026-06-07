@@ -64,6 +64,10 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
         dest.date = parseISO8601(val);
     }
 
+    if (auto it = src.find("taxonomies"); it != src.end() && !it->is_null()) {
+        dest.taxonomies = it->get<decltype(dest.taxonomies)>();
+    }
+
     if (auto it = src.find("listing"); it != src.end() && !it->is_null()) {
         if (dest.layout != "page_list") {
             throw std::runtime_error("listing supplied when layout != page_list");
@@ -112,6 +116,8 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     if (src.listing) {
         dest["listing"] = src.listing;
     }
+
+    dest["taxonomies"] = src.taxonomies;
 
     dest["data"] = src.data;
     dest["violet_internals.path"] = src.internalPath;
