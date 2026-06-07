@@ -21,6 +21,34 @@ TEST_CASE("Footnotes should work") {
         );
 
     }
+    SECTION("Multiple simple footnotes") {
+        std::stringstream ss;
+        ss << R"(This is text[^1][^2]
+
+[^1]: This is, in fact, **text**
+[^2]: And this is a second footnote)";
+        REQUIRE(
+            violet::Markdown::parse(ss)
+            ==
+            R"(<p>This is text)"
+                R"(<sup><a href="#fn-1" id="fn-1-r1">[1]</a></sup>)"
+                R"(<sup><a href="#fn-2" id="fn-2-r1">[2]</a></sup></p>)"
+            R"(<div id="violet-footnotes">)"
+            R"(<h2>Footnotes</h2>)"
+            "<ol>"
+                R"(<li id="fn-1">)"
+                    R"(<p>This is, in fact, <strong>text</strong></p>)"
+                    R"(<span class="footnote-backref">Usages: <a href="#fn-1-r1">[1]</a></span>)"
+                R"(</li>)"
+                R"(<li id="fn-2">)"
+                    R"(<p>And this is a second footnote</p>)"
+                    R"(<span class="footnote-backref">Usages: <a href="#fn-2-r1">[1]</a></span>)"
+                R"(</li>)"
+            "</ol>"
+            R"(</div>)"
+        );
+
+    }
 
     SECTION("Multi-paragraph footnote") {
         std::stringstream ss;

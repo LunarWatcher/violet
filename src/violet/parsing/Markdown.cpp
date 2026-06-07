@@ -615,13 +615,16 @@ void Markdown::parseFootnoteDef(
     // required.
     l.revert();
 
+    bool hasConsumedBound = false;
     while (in) {
         while (in.peek() == '\n') {
             std::ignore = in.get();
         }
-        if (!nextMajorMode(in, root, context)) {
+        if (!nextMajorMode(in, root, context, !hasConsumedBound)) {
             break;
         }
+
+        hasConsumedBound = true;
     }
     context.footnotes[refName.str()] = root;
 }
@@ -632,7 +635,17 @@ bool Markdown::nextMajorMode(
     DocumentContext& context,
     bool bulletBoundries
 ) {
-    switch (resolveMajorMode(in, tree, bulletBoundries)) {
+    auto type = resolveMajorMode(in, tree, bulletBoundries);
+    // Filter out types that are only legal under the doc root
+    if (tree->type != NodeType::DocumentRoot) {
+        switch (type) {
+        case NodeType::FootnoteDef:
+        case NodeType::AnchorDef:
+            return false;
+        default:;
+        }
+    }
+    switch (type) {
     case NodeType::Paragraph: {
         parseParagraph(in, tree, context);
     } break;

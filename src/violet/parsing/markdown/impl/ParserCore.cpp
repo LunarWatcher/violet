@@ -1,3 +1,4 @@
+#include <iostream>
 #include <violet/parsing/Markdown.hpp>
 
 #include <string>
@@ -21,7 +22,9 @@ static void delegateParse(
             break;
         }
 
-        nextMajorMode(in, rootTree, context, true);
+        if (!nextMajorMode(in, rootTree, context, true)) {
+            throw std::runtime_error("Failed to resolve next mode");
+        }
     }
 }
 
