@@ -1,7 +1,6 @@
 ---
 {
     "title": "Violet - another static site generator",
-    "layout": "page_list"
 }
 ---
 

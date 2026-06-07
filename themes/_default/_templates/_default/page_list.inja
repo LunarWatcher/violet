@@ -2,11 +2,13 @@
 {% block content %}
     {% include "content" %}
 
-    {% for page in listing.pages %}
-        <article>
-            <h2><a href="{{ site.site_prefix}}/{{ page.url }}">{{ page.title }}</a></h2>
-        </article>
-    {% endfor %}
+    {% if exists("listing") %}
+        {% for page in listing.pages %}
+            <article>
+                <h2><a href="{{ site.site_prefix}}/{{ page.url }}">{{ page.title }}</a></h2>
+            </article>
+        {% endfor %}
 
-    {% include "partials/paginator.inja" %}
+        {% include "partials/paginator.inja" %}
+    {% endif %}
 {% endblock %}
