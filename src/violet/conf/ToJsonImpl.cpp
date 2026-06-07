@@ -8,9 +8,7 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
     if (auto it = src.find("description"); it != src.end() && !it->is_null()) {
         dest.description = it->get<std::string>();
     }
-    if (auto it = src.find("site_prefix"); it != src.end() && !it->is_null()) {
-        dest.site_prefix = it->get<std::string>();
-    }
+    dest.site_prefix = src.value("site_prefix", "");
     if (auto it = src.find("exclude"); it != src.end()) {
         it->get_to(dest.exclude);
     }
@@ -37,9 +35,7 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         dest.raw["description"] = dest.description.value();
     }
 
-    if (dest.site_prefix) {
-        dest.raw["site_prefix"] = dest.site_prefix.value();
-    }
+    dest.raw["site_prefix"] = dest.site_prefix;
 
     if (dest.theme) {
         dest.raw["theme"] = dest.theme.value();

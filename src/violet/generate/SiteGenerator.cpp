@@ -166,7 +166,7 @@ bool SiteGenerator::processFile(
             content,
             std::bind(
                 projectBasedTranslator,
-                this->cfg.site_prefix.value_or(""),
+                this->cfg.site_prefix,
                 rootDir,
                 relPath,
                 std::placeholders::_1

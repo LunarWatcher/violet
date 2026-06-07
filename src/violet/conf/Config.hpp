@@ -11,7 +11,7 @@ struct Config {
     std::string name;
     std::optional<std::string> description;
 
-    std::optional<std::string> site_prefix;
+    std::string site_prefix;
     std::vector<std::string> exclude;
     std::optional<std::string> theme;
     nlohmann::json data;
