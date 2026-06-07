@@ -1,6 +1,6 @@
 ---
 {
-    "title": "Violet - another static site generator",
+    "title": "Violet - another static site generator"
 }
 ---
 
