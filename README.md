@@ -23,6 +23,10 @@ Due to limitations of the underlying socket library at the time of writing, magp
 
 See the docs folder, or https://lunarwatcher.codeberg.page/violet/
 
+## Extended usage example
+
+My website is built on violet, and also doubles as an example of a proper non-documentation site built on violet. Its source code is available [here](https://codeberg.org/LunarWatcher/pages). Relatively mediocre design because I'm not a designer, but that doesn't affect the parts that involve violet-specific features.
+
 ## License
 
 Violet itself is licensed under the [MIT license](LICENSE). The documentation is licensed under [CC-By-SA 4.0](docs/LICENSE)
