@@ -75,7 +75,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
     // bad
     auto path = man.fileManager.getRootFolder() / std::filesystem::path {
         frontmatter.at("violet_internals.path")
-    };
+    } / scope;
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
@@ -124,7 +124,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
     // bad
     auto path = man.fileManager.getRootFolder() / std::filesystem::path {
         frontmatter.at("violet_internals.path")
-    };
+    } / scope;
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
