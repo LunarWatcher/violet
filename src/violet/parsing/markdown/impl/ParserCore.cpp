@@ -9,6 +9,7 @@ static void delegateParse(
     Markdown::DOMTree* rootTree,
     Markdown::DocumentContext& context
 ) {
+    size_t lastOffset = in.tellg();
     while (in) {
         while (in.peek() == '\n') {
             std::ignore = in.get();
@@ -25,6 +26,13 @@ static void delegateParse(
         if (!nextMajorMode(in, rootTree, context, true)) {
             throw std::runtime_error("Failed to resolve next mode");
         }
+
+        if (lastOffset == in.tellg()) {
+            throw std::runtime_error(
+                "Critical: avoided infinite iteration at byte position " + std::to_string(lastOffset)
+            );
+        }
+        lastOffset = in.tellg();
     }
 }
 
