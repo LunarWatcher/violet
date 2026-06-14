@@ -73,6 +73,9 @@ public:
     static std::expected<std::shared_ptr<SiteGenerator>, std::string_view> loadWorkspace(
         const GenerateOpts& opts
     );
+
+    FileManager& getFileManager() { return fileManager; }
+    InjaManager& getInjaManager() { return injaManager; }
 };
 
 }

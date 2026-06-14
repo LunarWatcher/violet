@@ -23,13 +23,13 @@ public:
 
     inja::Environment env;
 
-private:
+
+public:
     DateTimeFunctions dateTimeFuncs;
     FileFunctions fileFuncs;
     LangFunctions langFuncs;
     HtmlFunctions htmlFuncs;
 
-public:
     InjaManager(
         GenerateOpts& opts,
         Config& cfg,

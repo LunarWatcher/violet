@@ -52,12 +52,20 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     dest.layout = src.value("layout", "single_page");
 
     if (auto it = src.find("date"); it != src.end() && !it->is_null()) {
-        auto val = it->get<std::string>();
-        dest.date = parseISO8601(val);
+        if (it->is_string()) {
+            auto val = it->get<std::string>();
+            dest.date = parseISO8601(val);
+        } else {
+            dest.date = it->get<int64_t>();
+        }
     }
     if (auto it = src.find("last_modified"); it != src.end() && !it->is_null()) {
-        auto val = it->get<std::string>();
-        dest.date = parseISO8601(val);
+        if (it->is_string()) {
+            auto val = it->get<std::string>();
+            dest.last_modified = parseISO8601(val);
+        } else {
+            dest.last_modified = it->get<int64_t>();
+        }
     }
 
     if (auto it = src.find("taxonomies"); it != src.end() && !it->is_null()) {

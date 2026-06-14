@@ -136,4 +136,83 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
     return std::nullopt;
 }
 
+void FileManager::recursivelyIterateFiles(
+    const std::filesystem::path& root,
+    const std::function<void(const std::filesystem::directory_entry& entry)>& processor
+) {
+    auto it = std::filesystem::recursive_directory_iterator(root);
+    auto end = std::filesystem::recursive_directory_iterator();
+
+    std::filesystem::path realOutputPath = opts.outputFolder;
+    if (!realOutputPath.is_absolute()) {
+        realOutputPath = this->root / opts.outputFolder;
+    }
+    realOutputPath = std::filesystem::weakly_canonical(realOutputPath);
+
+
+    // Subfolder of output path (avoids scopes set to {output_dir}/**)
+    // The implementation is shit because there is no trivial way to check if a path is a subpath of another
+    // path without resorting to stuff that's unreliable. This solution is only valid for canonical paths
+    // though, but that's fine, everything is canonical or made canonical here
+    if (std::filesystem::canonical(root).string().starts_with(realOutputPath.string())) {
+        return;
+    }
+
+    do {
+        auto& f = *it;
+        // Required to deal with "." as the scope in treePages and listPages
+        auto p = std::filesystem::weakly_canonical(
+            f.path()
+        );
+        auto relPath = std::filesystem::relative(
+            p,
+            root
+        );
+        if (f.is_directory()) {
+            if (
+                // Ignore git
+                p.filename().string().starts_with(".git")
+                // Ignore user excludes
+                || std::find(
+                    cfg.exclude.cbegin(),
+                    cfg.exclude.cend(),
+                    relPath.string()
+                ) != cfg.exclude.cend()
+                // Inline output directory
+                || p == realOutputPath
+            ) {
+                it.disable_recursion_pending();
+                continue;
+            }
+
+            // The special _ directories at the root are not processed by the recursion logic, so it must be disabled
+            // here.
+            // We also blanket disable all <root>/_[dir] folders since these are reserved folders.
+            if (relPath.string().starts_with("_")) {
+                it.disable_recursion_pending();
+                continue;
+            }
+        } else if (f.is_regular_file()) {
+            if (
+                // Ignore git
+                p.filename().string().starts_with(".git")
+                // Ignore violet config files
+                || relPath.string() == "violet.json"
+                || relPath.string() == "violet.theme.json"
+                // Ignore user excludes
+                || std::find(
+                    cfg.exclude.cbegin(),
+                    cfg.exclude.cend(),
+                    relPath.string()
+                ) != cfg.exclude.cend()
+            ) {
+                continue;
+            }
+        } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
+
+        minilog::debug("Forwarding {} to file tree iterator", f.path().string());
+        processor(f);
+    } while (++it != end);
+}
+
 }

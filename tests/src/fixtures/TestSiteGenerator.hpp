@@ -35,6 +35,12 @@ struct TestSiteGenerator {
     violet::SiteGenerator* operator->() { return gen.get(); }
 
     const std::filesystem::path& buildPath() { return workspace.buildDirectory.folder; }
+    const std::filesystem::path& sourcePath() { return workspace.rootDirectory; }
+
+    void assertGenerated() {
+        INFO("gen->generate must be called before this section is declared");
+        REQUIRE(std::filesystem::exists(buildPath()));
+    }
 };
 
 }

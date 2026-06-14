@@ -9,6 +9,8 @@ class InjaManager;
 class FileFunctions {
 private:
     InjaManager& man;
+public:
+    FileFunctions(InjaManager& man);
 
     nlohmann::json listPages(inja::Arguments& args);
     nlohmann::json treePages(inja::Arguments& args);
@@ -16,8 +18,6 @@ private:
     nlohmann::json listPagesByTaxonomy(inja::Arguments& args);
 
     nlohmann::json paginatedUrl(inja::Arguments& args);
-public:
-    FileFunctions(InjaManager& man);
 };
 
 }
