@@ -18,6 +18,10 @@ The `_default` theme is explicitly designed to be minimal, to be the bare minimu
 
 By all means, make a theme - but only _very_ special themes get added to the core, and only the bare minimum of features gets added to the existing built-in themes.
 
+### Pull requests only go to one codeforge
+
+This repo is primarily hosted on [Codeberg](https://codeberg.org/LunarWatcher/violet), but is also available on [GitHub](https://github.com/LunarWatcher/violet), where CI resources are used. Pull requests are preferred on Codeberg, but are also accepted on GitHub. However, do not make a pull request to both - I'll deal with syncing the two after merging.
+
 ## Development setup
 
 ```bash
