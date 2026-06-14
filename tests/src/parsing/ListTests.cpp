@@ -76,6 +76,28 @@ TEST_CASE("Unordered lists", "[markdown]") {
     impl("-");
 }
 
+TEST_CASE("Mixed unordered lists", "[markdown]") {
+    std::stringstream ss;
+    ss << R"(* Bullet 1
+- Bullet 2
+  * Bullet 3
+  - Bullet 4)";
+    REQUIRE(
+        violet::Markdown::parse(ss)
+        ==
+        "<ul>"
+            "<li><p>Bullet 1</p></li>"
+            "<li>"
+                "<p>Bullet 2</p>"
+                "<ul>"
+                    "<li><p>Bullet 3</p></li>"
+                    "<li><p>Bullet 4</p></li>"
+                "</ul>"
+            "</li>"
+        "</ul>"
+    );
+}
+
 TEST_CASE("Ordered lists", "[markdown]") {
     SECTION("Plain numbered lists") {
         std::stringstream ss;
