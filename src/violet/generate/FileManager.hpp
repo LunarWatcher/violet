@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stc/Environment.hpp"
+#include "stc/minilog.hpp"
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
 #include <filesystem>
@@ -70,7 +71,10 @@ public:
         }
         do {
             auto& f = *it;
-            auto& p = f.path();
+            // Required to deal with "." as the scope in treePages and listPages
+            auto p = std::filesystem::weakly_canonical(
+                f.path()
+            );
             auto relPath = std::filesystem::relative(
                 p,
                 root
@@ -117,6 +121,7 @@ public:
                 }
             } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
 
+            minilog::debug("Forwarding {} to file tree iterator", f.path().string());
             processor(f);
         } while (++it != end);
     }
