@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stc/minilog.hpp"
 #include "violet/parsing/Escaping.hpp"
 #include <filesystem>
 #include <iostream>
@@ -145,7 +146,6 @@ inline std::string projectBasedTranslator(
                 parsedPath << "index.html";
             } else {
                 auto fn = segment.substr(0, segment.rfind('.'));
-                std::cout << "fn=" << fn << std::endl;
                 parsedPath << renameFile(fn) << ".html";
             }
         } else {
@@ -176,7 +176,11 @@ inline std::string projectBasedTranslator(
 
     newPath += rest.str();
 
-    std::cout << "Rewrote " << in << " to " << newPath << std::endl;
+    minilog::debug(
+        "Rewrote URL {} to {}",
+        in,
+        newPath
+    );
     return newPath;
 }
 
