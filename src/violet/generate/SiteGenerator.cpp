@@ -1,6 +1,7 @@
 #include "SiteGenerator.hpp"
 
 #include "ProcessedFileType.hpp"
+#include "stc/minilog.hpp"
 #include "violet/paginator/Paginator.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
 
@@ -59,7 +60,7 @@ void SiteGenerator::renderAndWrite(
         file
     );
     if (!f) {
-        std::cerr << "Failed to open " << file << std::endl;
+        minilog::error("Failed to open {}", file.string());
         return;
     }
     auto renderedContent = injaManager.renderPage(
@@ -69,7 +70,7 @@ void SiteGenerator::renderAndWrite(
         pag
     );
 
-    std::cout << "Committing generated page " << file << std::endl;
+    minilog::info("Committing generated page to {}", file.string());
     f.write(
         renderedContent.data(),
         renderedContent.size()
@@ -81,12 +82,16 @@ void SiteGenerator::handleTemplatesAndSave(
     const std::filesystem::path& relPath,
     const Frontmatter& frontmatter
 ) {
+    minilog::debug("Rendering templates of {}", relPath.string());
     auto target = this->opts.outputFolder / relPath;
     std::filesystem::create_directories(
         target.parent_path()
     );
 
     if (frontmatter.listing.has_value()) {
+        minilog::debug(
+            "Page is paginated page_list, expanding pages"
+        );
         auto pag = Paginator {
             frontmatter,
             this->fileManager,
@@ -140,7 +145,7 @@ bool SiteGenerator::processFile(
     const std::filesystem::path& relPath,
     ProcessedFileType type
 ) {
-    std::cout << "Now reading " << relPath << std::endl;
+    minilog::debug("Now reading {}", relPath.string());
     auto data = this->metadataCache.openFile(
         relPath
     );
@@ -153,6 +158,7 @@ bool SiteGenerator::processFile(
 
     switch (type) {
     case ProcessedFileType::Html: {
+        minilog::debug("Loaded file is HTML with frontmatter.");
         std::string fileContent = content.str();
 
         handleTemplatesAndSave(
@@ -162,6 +168,7 @@ bool SiteGenerator::processFile(
         );
     } break;
     case ProcessedFileType::Markdown: {
+        minilog::debug("Loaded file is markdown. Parsing...");
         auto parsedPage = Markdown::parseWithContentPostprocessing(
             content,
             std::bind(
@@ -172,6 +179,8 @@ bool SiteGenerator::processFile(
                 std::placeholders::_1
             )
         );
+
+        minilog::debug("Markdown parsing complete");
 
         // TODO: this isn't elegant, but it seems to be the easiest option for now. The alternative is injecting a
         // fourth data object that's only present for markdown pages, but that just sucks.
@@ -194,7 +203,10 @@ bool SiteGenerator::processFile(
 bool SiteGenerator::generate() {
     const auto& rootDir = this->opts.root;
 
-    std::cout << "Using root directory " << rootDir << std::endl;
+    minilog::info(
+        "Using {} as the project root",
+        rootDir.string()
+    );
     this->fileManager.imbueRoot(rootDir);
     this->cfg.imbueRoot(rootDir);
 
@@ -203,7 +215,10 @@ bool SiteGenerator::generate() {
         realOutputPath = rootDir / opts.outputFolder;
     }
     if (opts.overridePrefixForLocalUse) {
-        std::cout << "Overriding prefix: using " << realOutputPath.string() << std::endl;
+        minilog::info(
+            "Overriding site prefix to {}",
+            realOutputPath.string()
+        );
         cfg.raw["site_prefix"] = realOutputPath.string();
         cfg.site_prefix = realOutputPath.string();
     }

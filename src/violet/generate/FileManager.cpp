@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stc/FileUtil.hpp>
+#include <stc/minilog.hpp>
 
 namespace violet {
 
@@ -63,19 +64,20 @@ std::filesystem::path FileManager::resolveTemplate(
 void FileManager::copyThemeFiles() {
     assertReady();
     if (!cfg.theme) {
-        std::cout << "No theme set" << std::endl;
+        minilog::info("No theme set");
         return;
     }
     std::ifstream confFile(themeDir / "violet.theme.json");
     
     if (!confFile) {
-        std::cout << "Warning: failed to open violet.theme.json for theme. Tried path: "
-                  << (themeDir / "violet.theme.json")
-                  << std::endl;
+        minilog::warn(
+            "Failed to open violet.theme.json for theme. Tried path: {}",
+            (themeDir / "violet.theme.json").string()
+        );
         return;
     }
 
-    std::cout << "Copying theme exports... " << std::endl;
+    minilog::info("Copying theme exports...");
     // TODO: export ThemeConfig to the class
     ThemeConfig themeCfg = nlohmann::json::parse(confFile);
     for (const auto& m : themeCfg.mount) {
@@ -91,7 +93,7 @@ void FileManager::copyThemeFiles() {
                 file.path(),
                 themeDir
             );
-            std::cout << "COPY " << std::filesystem::weakly_canonical(themeDir / rel) << std::endl;
+            minilog::debug("COPY {}", std::filesystem::weakly_canonical(themeDir / rel).string());
             copyRaw(
                 themeDir,
                 rel,
@@ -126,7 +128,10 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
             return p;
         }
     }
-    std::cout << "Failed to resolve partial " << path << std::endl;
+    minilog::error(
+        "Failed to resolve partial {}",
+        path.string()
+    );
 
     return std::nullopt;
 }

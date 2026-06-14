@@ -93,7 +93,7 @@ public:
                 }
                 // end of frontmatter reached
                 nlohmann::json out;
-                std::cout << json.str() << std::endl;
+                minilog::debug("Frontmatter content:\n{}", json.str());
                 json >> out;
                 return out;
             }

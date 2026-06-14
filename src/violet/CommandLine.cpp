@@ -1,5 +1,6 @@
 #include "CommandLine.hpp"
 #include "CLI/CLI.hpp"
+#include "stc/minilog.hpp"
 #include "violet/generate/SiteGenerator.hpp"
 #include <CLI/CLI.hpp>
 
@@ -7,11 +8,14 @@ int violet::cliMain(int argc, char** argv) {
     CLI::App app{
         "C++-based static site generator"
     };
+    GenerateOpts generateOpts;
+
+    minilog::config().level = minilog::Level::Info;
+
     app.require_subcommand(1, 1);
 
     argv = app.ensure_utf8(argv);
 
-    GenerateOpts generateOpts;
 
     auto cmdGenerate = app.add_subcommand(
         "generate",
@@ -30,9 +34,23 @@ int violet::cliMain(int argc, char** argv) {
     )
         ->default_val(generateOpts.overridePrefixForLocalUse);
 
+    cmdGenerate->add_flag_function(
+        "-d,--debug",
+        [](const auto&) {
+            minilog::config().level = minilog::Level::Debug;
+        },
+        "Whether or not to enable verbose debug logging"
+    );
     auto cmdServe = app.add_subcommand(
         "serve",
         "Currently not implemented, but will exist in the future:tm:"
+    );
+    cmdServe->add_flag_function(
+        "-d,--debug",
+        [](const auto&) {
+            minilog::config().level = minilog::Level::Debug;
+        },
+        "Whether or not to enable verbose debug logging"
     );
 
     CLI11_PARSE(app, argc, argv);

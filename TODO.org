@@ -17,7 +17,7 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
     Previously, type was used for both by accident, largely because the ~_templates/{type}~ was hacked in somewhat last minute. Any references left need to be updated
 ** DONE Render the documentation with violet
 
-* Core features [8/11]
+* Core features [9/12]
 ** DONE Templates
 ** DONE Themes
 *** DONE General theme support
@@ -28,7 +28,7 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
    This will likely need to be restricted to markdown rendering though, as I'm not sure where else you would be able to do it.
 
    Conclusion: initial setup done, but there's quite a lot more work to do for this to be done reliably, particularly when link normalisation is done.
-** TODO Footnotes
+** DONE Footnotes
 ** DONE Set up a few standard ways to deploy sites
    GH can get an action, not sure how the pipeline would work on codeberg. At least for my use, I'm at risk of just pushing to the corresponding branch with a script or some shit like that rather than actually doing a CI setup. Especially on Codeberg, since CI resources are more limited there.
 
@@ -47,8 +47,11 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
    I had a shower thought while writing a warning: a proper warning and error logging system also works rather well for creating a form of report for the build. Maybe not as efficient as just dumping straight to stdout, but negligible overhead (I'd imagine). Plus, better categorization of the log messages would be the excuse I need to properly render SyntaxErrors
 ** TODO Support syntax escaping
    I need my brackets to work again :(
+** TODO Add ~_italics_~
+   This would let bold italic be supported in one way, although ~***bold italic***~ still won't be
 
-* Dumb decision refactor [0/1]
+* Dumb decision refactor [0/2]
+** TODO It should be ~site.prefix~, not ~site.site_prefix~
 ** TODO It should not be necessary to use ~site.prefix~ everywhere in inja
    This is potentially a footgun, and one I have done a few times myself. ~.url~ should be an absolute path automagically
 
@@ -62,6 +65,12 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
    2. The format string being insecure
 
    Not actually sure if this matters, since the format string is usually going to be fixed, and it won't expose filesystem stuff or anything else important, unless `std::format` pulls a log4j. Should be fixed anyway.
+
+* Docs [0/1]
+** TODO Better theming docs
+   The docs around theming and templating are dogshit, and there needs to be a better intro to it. Added a getting started page to help with the intro to violet itself, but it ends up pointing to pages that don't yet exist for local theming.
+
+   Themes.md only covers proper themes, so it doesn't really describe project-local themes. This has bene deferred to Project structure.md, which is really out of place
 
 * Bugs [2/3]
 ** DONE page capitalisation is preserved
