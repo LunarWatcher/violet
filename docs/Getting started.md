@@ -3,6 +3,9 @@
     "title": "Getting started"
 }
 ---
+# Getting started
+
+{{ page.table_of_contents }}
 
 ## Installation
 

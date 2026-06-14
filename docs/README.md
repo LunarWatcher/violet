@@ -35,3 +35,8 @@ Comments are nice, sure, but they can always be substituted by a decent commit h
 
 As a consequence, while violet's config files are comment-free JSON, the documentation uses jsonc to be able to explain things inline. If you copy-paste config, you must remove the comments before running, or violet will error out.
 
+## Getting started
+
+See [Getting started](/Getting started.md)
+
+
