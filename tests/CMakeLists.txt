@@ -5,10 +5,11 @@ add_executable(tests
     src/integration/PaginationTests.cpp
 
     src/parsing/FootnoteTests.cpp
+    src/parsing/ListTests.cpp
     src/parsing/MarkdownTests.cpp
+    src/parsing/QuoteTests.cpp
     src/parsing/UrlTests.cpp
     src/parsing/UrlTranslationTests.cpp
-    src/parsing/QuoteTests.cpp
 
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp
