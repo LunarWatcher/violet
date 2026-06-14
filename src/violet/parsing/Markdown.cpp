@@ -188,7 +188,7 @@ bool Markdown::prepareStream(
                 }
                 break;
             case NodeType::UnorderedList:
-                if (includeBullets && in.peek() == '*') {
+                if (includeBullets && (in.peek() == '*' || in.peek() == '-')) {
                     std::ignore = in.get();
                     if (in.peek() == ' ') {
                         std::ignore = in.get();
