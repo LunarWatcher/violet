@@ -11,8 +11,7 @@ permissions:
 
 jobs:
   assemble:
-    runs-on: ubuntu-24.04
-    container: ubuntu:rolling
+    runs-on: ubuntu-latest
     steps:
       - name: Install deps
         run: |
