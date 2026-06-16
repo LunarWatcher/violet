@@ -38,3 +38,40 @@ Self explanatory; same as what you would pass to a regular `{% include "template
 
 A single object. All types are allowed, and what you pass depends on what you need in the templates you include.
 
+## `createPaginatedList(pageNum, totalPages)`
+
+Utility method for creating paginated lists. Due to some limitations in inja, it appears to be much harder to create pagination widgets entirely in inja without resorting to deeply cursed hacks.
+
+Example use:
+```inja
+<ul>
+    {% for i in createPaginatedList(listing.page, listing.total_pages) %}
+        <li title="Go to page {{ i }}">
+            <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, i) }}"
+                id="next-page"
+                aria-label="Next page"
+                {% if listing.page == i %}class="current"{% endif %}
+            >{{ i }}</a>
+        </li>
+    {% endfor %}
+</ul>
+```
+
+### Arguments
+
+* `pageNum`: the current page. Usually `listing.page`
+* `totalPages`: The total number of pages. Usually `listing.total_pages`
+
+### Return value
+
+A list of integer indices that can be used to construct a page. Assuming enough pages, the list returned is:
+```
+[
+    1, 2, 3,
+    listing.page - 1, listing.page, listing.page + 1,
+    listing.total_pages - 2, listing.total_pages - 1, listing.total_pages
+]
+```
+
+deduplicated and filtered for legal values. The max numbers of indices returned by this method is 9.
+

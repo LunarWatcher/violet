@@ -10,9 +10,14 @@ Themes are not required, and work together with templates and partials in the pr
 1. The project's `_templates` and `_partials` are checked.
 2. If no match is found and a theme is set, look in its `_templates` and `_partials` folders.
 
-## The themes folder
+Only one theme may be active at any given time, though if you need to extend a theme for a specific site in a way that can't be done with just data, you can use [project-local templates](Project-local templates.md) to override specific files.
 
-The `_themes` folder, partially described in [Project structure](Project structure.md), can on paper contain multiple themes. However, only one theme can be used at a time, so it should only contain one theme. This is not enforced in any way, as it makes no practical difference aside maybe making cloning the repo slower.
+## Theme folder structure
+
+* **Layout folder:** `<project root>/themes/<theme name>/_templates`
+* **Partials folder:** `<project root>/themes/<theme name>/_partials`
+
+Note that `<theme name>` may not start with an underscore. Themes starting with an underscore are reserved for internal use, and do a lookup in an installation-internal folder.
 
 ## The structure of a theme
 
@@ -64,3 +69,7 @@ The theme config file describes metadata about the theme that cannot otherwise b
 Although the risk is comparatively low, you should make sure you trust the theme. It can and will add files to your site, potentially without you noticing if you just push and let it run in the CI without watching the logs. It will never override your site, but since it can add JS, it can redirect to an entire site that lives in parallel with yours.
 
 Submodules provide automatic version pinning, as long as you don't blindly force an update on the CI, which may or may not help with supply chain attack. But do be careful when testing non-core themes; they may not be safe to use, or may even be safe and later become unsafe. Using common sense is required.
+
+## Writing templates
+
+Writing templates is identical in both themes and project-local templates. A small guide can be found in [Writing templates](Writing templates.md)

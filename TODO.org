@@ -50,10 +50,11 @@ This file does not make sense in GitHub's interface. Switch to source mode for a
 ** TODO Add ~_italics_~
    This would let bold italic be supported in one way, although ~***bold italic***~ still won't be
 
-* Dumb decision refactor [0/2]
-** TODO It should be ~site.prefix~, not ~site.site_prefix~
+* Dumb decision refactor [1/2]
+** DONE It should be ~site.prefix~, not ~site.site_prefix~
 ** TODO It should not be necessary to use ~site.prefix~ everywhere in inja
    This is potentially a footgun, and one I have done a few times myself. ~.url~ should be an absolute path automagically
+   It will still be required for other applications though, but maybe it makes sense for it to be a function instead
 
 * Security [0/2]
 ** TODO The extension functions for inja providing file iteration have various traversal bugs
