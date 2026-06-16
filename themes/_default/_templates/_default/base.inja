@@ -14,7 +14,7 @@
             {% set subtree = treePages(site, ".") %}
             {# In theory, this should never trigger since every site _will_ have an index, but whatever #}
             {% if existsIn(subtree, "index") %}
-            <p><a href="{{ site.site_prefix }}/{{ subtree.index.url }}">{{ subtree.index.title }}</a></p>
+            <p><a href="{{ site.prefix }}/{{ subtree.index.url }}">{{ subtree.index.title }}</a></p>
             {% endif %}
             <ul>
                 {# For whatever reason, setting the context inline does not work and results in a syntax error #}

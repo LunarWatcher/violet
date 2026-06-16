@@ -2,7 +2,7 @@
     <ul class="flex-horizontal inline-list">
         <li>
             {% if listing.page != 1 %}
-                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
+                <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, listing.page - 1) }}"
                    id="prev-page"
                    aria-label="Previous page">&laquo;</a>
             {% else %}
@@ -16,7 +16,7 @@
                 <li aria-hidden="true">&mldr;</li>
             {% endif %}
             <li title="Go to page {{ i }}">
-                <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, i) }}"
+                <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, i) }}"
                    id="next-page"
                    aria-label="Next page"
                    {% if listing.page == i %}class="current"{% endif %}
@@ -26,7 +26,7 @@
         {% endfor %}
             <li>
                 {% if listing.page + 1 <= listing.total_pages %}
-                    <a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, listing.page + 1) }}"
+                    <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, listing.page + 1) }}"
                        id="next-page"
                        aria-label="Next page">&raquo;</a>
                 {% else %}
@@ -35,7 +35,7 @@
             </li>
     </ul>
     <form class="flex-horizontal" id="skip-to-page"
-          onsubmit="event.preventDefault(); window.location.href = '{{ site.site_prefix}}/{{ listing.base_path }}/page/' + this.page.value + '/index.html'; return false;"
+          onsubmit="event.preventDefault(); window.location.href = '{{ site.prefix}}/{{ listing.base_path }}/page/' + this.page.value + '/index.html'; return false;"
     >
         <input type="number" min="1" max="{{ listing.total_pages }}" name="page" required aria-label="Page number" />
         <input type="submit" value="Go" />

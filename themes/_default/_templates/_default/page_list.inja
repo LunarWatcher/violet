@@ -5,7 +5,7 @@
     {% if exists("listing") %}
         {% for page in listing.pages %}
             <article>
-                <h2><a href="{{ site.site_prefix}}/{{ page.url }}">{{ page.title }}</a></h2>
+                <h2><a href="{{ site.prefix}}/{{ page.url }}">{{ page.title }}</a></h2>
             </article>
         {% endfor %}
 

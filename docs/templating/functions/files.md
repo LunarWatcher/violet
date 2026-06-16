@@ -107,7 +107,7 @@ Output:
 >
 > Valid anywhere: /blog/posts/page/69
 
-Standard practice in URLs is to chain it with `site.site_prefix` (this will change in the future):
+Standard practice in URLs is to chain it with `site.prefix` (this will change in the future):
 ```html
-<a href="{{ site.site_prefix }}/{{ paginatedUrl(listing.base_path, 69) }}>Text</a>"
+<a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, 69) }}>Text</a>"
 ```

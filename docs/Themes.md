@@ -27,7 +27,7 @@ The theme config file describes metadata about the theme that cannot otherwise b
 ```jsonc
 {
     // Defines which folders of the theme to mount to the page. Like proper violet sites,
-    // these folders are mounted directly under the root (or site_prefix if set).
+    // these folders are mounted directly under the root (or prefix if set).
     // As a consequence, you must disambiguate the names of your static assets.
     // DON'T: assets/style.css
     //      This will almost certainly conflict with the user's extra features

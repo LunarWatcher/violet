@@ -173,7 +173,7 @@ bool SiteGenerator::processFile(
             content,
             std::bind(
                 projectBasedTranslator,
-                this->cfg.site_prefix,
+                this->cfg.prefix,
                 rootDir,
                 relPath,
                 std::placeholders::_1
@@ -219,8 +219,8 @@ bool SiteGenerator::generate() {
             "Overriding site prefix to {}",
             realOutputPath.string()
         );
-        cfg.raw["site_prefix"] = realOutputPath.string();
-        cfg.site_prefix = realOutputPath.string();
+        cfg.raw["prefix"] = realOutputPath.string();
+        cfg.prefix = realOutputPath.string();
     }
 
 

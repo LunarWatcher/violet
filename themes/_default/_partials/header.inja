@@ -1,5 +1,5 @@
 <header class="flex-horizontal">
-    <span id="site-title"><a href="{{ site.site_prefix }}/">{{ site.name }}</a></span>
+    <span id="site-title"><a href="{{ site.prefix }}/">{{ site.name }}</a></span>
 
     {% if exists("site.data.repo.name") and exists("site.data.repo.url") %}
     <div id="repo-link" class="flex-horizontal">

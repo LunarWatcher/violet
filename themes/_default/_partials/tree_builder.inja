@@ -1,7 +1,7 @@
 {# Direct root descendants #}
 {% if existsIn(currTree, "items") %}
     {% for page in currTree.items %}
-        <li><a href="{{ site.site_prefix }}/{{ page.url }}">{{ page.title }}</a></li>
+        <li><a href="{{ site.prefix }}/{{ page.url }}">{{ page.title }}</a></li>
     {% endfor %}
 {% endif %}
 
@@ -9,7 +9,7 @@
     {% for folderName, nextTree in currTree.subfolders %}
         <li>
             {% if existsIn(nextTree, "index") %}
-                <a href="{{ site.site_prefix }}/{{ nextTree.index.url }}">{{ nextTree.index.title }}</a>
+                <a href="{{ site.prefix }}/{{ nextTree.index.url }}">{{ nextTree.index.title }}</a>
             {% else %}
                 {{ folderName }}
             {% endif %}
