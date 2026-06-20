@@ -7,6 +7,10 @@
 
 ## [unreleased]
 
+### Changed
+
+* Internal: Switch from stc minilog to standalone minilog (better logging, woo)
+
 
 ## [v0.4.0]
 

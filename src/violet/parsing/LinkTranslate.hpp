@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stc/minilog.hpp"
+#include "minilog/minilog.hpp"
 #include "violet/parsing/Escaping.hpp"
 #include <filesystem>
 #include <iostream>

@@ -47,6 +47,9 @@ include(FetchContent)
 FetchContent_Declare(stc
     GIT_REPOSITORY https://github.com/LunarWatcher/stc
 )
+FetchContent_Declare(minilog
+    GIT_REPOSITORY https://github.com/LunarWatcher/minilog
+)
 FetchContent_Declare(cli11
     GIT_REPOSITORY https://github.com/LunarWatcher/CLI11
     GIT_TAG main
@@ -59,7 +62,13 @@ FetchContent_Declare(inja
     GIT_REPOSITORY https://github.com/pantor/inja
     GIT_TAG v3.5.0
 )
-FetchContent_MakeAvailable(stc cli11 json inja)
+FetchContent_MakeAvailable(
+    stc
+    minilog
+    cli11
+    json
+    inja
+)
 
 add_subdirectory(src)
 add_subdirectory(themes)

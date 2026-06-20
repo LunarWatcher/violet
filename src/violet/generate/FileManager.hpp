@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stc/Environment.hpp"
-#include "stc/minilog.hpp"
+#include "minilog/minilog.hpp"
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
 #include <filesystem>

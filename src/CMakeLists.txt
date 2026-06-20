@@ -34,6 +34,7 @@ target_link_libraries(violetsrc PUBLIC
     nlohmann_json::nlohmann_json
     pantor::inja
     stc
+    minilog
 )
 
 if (LINUX)

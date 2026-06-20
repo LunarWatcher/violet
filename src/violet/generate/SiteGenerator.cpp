@@ -1,7 +1,7 @@
 #include "SiteGenerator.hpp"
 
 #include "ProcessedFileType.hpp"
-#include "stc/minilog.hpp"
+#include "minilog/minilog.hpp"
 #include "violet/paginator/Paginator.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
 

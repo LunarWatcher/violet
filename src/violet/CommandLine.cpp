@@ -1,6 +1,6 @@
 #include "CommandLine.hpp"
 #include "CLI/CLI.hpp"
-#include "stc/minilog.hpp"
+#include "minilog/minilog.hpp"
 #include "violet/generate/SiteGenerator.hpp"
 #include <CLI/CLI.hpp>
 
@@ -10,7 +10,7 @@ int violet::cliMain(int argc, char** argv) {
     };
     GenerateOpts generateOpts;
 
-    minilog::config().level = minilog::Level::Info;
+    minilog::setLevel(minilog::Level::Info);
 
     app.require_subcommand(1, 1);
 
@@ -37,7 +37,7 @@ int violet::cliMain(int argc, char** argv) {
     cmdGenerate->add_flag_function(
         "-d,--debug",
         [](const auto&) {
-            minilog::config().level = minilog::Level::Debug;
+            minilog::setLevel(minilog::Level::Debug);
         },
         "Whether or not to enable verbose debug logging"
     );
@@ -48,7 +48,7 @@ int violet::cliMain(int argc, char** argv) {
     cmdServe->add_flag_function(
         "-d,--debug",
         [](const auto&) {
-            minilog::config().level = minilog::Level::Debug;
+            minilog::setLevel(minilog::Level::Debug);
         },
         "Whether or not to enable verbose debug logging"
     );
