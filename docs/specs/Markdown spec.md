@@ -85,6 +85,22 @@ A better solution would be nice here, but is likely too complex to implement.
 
 Explicitly specifying IDs is not supported in the syntax. you can get around this with raw HTML.
 
+### `---` and `===` headers are not supported
+
+In other markdown flavours, the following can also declare headers:
+
+```
+Header
+------
+
+Header
+======
+```
+
+This is not supported by violet, because parsing it sucks and the syntax is ugly as fuck. Use the standard `#` header style instead.
+
+Also note that in the above example, the first header using `---` will actually be rendered as a horizontal rule. See [horizontal rules](#horizontal-rules)
+
 ## Bold and italics
 
 Bold and italics are implemented using the classic stars:
@@ -334,3 +350,31 @@ Instead, use teh standard link format:
 Rendered:
 
 > [https://example.com](https://example.com)
+
+## Horizontal rules
+
+The standard markdown `---` is used to create horizontal rules (rendered as `<hr/>`).
+
+Note that for parsing reasons, `---` with text immediately on the line before it does not produce a header, but produces a paragraph with a horizontal rule after it.
+
+Example:
+```
+This is a paragraph
+
+---
+
+This is another paragraph
+
+This is a pretend header
+------------------------
+```
+
+Rendered:
+> This is a paragraph
+>
+> ---
+>
+> This is another paragraph
+>
+> This is a pretend header
+> ------------------------

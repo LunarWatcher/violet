@@ -43,6 +43,12 @@ extern bool nextMajorMode(
     bool bulletBoundries = true
 );
 
+extern void parseHorizontalRule(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+);
+
 extern void parseCodeBlockContent(
     std::stringstream& in,
     CodeNode* out,

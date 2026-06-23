@@ -52,9 +52,29 @@ Markdown::NodeType Markdown::resolveMajorMode(
         std::ignore = in.get();
         if (in.peek() == ' ') {
             mode = NodeType::UnorderedList;
+            goto done;
         } else {
-            mode = NodeType::Paragraph;
+            char ch;
+            while (in >> std::noskipws >> ch) {
+                if (ch == '-'
+                    // Be lenient with trailing spaces (though this technically makes "- - - -" a valid <hr>)
+                    || ch == ' '
+                ) {
+                    continue;
+                } else if (ch == '\n') {
+                    mode = NodeType::HorizontalRule;
+                    goto done;
+                } else {
+                    break;
+                }
+            }
+            if (!in) {
+                // failsafe: trailing --- with no \n
+                mode = NodeType::HorizontalRule;
+                goto done;
+            }
         }
+        mode = NodeType::Paragraph;
     // } else if (in.peek() == '\n') { // Consume and ignore empty lines not consumed by previous modes
     //     std::ignore = in.get();
     //     // TODO: if this causes stackoverflows, add another meta-mode so the iterative approach can continue to be used
@@ -629,6 +649,32 @@ void Markdown::parseFootnoteDef(
     context.footnotes[refName.str()] = root;
 }
 
+void Markdown::parseHorizontalRule(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext&
+) {
+    prepareStream(in, out, true);
+
+    char ch;
+    while (in >> std::noskipws >> ch) {
+        if (ch == ' ' || ch == '-') {
+            continue;
+        } else if (ch == '\n') {
+            break;
+        } else {
+            throw std::runtime_error(
+                std::format(
+                    "Programmer error: resolveMajorMode for <hr> is the only major mode that guarantees precisely three "
+                    "characters in the set: <space>, <newline>, and -, but parseHorizontalRule got {}",
+                    ch
+                )
+            );
+        }
+    }
+    out->addChild(new HorizontalRuleNode);
+}
+
 bool Markdown::nextMajorMode(
     std::stringstream& in,
     DOMTree* tree,
@@ -648,6 +694,9 @@ bool Markdown::nextMajorMode(
     switch (type) {
     case NodeType::Paragraph: {
         parseParagraph(in, tree, context);
+    } break;
+    case NodeType::HorizontalRule: {
+        parseHorizontalRule(in, tree, context);
     } break;
     case NodeType::CodeBlock: {
         parseCodeBlock(in, tree, context);

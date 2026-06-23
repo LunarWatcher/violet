@@ -11,6 +11,7 @@ add_executable(tests
     src/parsing/UrlTests.cpp
     src/parsing/UrlTranslationTests.cpp
 
+    src/parsing/markdown/HorizontalRuleTests.cpp
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp
     src/parsing/markdown/TemplateParsing.cpp

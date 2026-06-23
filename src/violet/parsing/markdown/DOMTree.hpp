@@ -35,6 +35,7 @@ enum class NodeType {
     OrderedListEntry = 20,
 
     Image = 21,
+    HorizontalRule = 22,
 
 };
 

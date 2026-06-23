@@ -85,6 +85,9 @@ static void stringifyTreeImpl(
            << " alt=\"" << imgNode->alt << "\""
            << " />";
     } break;
+    case Markdown::NodeType::HorizontalRule: {
+        ss << "<hr/>";
+    } break;
     default:
         break;
     }

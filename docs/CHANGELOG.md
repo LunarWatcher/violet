@@ -7,6 +7,10 @@
 
 ## [unreleased]
 
+### Added
+
+* Horizontal rules are now supported (`---` separators)
+
 ### Changed
 
 * Internal: Switch from stc minilog to standalone minilog (better logging, woo)

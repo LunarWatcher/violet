@@ -117,4 +117,8 @@ struct FootnoteNode : public DOMTree {
     {}
 };
 
+struct HorizontalRuleNode : public DOMTree {
+    HorizontalRuleNode() : DOMTree(NodeType::HorizontalRule) {}
+};
+
 }
