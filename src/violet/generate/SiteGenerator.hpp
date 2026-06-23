@@ -53,6 +53,24 @@ private:
         const Frontmatter& frontmatter,
         Paginator::iterator* pag
     );
+
+    /**
+     * Helper method for conditionally calling `processFile` if frontmatter exists in the file.
+     * Given an input \p file, this function checks if the file has frontmatter available, and if it does, forwards the
+     * file to processFile for rendering.
+     *
+     * This should only be used by filetypes that don't require preprocessing before the templates are rendered.
+     *
+     * \returns the success status if the file is processed, or std::nullopt if the file doesn't have frontmatter.
+     *          Can also return false in the event of certain preprocessing errors even if the file doesn't have
+     *          frontmatter. This is currently limited to failures to open the file for frontmatter checking
+     */
+    std::optional<bool> processFileIfFrontmatterIsPresent(
+        const std::filesystem::path& file,
+        const std::filesystem::path& rootDir,
+        const std::filesystem::path& relPath,
+        ProcessedFileType fileType
+    );
 public:
     ~SiteGenerator() = default;
 

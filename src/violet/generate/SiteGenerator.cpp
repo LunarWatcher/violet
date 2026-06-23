@@ -200,6 +200,47 @@ bool SiteGenerator::processFile(
     return true;
 }
 
+std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
+    const std::filesystem::path& file,
+    const std::filesystem::path& rootDir,
+    const std::filesystem::path& relPath,
+    ProcessedFileType fileType
+) {
+    // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 7
+    // bytes rather than potentially an entire gigabyte-sized single-line file (unlikely to ever come up,
+    // but might as well)
+    std::ifstream in(file);
+    // this means the file is not readable. copyRaw will throw in this case.
+    // Other files can also trigger the same error, but we shamelessly ignore those for now.
+    if (!in) {
+        minilog::warn("Failed to open {} for a file read check", file.string());
+        return false;
+    }
+
+    // This checks that the file starts with the frontmatter identifier.
+    char ch;
+    for (size_t i = 0; i < 3; ++i) {
+        if (!(in >> ch) || ch != '-') {
+            return std::nullopt;
+        }
+    }
+    // noskipws is required, or the char will be eaten automagically by features that otherwise would be a
+    // convenience
+    // This checks that the character immediately after the --- is a newline
+    if (!(in >> std::noskipws >> ch) || (ch != '\n' && ch != '\r')) {
+        return std::nullopt;
+    }
+
+    in.close();
+
+    // At this point, we have something frontmatter-shaped.
+    return processFile(
+        rootDir,
+        relPath,
+        fileType
+    );
+}
+
 bool SiteGenerator::generate() {
     const auto& rootDir = this->opts.root;
 
@@ -254,37 +295,19 @@ bool SiteGenerator::generate() {
                 success &= processFile(rootDir, relPath, ProcessedFileType::Markdown);
                 return;
             } else if (ext == ".html") {
-                // HTML files are conditionally processed. No frontmatter means they're copied as any other static file
-                // would, frontmatter means processed.
-                //
-                // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 7
-                // bytes rather than potentially an entire gigabyte-sized single-line file (unlikely to ever come up,
-                // but might as well)
-                std::ifstream in(p);
-                // this means the file is not readable. copyRaw will throw in this case.
-                // Other files can also trigger the same error, but we shamelessly ignore those for now.
-                if (!in) {
-                    // TODO: warn
-                    return;
-                }
-
-                char ch;
-                for (size_t i = 0; i < 3; ++i) {
-                    if (!(in >> ch) || ch != '-') {
-                        goto cont;
-                    }
-                }
-                // noskipws is required, or the char will be eaten automagically by features that otherwise would be a
-                // convenience
-                if (!(in >> std::noskipws >> ch) || (ch != '\n' && ch != '\r')) {
-                    goto cont;
-                }
-
-                in.close();
                 // we have a frontmatter, or at least something that is frontmatter-shaped.
                 // It may still be malformed, but this will be addressed by processFile()
-                success &= processFile(rootDir, relPath, ProcessedFileType::Html);
-                return;
+                auto result = processFileIfFrontmatterIsPresent(
+                    p,
+                    rootDir,
+                    relPath,
+                    ProcessedFileType::Html
+                );
+                if (result.has_value()) {
+                    success &= *result;
+                    return;
+                }
+                // If the result has no value, fall back to standard copyRaw
             } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
                 // TODO: handle specially
             }
