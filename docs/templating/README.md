@@ -14,6 +14,13 @@ Violet provides two ways to provide templates for pages:
 
 These two can live together: project-local templates take precedence over the active theme, and can be used to extend and existing theme. A whole site can also be implemented entirely without a theme using exclusively project-local templates.
 
+## Special includes
+
+Violet has a couple special includes you can use.
+
+* Page content (usually raw HTML): `{% include "content" %}`
+* Partials: `{% include "partials/partial_name.inja" %}`
+
 ## Extra functions
 
 Violet provides many extra functions on top of the inja builtins. See [Extra functions](/templating/functions/README.md) and its subpages.
@@ -36,7 +43,7 @@ As currently implemented, there are a fair few things you need to keep track of 
 
 ### `{{ site.prefix }}` must be present on all absolute internal URLs in templates
 
-This does not apply to links in markdown, it exclusively applies to links in the inja templates. 
+This does not apply to links in markdown, it exclusively applies to links in the inja templates.
 
 When writing an absolute link, you must specify `{{ site.prefix }}`. Even if your deployment lies on `/`, `-l` for local development overwrites the site prefix to be the full path to the build directory, so all your local things work.
 
