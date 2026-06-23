@@ -206,7 +206,7 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
     const std::filesystem::path& relPath,
     ProcessedFileType fileType
 ) {
-    // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 7
+    // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 4
     // bytes rather than potentially an entire gigabyte-sized single-line file (unlikely to ever come up,
     // but might as well)
     std::ifstream in(file);
