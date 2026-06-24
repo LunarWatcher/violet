@@ -44,8 +44,6 @@ Paginator::Paginator(
             ) {
                 return;
             }
-            // TODO: this does not handle HTML files without frontmatter. This could probably be resolved by an optional
-            // return from loadMetadata
             auto filePath = std::filesystem::relative(
                 entryPath,
                 fileMan.getRootFolder()
