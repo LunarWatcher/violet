@@ -35,11 +35,19 @@ struct Frontmatter {
     std::string internalUrl;
     std::string internalPath;
 
+    bool isAsset = false;
+
     void withFilePath(
         const std::filesystem::path& source
     ) {
         if (!title) {
             title = source.filename().replace_extension();
+        }
+
+        auto ext = source.extension();
+        if (ext == ".js" || ext == ".mjs" || ext == ".css") {
+            isAsset = true;
+            layout = "";
         }
 
         internalPath = source.string();

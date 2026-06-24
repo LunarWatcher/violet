@@ -3,6 +3,8 @@
 namespace violet {
 enum class ProcessedFileType {
     Html,
-    Markdown
+    Markdown,
+    Xml,
+    Asset
 };
 }

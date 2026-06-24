@@ -70,16 +70,24 @@ std::string InjaManager::renderPage(
         });
     }
 
-    inja::Template content = env.parse(fileContent);
-    env.include_template("content", content);
+    if (!fm.isAsset) {
+        inja::Template content = env.parse(fileContent);
+        env.include_template("content", content);
 
-    return env.render_file(
-        this->fileManager.resolveTemplate(
-            fm.type,
-            fm.layout
-        ),
-        context
-    );
+        return env.render_file(
+            this->fileManager.resolveTemplate(
+                fm.type,
+                fm.layout
+            ),
+            context
+        );
+    } else {
+        inja::Template content = env.parse(fileContent);
+        return env.render(
+            fileContent,
+            context
+        );
+    }
 }
 
 }

@@ -157,6 +157,16 @@ bool SiteGenerator::processFile(
     content << in.rdbuf();
 
     switch (type) {
+    case ProcessedFileType::Asset: {
+        minilog::debug("Loaded file is an asset with frontmatter. Doing minimal template parsing");
+        std::string fileContent = content.str();
+
+        handleTemplatesAndSave(
+            std::move(fileContent),
+            relPath,
+            parsedFrontmatter
+        );
+    } break;
     case ProcessedFileType::Html: {
         minilog::debug("Loaded file is HTML with frontmatter.");
         std::string fileContent = content.str();
@@ -193,6 +203,16 @@ bool SiteGenerator::processFile(
             std::move(parsedPage.parsedContents),
             fm.internalUrl,
             fm
+        );
+    } break;
+    case violet::ProcessedFileType::Xml: {
+        minilog::debug("Loaded file is HTML with frontmatter.");
+        std::string fileContent = content.str();
+
+        handleTemplatesAndSave(
+            std::move(fileContent),
+            relPath,
+            parsedFrontmatter
         );
     } break;
     }
@@ -295,8 +315,6 @@ bool SiteGenerator::generate() {
                 success &= processFile(rootDir, relPath, ProcessedFileType::Markdown);
                 return;
             } else if (ext == ".html") {
-                // we have a frontmatter, or at least something that is frontmatter-shaped.
-                // It may still be malformed, but this will be addressed by processFile()
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
                     rootDir,
@@ -307,9 +325,28 @@ bool SiteGenerator::generate() {
                     success &= *result;
                     return;
                 }
-                // If the result has no value, fall back to standard copyRaw
+            } else if (ext == ".atom" || ext == ".xml" || ext == ".rss") {
+                auto result = processFileIfFrontmatterIsPresent(
+                    p,
+                    rootDir,
+                    relPath,
+                    ProcessedFileType::Xml
+                );
+                if (result.has_value()) {
+                    success &= *result;
+                    return;
+                }
             } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
-                // TODO: handle specially
+                auto result = processFileIfFrontmatterIsPresent(
+                    p,
+                    rootDir,
+                    relPath,
+                    ProcessedFileType::Asset
+                );
+                if (result.has_value()) {
+                    success &= *result;
+                    return;
+                }
             }
         cont:
             fileManager.copyRaw(rootDir, relPath, relPath);

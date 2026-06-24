@@ -63,6 +63,7 @@ public:
                 f.tellg()
             );
             this->fileToMetadataCache[relPath.string()] = metadata;
+
         }
 
         return OpenData {
