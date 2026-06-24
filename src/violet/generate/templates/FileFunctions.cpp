@@ -48,6 +48,10 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
                 filePath
             );
 
+            if (metadata.frontmatter.isAsset) {
+                return;
+            }
+
             const auto& taxonomies = metadata.frontmatter.taxonomies;
             if (auto it = taxonomies.find(taxonomy); it != taxonomies.end()) {
                 auto& vec = it->second;
@@ -104,7 +108,9 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
             );
-            pages.push_back(metadata.frontmatter);
+            if (!metadata.frontmatter.isAsset) {
+                pages.push_back(metadata.frontmatter);
+            }
         }
     );
     return pages;
@@ -152,6 +158,10 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
             );
+
+            if (metadata.frontmatter.isAsset) {
+                return;
+            }
 
             nlohmann::json* next = &pages;
 
