@@ -10,6 +10,8 @@
 ### Added
 
 * Horizontal rules are now supported (`---` separators)
+* Allowed RSS/ATOM (`.atom`, `.rss`, `.xml`) to be passed through template rendering
+* Allowed some assets (`.css`, `.js`, `.mjs`) to be passed through template rendering. This is a weaker version where no base template is used, i.e. the templates operate directly on the asset. Mainly intended to let `{{ site.prefix }}` be used in CSS files
 
 ### Changed
 
