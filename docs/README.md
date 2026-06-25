@@ -14,6 +14,21 @@
 * Is and will remain AI slop-free
 * Designed to take advantage of markdown features rather than reinventing them with SSG-specific templates for no reason. This improves the writing experience, since the URLs can be standard markdown, and work both in the local editor and after generation.
 * Generally designed to have trivially understandable behaviour
+* Most of what you'd expect from a static site generator
+  * Templates (through the jinja-inspired library [inja](https://github.com/pantor/inja/))
+  * Markdown to HTML converter, based on a custom markdown parser with a few minor differences from major implementations, largely down to strictness. Markdown is a markup language, and in this implementation, invalid markup is an error.
+    * Frontmatter in violet is JSON-based
+  * Paginated page lists allow for long lists to be spread across pages
+  * File iteration functions let you make your own custom lists if the built-in lists don't work for your use - but these do not paginate. The same functions are used to generate RSS or Atom feeds.
+* Common sense path translations so stuff ends up where you'd expect
+
+  One of my greatest annoyances I had with hugo (back before it turned to AI slop) was the incredible complexity required to figure out which god damn template file is being used to render this one particular file, and where the actual fuck my files ended up being placed. Hugo tries to abstract a lot of its file generation away with templating that should make it easy to work with, but that end up doing the exact opposite. Violet has therefore been intentionally designed to avoid the lookup hell that is hugo's design
+  * There are up to 4 possible lookup locations for templates - 2 if you don't use a theme. This number will never increase.
+    * Lookup semantics are well-defined based on a `type` and a `layout`, both of which are configurable in frontmatter. File names, folder names, or other path components will never influence the lookup location.
+    * Violet trades potentially more verbose frontmatter under extremely specific scenarios for the ability to actually understand what violet does when generating a site.
+  * Beyond converting `.md` to `.html`, and converting to a more URL-friendly format (spaces become -, letters are lower-cased, and non-ascii chars are stripped), no major changes are made. If you want a specific path structure, you need to provide that in the source medium.
+  * Your folder format affects the templates, but because you're in control of most of the methods for handling the file tree, this doesn't violently break violet.
+  * Non-automated Atom and RSS feeds that can be arbitrarily composed, so you don't have to wonder if/where violet put the feed. Means more manual setup the first time you make an RSS or atom feed, but means you also get to control precisely what goes into
 
 ### Goals
 
