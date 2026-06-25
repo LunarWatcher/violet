@@ -24,7 +24,8 @@ For the most part, the logic is the same as for HTML and markdown files, which i
   * WARNING: The sample feed lies. It uses `url:uuid`, which is invalid, but a later link buried on this page ([this one](https://web.archive.org/web/20110915110202/http://diveintomark.org/archives/2004/05/28/howto-atom-id#nourn)) describes why url links shouldn't be used. This is a huge oversight by the w3c. TL;DR: use links, not UUIDs. Violet cannot generate stable UUIDs anyway, so links are much more stable.
 * Atom validator: [https://validator.w3.org/feed/check.cgi](https://validator.w3.org/feed/check.cgi)
 
-## Example (Atom feed, no base template)
+## Examples
+### Atom feed with no base template
 
 This example shows an atom feed with no base template, so everything is contained within a single file. See the comments for more info about the violet-specific functions; the atom bits are the bare minimum to get past validation
 
@@ -86,13 +87,72 @@ This example shows an atom feed with no base template, so everything is containe
             <!-- My reference site only has one author. You can use {{ entry.data }} if you have a multi-author site. -->
             <author>
                 <name>Olivia</name>
-                <email>oliviawolfie@pm.me</email>
+                <email>email@example.com</email>
             </author>
         </entry>
     {% endfor %}
 </feed>
 ```
 
-## Example (RSS)
+### Atom feed using template
+
+This example is the same in principle as the standalone example. Its comments apply here as well, and have not been duplicated. However, it relies far more heavily on `{{ page.data }}`, and rather than copying it into its final destination, we put it in `_templates/_default/feed.inja`:
+```inja
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>{{ site.name }} - {{ page.data.name }}</title>
+    <link href="{{ site.data.domain }}/{{ page.url }}" rel="self" />
+    <!-- Technically, you can have https://example.com/feed.atom that provides a feed for https://example.com/blog.
+    Also, violet does not yet provide anything that lets you strip components from a URL, so this is a cheap workaround
+    -->
+    <link href="{{ site.data.domain }}{{ page.data.for-scope }}" />
+    <id>{{ site.data.domain }}/{{ page.url }}</id>
+    <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+
+    {% for entry in listPagesPaginated(page, ".", violet.sort.by_last_modified_date) %}
+        <entry>
+            <title><![CDATA[{{ entry.title }}]]></title>
+            <link rel="alternate" href="{{ site.data.domain }}/{{ entry.url }}" />
+            <id>{{ site.data.domain }}/{{ entry.url }}</id>
+
+            {% if existsIn(entry, "date") %}
+                <published>{{ formatDate(entry.date, violet.datetime.iso) }}</published>
+            {% else %}
+                <published>{{ formatDate(now(), violet.datetime.iso) }}</published>
+            {% endif %}
+            {% if existsIn(entry, "last_modified") %}
+                <updated>{{ formatDate(entry.last_modified, violet.datetime.iso) }}</updated>
+            {% else if existsIn(entry, "date") %}
+                <updated>{{ formatDate(entry.date, violet.datetime.iso) }}</updated>
+            {% else %}
+                <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+            {% endif %}
+            {% if existsIn(entry, "summary") %}
+                <summary><![CDATA[{{ entry.summary }}]]></summary>
+            {% endif %}
+            <author>
+                <name>Olivia</name>
+                <email>email@example.com</email>
+            </author>
+        </entry>
+    {% endfor %}
+</feed>
+```
+
+Now, `/blog/feed.atom` becomes the much shorter:
+```xml
+---
+{
+    "data": {
+        "name": "blog posts",
+        "for-scope": "/posts/"
+    }
+}
+---
+```
+
+... no, really, that's it. Now you can make multiple feeds. Due to the use of the "." scope, they'll all generate relative to the location of the final `feed.atom`.
+
+### RSS feed
 
 I did not implement an RSS feed, so I'm unable to provide an example :( If you make one, consider opening a PR? :) 
