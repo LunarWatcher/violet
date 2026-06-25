@@ -25,6 +25,19 @@ For the most part, the logic is the same as for HTML and markdown files, which i
 * Atom validator: [https://validator.w3.org/feed/check.cgi](https://validator.w3.org/feed/check.cgi)
 
 ## Examples
+
+### Linking to a feed
+
+Links work exactly the way you'd expect; if you have `blog/feed.atom`, you'll find it at `/blog/feed.atom` on the rendered site.
+
+If you want to link to your feeds in your `<head>`, you'd do it like you'd load a CSS or JS file, though I prefer using 
+```
+<link rel="alternate"
+   title="Olivia's silly blog :3 - blog posts"
+   type="application/atom+xml"
+   href="{{ site.data.domain }}/posts/feed.atom" />
+```
+
 ### Atom feed with no base template
 
 This example shows an atom feed with no base template, so everything is contained within a single file. See the comments for more info about the violet-specific functions; the atom bits are the bare minimum to get past validation
@@ -151,8 +164,49 @@ Now, `/blog/feed.atom` becomes the much shorter:
 ---
 ```
 
-... no, really, that's it. Now you can make multiple feeds. Due to the use of the "." scope, they'll all generate relative to the location of the final `feed.atom`.
+... no, really, that's it. Now you can make multiple feeds. Due to the use of the "." scope, they'll all generate relative to the location of the final `feed.atom`. Unfortunately, you now can't make RSS feeds
 
 ### RSS feed
 
-I did not implement an RSS feed, so I'm unable to provide an example :( If you make one, consider opening a PR? :) 
+I did not implement an RSS feed, so I'm unable to provide an example :( If you make one, consider opening a PR? :)
+
+### Combined feed
+
+At this time, the only way to create a combined feed is to repeat the same process as for a single feed multiple times. Atom feeds [fortunately do not require a specific order](https://datatracker.ietf.org/doc/html/rfc4287#section-4.1.1), so this is technically legal, but not optimal. Doing it with multiple manual entries does mean that the feed _will_ always contain at least N elements from each feed, though, so it's not all bad.
+
+Here's an abridged example based on the Atom feed example, using the file `/combined.atom`:
+```inja
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>{{ site.name }} - {{ page.data.name }}</title>
+    <link href="https://example.com/combined.atom" rel="self" />
+    <link href="https://example.com" />
+    <id>{{ site.data.domain }}/combined.atom</id>
+    <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+
+    <!-- The second argument is now used to iterate subfolders of the root rather than the entire root
+    You can in theory iterate the root as well, but this really depends on your site and its needs.
+    For my use, I avoid iterating the root since I have non-blog content I don't want in the feed.
+    -->
+    {% for entry in listPagesPaginated(site, "blog", violet.sort.by_last_modified_date, 10) %}
+        <entry>
+            <!-- Entry content omitted for brevity -->
+        </entry>
+    {% endfor %}
+
+    {% for entry in listPagesPaginated(site, "til", violet.sort.by_last_modified_date, 10) %}
+        <entry>
+            <!-- Entry content omitted for brevity -->
+        </entry>
+    {% endfor %}
+
+    {% for entry in listPagesPaginated(site, "notes", violet.sort.by_last_modified_date, 10) %}
+        <entry>
+            <!-- Entry content omitted for brevity -->
+        </entry>
+    {% endfor %}
+</feed>
+```
+
+The extra parameter to `listPagesPaginated` (the `10`) is the page size. We reduce it to 10 here purely to avoid getting up to 150 elements in the final combined feed. How you go about this is up to you.
+
