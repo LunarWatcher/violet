@@ -28,7 +28,7 @@ void FileManager::copyRaw(
     );
 }
 
-std::filesystem::path FileManager::resolveTemplate(
+std::optional<std::filesystem::path> FileManager::resolveTemplate(
     const std::string& type,
     const std::string& layout
 ) {
@@ -50,16 +50,10 @@ std::filesystem::path FileManager::resolveTemplate(
         paths.push_back(themeDir / "_templates" / "_default");
     }
 
-    auto filePath = stc::FileUtil::findFile(
+    return stc::FileUtil::findFile(
         paths,
         file
     );
-
-    if (!filePath) {
-        throw std::runtime_error("Failed to resolve " + file);
-    }
-
-    return *filePath;
 }
 void FileManager::copyThemeFiles() {
     assertReady();

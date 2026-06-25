@@ -19,7 +19,7 @@ struct ListingFrontmatter {
 struct Frontmatter {
     std::optional<std::string> title;
     std::string type;
-    std::string layout;
+    std::optional<std::string> layout;
 
     std::optional<int64_t> date;
     std::optional<int64_t> last_modified;
@@ -83,6 +83,12 @@ struct Frontmatter {
             internalPath,
             *title,
             internalUrl
+        );
+    }
+
+    std::string getLayout() const noexcept {
+        return layout.value_or(
+            internalFileType == ProcessedFileType::Xml ? "feed" : "single_page"
         );
     }
 };

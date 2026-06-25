@@ -49,7 +49,9 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     }
 
     dest.type = src.value("type", "_default");
-    dest.layout = src.value("layout", "single_page");
+    if (auto it = src.find("layout"); it != src.end() && !it->is_null()) {
+        dest.layout = src.at("layout").get<std::string>();
+    }
 
     if (auto it = src.find("date"); it != src.end() && !it->is_null()) {
         if (it->is_string()) {
@@ -73,7 +75,7 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     }
 
     if (auto it = src.find("listing"); it != src.end() && !it->is_null()) {
-        if (dest.layout != "page_list") {
+        if (dest.getLayout() != "page_list") {
             throw std::runtime_error("listing supplied when layout != page_list");
         }
         dest.listing = it->get<ListingFrontmatter>();
@@ -105,7 +107,7 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     // NOLINTNEXTLINE(bugprone-unchecked-optional-access): it's forced true by the time this is called.
     dest["title"] = *src.title;
     dest["type"] = src.type;
-    dest["layout"] = src.layout;
+    dest["layout"] = src.getLayout();
     if (src.date) {
         dest["date"] = src.date;
     }

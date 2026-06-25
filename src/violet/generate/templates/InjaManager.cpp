@@ -2,6 +2,7 @@
 #include "inja/environment.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/data/VioletGlobal.hpp"
+#include "violet/generate/ProcessedFileType.hpp"
 #include "violet/paginator/Paginator.hpp"
 
 #include <filesystem>
@@ -73,14 +74,30 @@ std::string InjaManager::renderPage(
     }
 
     if (!fm.isAsset) {
+        auto templateLocation = this->fileManager.resolveTemplate(
+            fm.type,
+            fm.getLayout()
+        );
+        if (!templateLocation.has_value()) {
+            if (fm.internalFileType == ProcessedFileType::Xml) {
+                return env.render(
+                    fileContent,
+                    context
+                );
+            } else {
+                throw std::runtime_error(
+                    std::format(
+                        "Failed to find template for type {}/layout {}",
+                        fm.type,
+                        fm.getLayout()
+                    )
+                );
+            }
+        }
         inja::Template content = env.parse(fileContent);
         env.include_template("content", content);
-
         return env.render_file(
-            this->fileManager.resolveTemplate(
-                fm.type,
-                fm.layout
-            ),
+            *templateLocation,
             context
         );
     } else {

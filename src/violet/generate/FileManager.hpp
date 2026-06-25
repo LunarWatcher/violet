@@ -24,7 +24,7 @@ public:
         cfg(cfg)
     {}
 
-    std::filesystem::path resolveTemplate(
+    std::optional<std::filesystem::path> resolveTemplate(
         const std::string& type,
         const std::string& layout
     );
