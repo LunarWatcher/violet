@@ -1,6 +1,7 @@
 #include "violet/conf/Config.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/conf/ThemeConfig.hpp"
+#include "violet/data/Constants.hpp"
 #include "violet/parsing/DateTimeParsing.hpp"
 
 void violet::from_json(const nlohmann::json& src, Config& dest) {
@@ -85,7 +86,7 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
         dest.data = *it;
     }
     // TODO: not sure if we want this
-    if (auto it = src.find("violet_internals.path"); it != src.end()) {
+    if (auto it = src.find(violet::constants::InternalPathRef); it != src.end()) {
         dest.internalPath = *it;
     }
     if (auto it = src.find("summary"); it != src.end() && !it->is_null()) {
@@ -122,7 +123,7 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     dest["taxonomies"] = src.taxonomies;
 
     dest["data"] = src.data;
-    dest["violet_internals.path"] = src.internalPath;
+    dest[violet::constants::InternalPathRef] = src.internalPath;
     dest["url"] = src.internalUrl;
     dest["table_of_contents"] = src.tableOfContents;
     if (src.summary) {

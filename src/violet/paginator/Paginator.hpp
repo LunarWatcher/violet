@@ -16,7 +16,7 @@ private:
 
     friend class iterator;
 public:
-    const Frontmatter& pageFm;
+    const std::filesystem::path basePath;
     FileManager& fileMan;
 
     struct iterator {
@@ -80,7 +80,7 @@ public:
     );
 
     Paginator(
-        const Frontmatter& pageFm,
+        const std::filesystem::path& owningFilePath,
         FileManager& fileMan,
         MetadataCache& metaCache,
         size_t pageSize,

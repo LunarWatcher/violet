@@ -3,6 +3,7 @@
 #include "InjaManager.hpp"
 #include "violet/algorithm/SortMethod.hpp"
 #include "violet/conf/Frontmatter.hpp"
+#include "violet/data/Constants.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
 
 namespace violet {
@@ -85,7 +86,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
     // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
     // bad
     auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at("violet_internals.path")
+        frontmatter.at(violet::constants::InternalPathRef)
     };
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
@@ -137,7 +138,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
     // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
     // bad
     auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at("violet_internals.path")
+        frontmatter.at(violet::constants::InternalPathRef)
     };
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
@@ -208,7 +209,7 @@ nlohmann::json FileFunctions::paginatedUrl(inja::Arguments& args) {
 }
 
 nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
-    const auto frontmatter = args.at(0)->get<Frontmatter>();
+    const auto& frontmatter = *args.at(0);
     const auto scope = args.at(1)->get<std::string>();
     // TODO: this is technically 
     const auto sortMethod = safeCastEnum<SortMethod>(
@@ -232,7 +233,7 @@ nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
 
 
     Paginator pag {
-        frontmatter,
+        frontmatter.at(violet::constants::InternalPathRef),
         this->man.fileManager,
         this->man.metaCache,
         pageSize,

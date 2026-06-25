@@ -69,7 +69,7 @@ std::string InjaManager::renderPage(
             { "page", pagIt->getPage() + 1 },
             { "total_pages", pagIt->getTotalPages() },
             { "pages", std::move(pages) },
-            { "base_path", std::filesystem::path(pagIt->paginator.pageFm.internalUrl).parent_path().string() },
+            { "base_path", std::filesystem::path(pagIt->paginator.basePath).parent_path().string() },
         });
     }
 

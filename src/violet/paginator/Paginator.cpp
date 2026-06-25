@@ -12,7 +12,7 @@ Paginator::Paginator(
     const std::filesystem::path& prefix,
     SortMethod sortMethod
 ) : Paginator(
-    pageFm,
+    pageFm.internalPath,
     fileMan,
     metaCache,
     // NOLINTNEXTLINE(bugprone-unchecked-optional-access): this constructor signature is only defined for listings
@@ -21,14 +21,14 @@ Paginator::Paginator(
     sortMethod
 ) {}
 Paginator::Paginator(
-    const Frontmatter& pageFm,
+    const std::filesystem::path& owningFilePath,
     FileManager& fileMan,
     MetadataCache& metaCache,
     size_t pageSize,
     const std::filesystem::path& prefix,
     SortMethod sortMethod
 )
-    : pageFm(pageFm),
+    : basePath(owningFilePath),
       fileMan(fileMan),
       pageSize(pageSize)
 {
@@ -47,7 +47,7 @@ Paginator::Paginator(
     // TODO: support scoping so /index.md can be an index for /posts/*
     // TODO: error handling
     auto path = fileMan.getRootFolder() / std::filesystem::path {
-        pageFm.internalPath
+        owningFilePath
     };
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();

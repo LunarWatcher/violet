@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/data/Constants.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -22,7 +23,7 @@ struct Config {
     nlohmann::json raw;
 
     void imbueRoot(const std::filesystem::path& root) {
-        raw["violet_internals.path"] = root.string();
+        raw[violet::constants::InternalPathRef] = root.string();
     }
 };
 
