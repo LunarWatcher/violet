@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>{{ site.name }} - {{ page.data.name }}</title>
+    <link href="{{ site.data.domain }}/{{ page.url }}" rel="self" />
+    <link href="{{ site.data.domain }}{{ page.data.for-scope }}" />
+    <id>{{ site.data.domain }}/{{ page.url }}</id>
+    <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+
+    {% for entry in listPagesPaginated(page, ".", violet.sort.by_last_modified_date) %}
+        <entry>
+            <title><![CDATA[{{ entry.title }}]]></title>
+            <link rel="alternate" href="{{ site.data.domain }}/{{ entry.url }}" />
+            <id>{{ site.data.domain }}/{{ entry.url }}</id>
+
+            {% if existsIn(entry, "date") %}
+                <published>{{ formatDate(entry.date, violet.datetime.iso) }}</published>
+            {% else %}
+                <published>{{ formatDate(now(), violet.datetime.iso) }}</published>
+            {% endif %}
+            {% if existsIn(entry, "last_modified") %}
+                <updated>{{ formatDate(entry.last_modified, violet.datetime.iso) }}</updated>
+            {% else if existsIn(entry, "date") %}
+                <updated>{{ formatDate(entry.date, violet.datetime.iso) }}</updated>
+            {% else %}
+                <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+            {% endif %}
+            {% if existsIn(entry, "summary") %}
+                <summary><![CDATA[{{ entry.summary }}]]></summary>
+            {% else %}
+                <summary>No summary available! :(</summary>
+            {% endif %}
+            <author>
+                <name>{{ site.data.author.name }}</name>
+                <email>{{ site.data.author.email }}</email>
+            </author>
+        </entry>
+    {% endfor %}
+</feed>

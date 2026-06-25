@@ -28,7 +28,40 @@ The default theme vendors [highlightjs](https://github.com/highlightjs/highlight
             "name": "LunarWatcher/violet",
             "url": "https://codeberg.org/LunarWatcher/violet",
             "license": "Optional text describing the license. <a href=\"https://example.com\">Supports HTML</a>"
+        },
+        // Only used by the default feed template, and only required when your site contains a `.atom` file with frontmatter
+        "domain": "https://example.com",
+        // Only used by the default feed template, and only required when your site contains a `.atom` file with frontmatter
+        "author": {
+            "name": "Your name",
+            "email": "Your email"
         }
     }
 }
 ```
+
+## Feeds
+
+The default theme includes a basic Atom template. To create an atom file for, for example, a blog, create `blog/feed.atom` (or equivalent where you have your blog posts) with the content:
+```xml
+---
+{
+    "data": {
+        "name": "Blog posts",
+        "domain": "https://example.com",
+        "for-scope": "/blog/"
+    }
+}
+---
+```
+
+The data fields are:
+
+* `name`: The name of your feed. Only used internally in the feed.
+* `domain`: The domain the feed is rendered at.
+* `for-scope`: An absolute path to the root content directory of feed, i.e. the path where the content is grouped together.
+
+> [!tip]
+> If site generation fails after adding an RSS feed, you may be missing the `domain` and/or `author` keys in your `violet.json`. See [the config options for the default theme](#config-options)
+
+RSS feeds are not part of the default theme, nor is linking to the RSS feed from the `<head>`. If you need the RSS functionality, I strongly recommend creating a new theme. Changes that automate additions to `<head>` may be added in the future, but will likely still be manual and `data`-based.

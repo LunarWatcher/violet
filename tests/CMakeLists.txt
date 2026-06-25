@@ -1,8 +1,11 @@
 add_executable(tests
     src/Main.cpp
 
+    src/fixtures/LoadWorkspace.cpp
+    src/fixtures/TestSiteGenerator.cpp
+
     src/integration/BasicSiteGenerationTests.cpp
-    src/integration/PaginationTests.cpp
+    src/integration/BlogIntegrationTests.cpp
 
     src/parsing/FootnoteTests.cpp
     src/parsing/ListTests.cpp
@@ -18,11 +21,13 @@ add_executable(tests
     src/parsing/markdown/ImageTests.cpp
     src/parsing/markdown/TemplateParsing.cpp
     src/parsing/markdown/ToCGenerationTests.cpp
+
+    src/utils/FileReader.cpp
 )
 
 Include(FetchContent)
 
-set(CATCH_CONFIG_DEFAULT_REPORTER "explicit" CACHE STRING "" FORCE)
+# set(CATCH_CONFIG_DEFAULT_REPORTER "explicit" CACHE STRING "" FORCE)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git

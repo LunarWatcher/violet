@@ -11,6 +11,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
 
+{{ page.table_of_contents }}
+
+
 ## [unreleased]
 
 ### Added
@@ -25,10 +28,12 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Templates: Added `listPagesPaginated`, which is used for listing out pages of content.
 * Redesigned and implemented the RSS strategy to require manual setup of the feeds, with some modifications in the defaults for RSS and Atom feeds' templates.
   * See [RSS and atom feeds](/RSS and atom feeds.md)
+* New command: `violet version`
 
 ### Changed
 
 * Internal: Switch from stc minilog to standalone minilog (better logging, woo)
+* Internal: Moved `--debug` into a standard function to avoid duplicating logic
 
 
 ## [v0.4.0]

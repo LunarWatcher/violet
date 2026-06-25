@@ -1,4 +1,11 @@
 {
     "name": "Test blog",
-    "description": "Used for simulating a blog in unit and integraiont tests"
+    "description": "Used for simulating a blog in unit and integration tests",
+    "data": {
+        "domain": "https://example.com",
+        "author": {
+            "name": "Olivia",
+            "email": "email@example.com"
+        }
+    }
 }

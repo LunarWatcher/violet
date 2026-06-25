@@ -1,0 +1,9 @@
+---
+{
+    "data": {
+        "name": "Blog posts",
+        "domain": "https://example.com",
+        "for-scope": "/blog/"
+    }
+}
+---

@@ -14,22 +14,7 @@ struct TestSiteGenerator {
     TestSiteGenerator(
         SiteVariant site,
         const std::string& buildDirectoryName = "pages"
-    ) :
-        workspace(site, buildDirectoryName),
-        opts({
-            .watch = false,
-            .outputFolder = workspace.rootDirectory / buildDirectoryName,
-            .overridePrefixForLocalUse = true,
-            .root = workspace.rootDirectory,
-        })
-    {
-        auto result = violet::SiteGenerator::loadWorkspace(
-            opts
-        );
-        REQUIRE(result.has_value());
-
-        this->gen = *result;
-    }
+    );
 
     violet::SiteGenerator* operator*() { return gen.get(); }
     violet::SiteGenerator* operator->() { return gen.get(); }
@@ -37,10 +22,8 @@ struct TestSiteGenerator {
     const std::filesystem::path& buildPath() { return workspace.buildDirectory.folder; }
     const std::filesystem::path& sourcePath() { return workspace.rootDirectory; }
 
-    void assertGenerated() {
-        INFO("gen->generate must be called before this section is declared");
-        REQUIRE(std::filesystem::exists(buildPath()));
-    }
+    void generateWithAsserts();
+    void assertGenerated();
 };
 
 }

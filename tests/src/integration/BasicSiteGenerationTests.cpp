@@ -5,7 +5,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <filesystem>
-#include <thread>
 #include <violet/generate/SiteGenerator.hpp>
 
 TEST_CASE("Basic site tests") {

@@ -1,9 +1,5 @@
 # Contribution guidelines
 
-This file is mostly aimed at developers, and primarily describes the setup required for development, and project-specific things to think about when contributing code. For general open-source contribution guidelines, see [opensource.guide](//opensource.guide). The guidelines listed under "Basic guidelines" do apply to all forms of contributions, including issues.
-
-This file will not go into detail on how to write issues. Any important details that need to be included (if any) will be part of an issue template, selectable when you create an issue. If none exists for your use-case (or at all), use common sense. I do strongly suggest reading [the section on communicating effectively on opensource.guide](https://opensource.guide/how-to-contribute/#communicating-effectively) if you're wondering how to write good issues. There's nothing anyone could write here that isn't covered there and in thousands of other resources around the internet in far greater detail.
-
 ## Basic guidelines
 
 ### Use of generative AI is banned
@@ -18,9 +14,15 @@ The `_default` theme is explicitly designed to be minimal, to be the bare minimu
 
 By all means, make a theme - but only _very_ special themes get added to the core, and only the bare minimum of features gets added to the existing built-in themes.
 
-### Pull requests only go to one codeforge
+### Development contributions
+
+#### Pull requests only go to one codeforge
 
 This repo is primarily hosted on [Codeberg](https://codeberg.org/LunarWatcher/violet), but is also available on [GitHub](https://github.com/LunarWatcher/violet), where CI resources are used. Pull requests are preferred on Codeberg, but are also accepted on GitHub. However, do not make a pull request to both - I'll deal with syncing the two after merging.
+
+#### Update the changelog
+
+Add whatever changes you made to `docs/CHANGELOG.md`. There's no exact science to what to write there, but note that it is meant to communicate changes to users.
 
 ## Development setup
 
@@ -34,7 +36,7 @@ cmake --build .
 
 ### Running tests
 
-```
+```bash
 cmake --build . --target test
 ```
 
@@ -73,4 +75,10 @@ Because CMake:tm:, a manual list of files has to be maintained. Modify `themes/C
 For now, the doc page is published manually using `scripts/publish.sh`. Running it uses the locally built violet (or one in the PATH if the local one isn't found) to generate and push the page to Codeberg pages.
 
 This script will eventually probably also publish to GitHub, but it's currently just a proof of concept.
+
+### Releases
+
+Releases are made on both codeberg and github. The GitHub release is required for GitHub Actions-based workflows to work, and it has its assets created automagically. Codeberg currently does not have any assets, because I'm not entirely sure how I want to go about making releases on Codeberg yet since CI stuff is hard.
+
+Don't forget to move the `[unreleased]` changelog section to a named version
 

@@ -8,6 +8,7 @@ set(ASSETS
     _default/_partials/tree_builder.inja
 
     _default/_templates/_default/base.inja
+    _default/_templates/_default/feed.inja
     _default/_templates/_default/page_list.inja
     _default/_templates/_default/single_page.inja
 

@@ -8,12 +8,13 @@ namespace tests {
 
 enum class SiteVariant {
     /**
-     * Standard test site with some fairly common defaults enabled. Most tests should use this site.  
+     * Standard test site with some fairly common defaults enabled. Most tests testing markdown-related stuff should use
+     * this site.
      */
     BaseTestSite,
 
     /**
-     * Standard test site modelled after a blog  
+     * Standard test site modelled after a blog. Includes a feed and pagination features
      */
     BlogTestSite,
 };
@@ -35,16 +36,7 @@ struct LoadWorkspace {
         return std::filesystem::path{TEST_ROOT_PATH} / "sites" / resolveSite(site);
     }
 
-    std::string resolveSite(SiteVariant site) {
-        switch(site) {
-        case SiteVariant::BaseTestSite:
-            return "test-site";
-        case SiteVariant::BlogTestSite:
-            return "test-blog";
-        }
-
-        throw std::runtime_error("Undefined");
-    }
+    std::string resolveSite(SiteVariant site);
 };
 
 }
