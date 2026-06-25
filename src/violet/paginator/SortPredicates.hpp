@@ -13,6 +13,7 @@ extern bool byLastModifiedDate(
     const Frontmatter* b
 );
 
+// NOLINTNEXTLINE(bugprone-throwing-static-initialization): why the fuck would it?
 inline std::unordered_map<SortMethod, std::function<bool(const Frontmatter*, const Frontmatter*)>> sortMethods = {
     {SortMethod::ByCreationDate, &byCreationDate},
     {SortMethod::ByLastModifiedDate, &byLastModifiedDate},

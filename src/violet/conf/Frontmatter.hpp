@@ -1,6 +1,7 @@
 #pragma once
 
 #include "minilog/minilog.hpp"
+#include "violet/generate/ProcessedFileType.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
 #include <filesystem>
 
@@ -35,19 +36,33 @@ struct Frontmatter {
     std::string internalUrl;
     std::string internalPath;
 
+    ProcessedFileType internalFileType = ProcessedFileType::Uninitialized;
     bool isAsset = false;
 
     void withFilePath(
         const std::filesystem::path& source
     ) {
-        if (!title) {
-            title = source.filename().replace_extension();
-        }
-
-        auto ext = source.extension();
+        auto ext = source.extension().string();
         if (ext == ".js" || ext == ".mjs" || ext == ".css") {
             isAsset = true;
             layout = "";
+            internalFileType = ProcessedFileType::Asset;
+        } else if (ext == ".rss" || ext == ".atom" || ext == ".xml") {
+            internalFileType = ProcessedFileType::Xml;
+        } else if (ext == ".html") {
+            internalFileType = ProcessedFileType::Html;
+        } else if (ext == ".md") {
+            internalFileType = ProcessedFileType::Markdown;
+        } else {
+            throw std::runtime_error(
+                std::format(
+                    "Frontmatter attempted initialized on illegal filetype {}",
+                    ext
+                )
+            );
+        }
+        if (!title) {
+            title = source.filename().replace_extension();
         }
 
         internalPath = source.string();

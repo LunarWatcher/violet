@@ -142,8 +142,7 @@ void SiteGenerator::handleTemplatesAndSave(
 
 bool SiteGenerator::processFile(
     const std::filesystem::path& rootDir,
-    const std::filesystem::path& relPath,
-    ProcessedFileType type
+    const std::filesystem::path& relPath
 ) {
     minilog::debug("Now reading {}", relPath.string());
     auto data = this->metadataCache.openFile(
@@ -156,7 +155,7 @@ bool SiteGenerator::processFile(
     std::stringstream content;
     content << in.rdbuf();
 
-    switch (type) {
+    switch (parsedFrontmatter.internalFileType) {
     case ProcessedFileType::Asset: {
         minilog::debug("Loaded file is an asset with frontmatter. Doing minimal template parsing");
         std::string fileContent = content.str();
@@ -215,6 +214,8 @@ bool SiteGenerator::processFile(
             parsedFrontmatter
         );
     } break;
+    case ProcessedFileType::Uninitialized:
+        throw std::runtime_error("Developer error: internalFileType was not initialized!");
     }
 
     return true;
@@ -223,8 +224,7 @@ bool SiteGenerator::processFile(
 std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
     const std::filesystem::path& file,
     const std::filesystem::path& rootDir,
-    const std::filesystem::path& relPath,
-    ProcessedFileType fileType
+    const std::filesystem::path& relPath
 ) {
     // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 4
     // bytes rather than potentially an entire gigabyte-sized single-line file (unlikely to ever come up,
@@ -256,8 +256,7 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
     // At this point, we have something frontmatter-shaped.
     return processFile(
         rootDir,
-        relPath,
-        fileType
+        relPath
     );
 }
 
@@ -312,14 +311,13 @@ bool SiteGenerator::generate() {
                     return;
                 }
 
-                success &= processFile(rootDir, relPath, ProcessedFileType::Markdown);
+                success &= processFile(rootDir, relPath);
                 return;
             } else if (ext == ".html") {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
                     rootDir,
-                    relPath,
-                    ProcessedFileType::Html
+                    relPath
                 );
                 if (result.has_value()) {
                     success &= *result;
@@ -329,8 +327,7 @@ bool SiteGenerator::generate() {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
                     rootDir,
-                    relPath,
-                    ProcessedFileType::Xml
+                    relPath
                 );
                 if (result.has_value()) {
                     success &= *result;
@@ -340,8 +337,7 @@ bool SiteGenerator::generate() {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
                     rootDir,
-                    relPath,
-                    ProcessedFileType::Asset
+                    relPath
                 );
                 if (result.has_value()) {
                     success &= *result;

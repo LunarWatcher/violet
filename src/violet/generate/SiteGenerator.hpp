@@ -30,8 +30,7 @@ private:
 
     bool processFile(
         const std::filesystem::path& rootDir,
-        const std::filesystem::path& relPath,
-        ProcessedFileType type
+        const std::filesystem::path& relPath
     );
 
     void handleTemplatesAndSave(
@@ -68,8 +67,7 @@ private:
     std::optional<bool> processFileIfFrontmatterIsPresent(
         const std::filesystem::path& file,
         const std::filesystem::path& rootDir,
-        const std::filesystem::path& relPath,
-        ProcessedFileType fileType
+        const std::filesystem::path& relPath
     );
 public:
     ~SiteGenerator() = default;
