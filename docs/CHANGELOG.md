@@ -23,6 +23,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
   * Added `violet.datetime.iso`, which is a shorthand for the `"%FT%H:%M:%OS%Oz"` date format string
   * Added `violet.sort` with two values, which is used with the `listPagesPaginated`
 * Templates: Added `listPagesPaginated`, which is used for listing out pages of content.
+* Redesigned and implemented the RSS strategy to require manual setup of the feeds, with some modifications in the defaults for RSS and Atom feeds' templates.
+  * See [RSS and atom feeds](/RSS and atom feeds.md)
 
 ### Changed
 

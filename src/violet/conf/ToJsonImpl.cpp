@@ -93,10 +93,6 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
 }
 
 void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
-    if (auto it = src.find("rss"); it != src.end() && !it->is_null()) {
-        dest.rss = it->get<std::string>();
-    }
-
     dest.recursive = src.value("recursive", false);
     dest.pageSize = src.value("page_size", 50);
     if (dest.pageSize == 0) {
@@ -134,9 +130,6 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
 
 // TODO: isn't this internal data that we don't want to re-expose again?
 void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {
-    if (src.rss) {
-        dest["rss"] = src.rss;
-    }
     dest["recursive"] = src.recursive;
     dest["page_size"] = src.pageSize;
 }

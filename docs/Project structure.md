@@ -81,15 +81,23 @@ The names of the inja files have special meanings. The currently used files are:
 * `single_page.inja`: Used for individual pages
 * `page_list.inja`: Used for list pages, i.e. pages that list out other pages in the current directory. These also provide foundations for feeds.
 
-### Lookup order
+### Lookup order 
 
-There is no lookup order, and this is a feature. Many other SSGs have complex lookup rules that end up being a pain in the ass to follow.
+
+The lookup order is intentionally kept minimal to avoid wildly complex lookup rules. The lookup rules are currently separated into two categories: assets and everything else.
+
+#### Assets
+
+Assets (CSS and JS) can have frontmatter too. Unlike all the other types, however, they do not respect the standard layout system. This is because it doesn't make sense to do templating in CSS and JS beyond getting in site-specific variables.
+
+#### Everything else (HTML, markdown, RSS and Atom)
 
 * If no `type` is declared in the frontmatter, `_default` is used.
 * If a non-`_default` type is used, but it doesn't contain a given template, the `_default` is sourced.
 * If no template of the corresponding type nor in the `_default` fallback is found, the build fails.
 * If the `type` doesn't map to a folder in `templates` or in the theme, if set, the build fails.
 
+Note that RSS and Atom feeds deviate from HTML and markdown in their default `layout`. For HTML and markdown, the default `layout` is `single_page`. For RSS and Atom, the default `layout` is `feed`. RSS and Atom feeds are additionally allowed to not have a base template, in which case, the file is parsed standalone. See [RSS and atom feeds](/RSS and atom feeds.md#lookup-locations)
 
 ## Partials
 

@@ -44,12 +44,6 @@ Paginated page lists are declared similarly to standard page lists, but are used
 
 On paginated page lists, the pages are available under the [global `listing` variable](/schemas/listing.md).
 
-## Additional features
-
-### RSS
-
-TBA
-
 ## Writing page list templates
 
 See [Templating](/templating/README.md)
