@@ -10,11 +10,14 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `BREAKING:` - changes that require changes as part of an update
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
+* `Theme(theme name)` - changes made to specific themes
 
 {{ page.table_of_contents }}
 
 
 ## [unreleased]
+
+## [v0.5.0] (2026-06-25)
 
 ### Added
 
@@ -29,6 +32,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Redesigned and implemented the RSS strategy to require manual setup of the feeds, with some modifications in the defaults for RSS and Atom feeds' templates.
   * See [RSS and atom feeds](/RSS and atom feeds.md)
 * New command: `violet version`
+* Theme(default): added Atom feed template
 
 ### Changed
 
@@ -52,6 +56,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...master
+[v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://codeberg.org/LunarWatcher/violet/releases/tag/v0.3.0
