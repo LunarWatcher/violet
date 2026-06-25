@@ -42,6 +42,8 @@ struct Frontmatter {
     void withFilePath(
         const std::filesystem::path& source
     ) {
+        internalPath = source.string();
+        internalUrl = source.string();
         auto ext = source.extension().string();
         if (ext == ".js" || ext == ".mjs" || ext == ".css") {
             isAsset = true;
@@ -53,6 +55,19 @@ struct Frontmatter {
             internalFileType = ProcessedFileType::Html;
         } else if (ext == ".md") {
             internalFileType = ProcessedFileType::Markdown;
+
+            std::filesystem::path newPath = source;
+            if (newPath.filename() != "README.md") {
+                newPath = newPath.replace_extension(".html");
+                newPath = newPath.replace_filename(
+                    renameFile(
+                        newPath.filename().string()
+                    )
+                );
+            } else {
+                newPath = newPath.replace_filename("index.html");
+            }
+            internalUrl = newPath;
         } else {
             throw std::runtime_error(
                 std::format(
@@ -64,20 +79,6 @@ struct Frontmatter {
         if (!title) {
             title = source.filename().replace_extension();
         }
-
-        internalPath = source.string();
-        std::filesystem::path newPath = source;
-        if (newPath.filename() != "README.md") {
-            newPath = newPath.replace_extension(".html");
-            newPath = newPath.replace_filename(
-                renameFile(
-                    newPath.filename().string()
-                )
-            );
-        } else {
-            newPath = newPath.replace_filename("index.html");
-        }
-        internalUrl = newPath;
         minilog::debug(
             "Page (path: {}, title: {}) has been assigned output URL {}",
             internalPath,
