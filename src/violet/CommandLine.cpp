@@ -4,23 +4,41 @@
 #include "violet/generate/SiteGenerator.hpp"
 #include <CLI/CLI.hpp>
 
+void violet::withStandardFlags(CLI::App* app) {
+    app->add_flag_function(
+        "-d,--debug",
+        [](bool debug) {
+            // This should never come up, but it's at least nice to provide the option for scripts to use
+            // `--debug=${computed-debug-var}` based on outer scripting logic
+            if (debug) {
+                minilog::setLevel(minilog::Level::Debug);
+            }
+        },
+        "Whether or not to enable verbose debug logging"
+    );
+}
+
 int violet::cliMain(int argc, char** argv) {
-    CLI::App app{
-        "C++-based static site generator"
+    CLI::App app {
+        "C++-based static site generator",
     };
     GenerateOpts generateOpts;
 
     minilog::setLevel(minilog::Level::Info);
-
     app.require_subcommand(1, 1);
 
     argv = app.ensure_utf8(argv);
 
+    auto cmdVersion = app.add_subcommand(
+        "version",
+        "Outputs the version"
+    );
 
     auto cmdGenerate = app.add_subcommand(
         "generate",
         "Converts the input project (always in the working directory) to a generated site"
     );
+    withStandardFlags(cmdGenerate);
     cmdGenerate->add_option(
         "-w,--watch",
         generateOpts.watch,
@@ -34,28 +52,17 @@ int violet::cliMain(int argc, char** argv) {
     )
         ->default_val(generateOpts.overridePrefixForLocalUse);
 
-    cmdGenerate->add_flag_function(
-        "-d,--debug",
-        [](const auto&) {
-            minilog::setLevel(minilog::Level::Debug);
-        },
-        "Whether or not to enable verbose debug logging"
-    );
     auto cmdServe = app.add_subcommand(
         "serve",
         "Currently not implemented, but will exist in the future:tm:"
     );
-    cmdServe->add_flag_function(
-        "-d,--debug",
-        [](const auto&) {
-            minilog::setLevel(minilog::Level::Debug);
-        },
-        "Whether or not to enable verbose debug logging"
-    );
+    withStandardFlags(cmdServe);
 
     CLI11_PARSE(app, argc, argv);
 
-    if (cmdGenerate->parsed()) {
+    if (cmdVersion->parsed()) {
+        std::cout << "violet " << VIOLET_VERSION << std::endl;
+    } else if (cmdGenerate->parsed()) {
         return generateMain(generateOpts);
     } else if (cmdServe->parsed()) {
         std::cout

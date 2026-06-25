@@ -70,6 +70,19 @@ FetchContent_MakeAvailable(
     inja
 )
 
+find_program(GIT git)
+if (GIT)
+    execute_process(COMMAND ${GIT} describe --tags --always
+        OUTPUT_VARIABLE VIOLET_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Detected version: ${VIOLET_VERSION}")
+else()
+    message(WARNING "Git not found. Defaulting to unknown version. This will not have an effect on the program beyond a missing version")
+    set(VIOLET_VERSION "Unknown: Git unavailable at compile time")
+endif()
+add_definitions(-DVIOLET_VERSION="${VIOLET_VERSION}")
+
 add_subdirectory(src)
 add_subdirectory(themes)
 
