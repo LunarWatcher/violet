@@ -111,3 +111,34 @@ Standard practice in URLs is to chain it with `site.prefix` (this will change in
 ```html
 <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, 69) }}>Text</a>"
 ```
+
+## `listPagesPaginated(object, location, sortMethod[, pageSize[, pageNumber]])`
+
+Equivalent to `listPages`, but returns up to `pageSize` entries at page `pageNumber`, as determined by the `sortMethod`. 
+
+Returns an empty list if `pageNumber` exceeds the number of available pages.
+
+### Arguments
+
+#### `object`
+
+The object the location is relative to. Usually `page` or `site`. 
+
+#### `location`
+
+The path relative to the provided object to iterate. 
+
+The page number to get the pages for. 
+
+#### `sortMethod` (enum constant: `violet.sort`)
+
+Must be set to one of the values in the global variable `violet.sort`. See [the spec for the global `violet` variable](/schemas/violet.md#violetsort-enum-constants)
+
+#### `pageSize`
+
+The size of each page. Default value: 50
+
+#### `pageNumber`
+
+The page number to load. Default value: 1
+

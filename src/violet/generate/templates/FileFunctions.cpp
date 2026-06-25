@@ -1,12 +1,18 @@
 #include "FileFunctions.hpp"
 
 #include "InjaManager.hpp"
+#include "violet/algorithm/SortMethod.hpp"
+#include "violet/conf/Frontmatter.hpp"
+#include "violet/generate/templates/ext/SafeCastEnum.hpp"
 
 namespace violet {
 
 FileFunctions::FileFunctions(InjaManager& man) : man(man) {
     man.env.add_callback("listPages", 2, [this](inja::Arguments& args) -> nlohmann::json {
         return listPages(args);
+    });
+    man.env.add_callback("listPagesPaginated",  [this](inja::Arguments& args) -> nlohmann::json {
+        return listPagesPaginated(args);
     });
     man.env.add_callback("treePages", 2, [this](inja::Arguments& args) -> nlohmann::json {
         return treePages(args);
@@ -18,6 +24,7 @@ FileFunctions::FileFunctions(InjaManager& man) : man(man) {
         return listPagesByTaxonomy(args);
     });
 }
+nlohmann::json listPagesPaginated(inja::Arguments& args);
 
 nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
     auto& root = man.fileManager.getRootFolder();
@@ -198,6 +205,56 @@ nlohmann::json FileFunctions::paginatedUrl(inja::Arguments& args) {
 
     ss << "page/" << page << "/index.html";
     return ss.str();
+}
+
+nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
+    const auto frontmatter = args.at(0)->get<Frontmatter>();
+    const auto scope = args.at(1)->get<std::string>();
+    // TODO: this is technically 
+    const auto sortMethod = safeCastEnum<SortMethod>(
+        args.at(2)->get<int>()
+    );
+
+    if (!sortMethod.has_value()) {
+        throw std::runtime_error(
+            "listPagesPaginated got illegal sortMethod. Make sure you're using one of the values in violet.sort."
+        );
+    }
+
+    uint64_t pageSize = 50;
+    uint64_t pageNumber = 1;
+    if (args.size() > 3) {
+        pageSize = *args.at(3);
+    }
+    if (args.size() > 4) {
+        pageNumber = *args.at(4);
+    }
+
+
+    Paginator pag {
+        frontmatter,
+        this->man.fileManager,
+        this->man.metaCache,
+        pageSize,
+        scope,
+        *sortMethod
+    };
+    if (pageNumber == 0) {
+        throw std::runtime_error("Page numbers are 1-indexed");
+    }
+    --pageNumber;
+
+    if (pageNumber >= pag.getTotalPages()) {
+        // Page out of range
+        return {};
+    }
+    nlohmann::json out;
+
+    for (const auto* fm : *pag.page(pageNumber)) {
+        out.push_back(*fm);
+    }
+
+    return out;
 }
 
 }

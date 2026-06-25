@@ -10,6 +10,11 @@ DateTimeFunctions::DateTimeFunctions(InjaManager& man) : man(man) {
     man.env.add_callback("formatDate", [this](inja::Arguments& args) {
         return formatDate(args);
     });
+    man.env.add_callback("now", 0, [this](inja::Arguments&) {
+        return (int64_t) std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::system_clock::now().time_since_epoch()
+        ).count();
+    });
 }
 
 nlohmann::json DateTimeFunctions::formatDate(inja::Arguments& args) {
@@ -20,6 +25,7 @@ nlohmann::json DateTimeFunctions::formatDate(inja::Arguments& args) {
     if (args.size() == 3) {
         timezone = args.at(2)->get<std::string>();
     } else if (args.size() > 3) {
+        // TODO: Create custom error (maybe? or do I just wanwt to handle inja's exceptions better?)
         throw std::runtime_error("formatDate takes 2 or 3 arguments, but got 4");
     }
 

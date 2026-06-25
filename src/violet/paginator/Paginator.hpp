@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/algorithm/SortMethod.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/generate/FileManager.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
@@ -11,6 +12,7 @@ private:
 
     std::vector<const Frontmatter*> fm;
     size_t offset = 0;
+    const size_t pageSize;
 
     friend class iterator;
 public:
@@ -32,12 +34,10 @@ public:
         size_t page;
 
         void setFm() {
-            // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
-            auto pageSize = paginator.pageFm.listing->pageSize;
             fm = {};
-            fm.reserve(pageSize);
+            fm.reserve(paginator.pageSize);
 
-            for (size_t i = offset; i < std::min(offset + pageSize, paginator.fm.size()); ++i) {
+            for (size_t i = offset; i < std::min(offset + paginator.pageSize, paginator.fm.size()); ++i) {
                 fm.push_back(
                     paginator.fm.at(i)
                 );
@@ -52,9 +52,7 @@ public:
         pointer operator->() { return &fm; }
 
         iterator& operator++() {
-            // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
-            auto pageSize = paginator.pageFm.listing->pageSize;
-            offset += pageSize;
+            offset += paginator.pageSize;
             ++page;
 
             if (page != getTotalPages()) {
@@ -65,10 +63,7 @@ public:
         }
 
         bool operator!=(const iterator& other) { return !(*this == other); }
-        bool operator==(const iterator& other) {
-            // TODO: this is ugly as fuck
-            return other.page == this->page;
-        }
+        bool operator==(const iterator& other) { return other.page == this->page; }
 
         size_t getPage() { return page; }
         size_t getTotalPages() {
@@ -79,15 +74,31 @@ public:
     Paginator(
         const Frontmatter& pageFm,
         FileManager& fileMan,
-        MetadataCache& metaCache
+        MetadataCache& metaCache,
+        const std::filesystem::path& prefix = ".",
+        SortMethod sortMethod = SortMethod::ByCreationDate
+    );
+
+    Paginator(
+        const Frontmatter& pageFm,
+        FileManager& fileMan,
+        MetadataCache& metaCache,
+        size_t pageSize,
+        const std::filesystem::path& prefix = ".",
+        SortMethod sortMethod = SortMethod::ByCreationDate
     );
 
     iterator begin() { return iterator(*this, 0); }
     iterator end() { return iterator(*this, getTotalPages()); }
 
+    iterator page(size_t startPage) {
+        if (startPage >= getTotalPages()) {
+            throw std::runtime_error("Illegal start page");
+        }
+        return iterator(*this, startPage);
+    }
+
     size_t getTotalPages() {
-        // NOLINTNEXTLINE(bugprone-unchecked-optional-access): A page must have a listing to initialize a paginator
-        auto pageSize = pageFm.listing->pageSize;
         // TODO: this isn't a great solution
         return std::max<size_t>(
             1,

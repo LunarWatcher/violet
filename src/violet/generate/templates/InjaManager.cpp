@@ -1,6 +1,7 @@
 #include "InjaManager.hpp"
 #include "inja/environment.hpp"
 #include "violet/conf/Frontmatter.hpp"
+#include "violet/data/VioletGlobal.hpp"
 #include "violet/paginator/Paginator.hpp"
 
 #include <filesystem>
@@ -52,6 +53,7 @@ std::string InjaManager::renderPage(
     nlohmann::json context = {
         {"page", fm},
         {"site", this->cfg.raw},
+        {"violet", violet::violet_global}
     };
 
     if (pagIt != nullptr) {
@@ -82,7 +84,6 @@ std::string InjaManager::renderPage(
             context
         );
     } else {
-        inja::Template content = env.parse(fileContent);
         return env.render(
             fileContent,
             context

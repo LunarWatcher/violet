@@ -1,25 +1,48 @@
 #include "Paginator.hpp"
 #include "violet/generate/FileManager.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
+#include "violet/paginator/SortPredicates.hpp"
 
 namespace violet {
 
 Paginator::Paginator(
     const Frontmatter& pageFm,
     FileManager& fileMan,
-    MetadataCache& metaCache
-) : pageFm(pageFm),
-    fileMan(fileMan)
+    MetadataCache& metaCache,
+    const std::filesystem::path& prefix,
+    SortMethod sortMethod
+) : Paginator(
+    pageFm,
+    fileMan,
+    metaCache,
+    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): this constructor signature is only defined for listings
+    pageFm.listing->pageSize,
+    prefix,
+    sortMethod
+) {}
+Paginator::Paginator(
+    const Frontmatter& pageFm,
+    FileManager& fileMan,
+    MetadataCache& metaCache,
+    size_t pageSize,
+    const std::filesystem::path& prefix,
+    SortMethod sortMethod
+)
+    : pageFm(pageFm),
+      fileMan(fileMan),
+      pageSize(pageSize)
 {
-    if (pageFm.layout != "page_list" || !pageFm.listing.has_value()) {
-        throw std::runtime_error(
-            std::format(
-                "Can only initialize a paginator on a paginated page list. Type = {}, has listing: {}",
-                pageFm.type,
-                pageFm.listing.has_value()
-            )
-        );
-    }
+    // No longer the case, only applies to the other signature (where it's hard-enforced with an unchecked optional
+    // access :3)
+    // if (pageFm.layout != "page_list" || !pageFm.listing.has_value()) {
+    //     throw std::runtime_error(
+    //         std::format(
+    //             "Can only initialize a paginator on a paginated page list. Type = {}, has listing: {}",
+    //             pageFm.type,
+    //             pageFm.listing.has_value()
+    //         )
+    //     );
+    // }
 
     // TODO: support scoping so /index.md can be an index for /posts/*
     // TODO: error handling
@@ -29,6 +52,7 @@ Paginator::Paginator(
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
+    path /= prefix;
     fileMan.recursivelyIterateFiles(
         path,
         [&](auto& entry) {
@@ -55,24 +79,10 @@ Paginator::Paginator(
         }
     );
 
-    // TODO: custom predicates hard, check that this logic is right. The title logic appears to be right, but the test
-    // blog test site currently does not include dates
     std::sort(
         fm.begin(),
         fm.end(),
-        [](const Frontmatter* a, const Frontmatter* b) {
-            if (a->date.has_value() && b->date.has_value() && a->date != b->date) {
-                return a->date > b->date;
-            }
-
-            std::filesystem::path aPath = a->internalPath,
-                bPath = b->internalPath;
-
-            auto aFn = aPath.filename();
-            auto bFn = bPath.filename();
-
-            return aFn > bFn;
-        }
+        sort::sortMethods.at(sortMethod)
     );
 }
 

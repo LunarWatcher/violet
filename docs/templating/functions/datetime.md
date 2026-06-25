@@ -32,3 +32,6 @@ Given
 ```
 This would render `2026-03-30T19:02:51+0100`
 
+## `now()`
+
+Returns the internal representation of the time when the function is invoked. Must be passed through `formatDate` to be human-readable

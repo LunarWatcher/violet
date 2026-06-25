@@ -11,6 +11,8 @@ add_executable(tests
     src/parsing/UrlTests.cpp
     src/parsing/UrlTranslationTests.cpp
 
+    src/parsing/ext/SafeCastEnumTests.cpp
+
     src/parsing/markdown/HorizontalRuleTests.cpp
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp
@@ -20,7 +22,6 @@ add_executable(tests
 
 Include(FetchContent)
 
-# Not yet sourcing stc, so this won't work yet
 set(CATCH_CONFIG_DEFAULT_REPORTER "explicit" CACHE STRING "" FORCE)
 FetchContent_Declare(
   Catch2

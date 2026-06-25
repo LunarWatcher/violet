@@ -5,6 +5,12 @@
 ---
 # Changelog
 
+This page contains the changelog for violet. Please note that you'll encounter the following indicators:
+
+* `BREAKING:` - changes that require changes as part of an update
+* `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
+* `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
+
 ## [unreleased]
 
 ### Added
@@ -12,6 +18,11 @@
 * Horizontal rules are now supported (`---` separators)
 * Allowed RSS/ATOM (`.atom`, `.rss`, `.xml`) to be passed through template rendering
 * Allowed some assets (`.css`, `.js`, `.mjs`) to be passed through template rendering. This is a weaker version where no base template is used, i.e. the templates operate directly on the asset. Mainly intended to let `{{ site.prefix }}` be used in CSS files
+* Templates: added the `now()` function for use with the time parsing functions. Example use: `{{ formatDate(now(), "%FT%T%z") }}`
+* Templates: Added the `violet` global variable.
+  * Added `violet.datetime.iso`, which is a shorthand for the `"%FT%H:%M:%OS%Oz"` date format string
+  * Added `violet.sort` with two values, which is used with the `listPagesPaginated`
+* Templates: Added `listPagesPaginated`, which is used for listing out pages of content.
 
 ### Changed
 

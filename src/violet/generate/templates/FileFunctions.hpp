@@ -17,6 +17,8 @@ public:
 
     nlohmann::json listPagesByTaxonomy(inja::Arguments& args);
 
+    nlohmann::json listPagesPaginated(inja::Arguments& args);
+
     nlohmann::json paginatedUrl(inja::Arguments& args);
 };
 
