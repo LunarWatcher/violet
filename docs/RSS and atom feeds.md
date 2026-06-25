@@ -28,7 +28,7 @@ For the most part, the logic is the same as for HTML and markdown files, which i
 
 This example shows an atom feed with no base template, so everything is contained within a single file. See the comments for more info about the violet-specific functions; the atom bits are the bare minimum to get past validation
 
-`<site root dir>/posts/feed.atom`:
+`<site root dir>/blog/feed.atom`:
 ```inja
 ---
 ---
