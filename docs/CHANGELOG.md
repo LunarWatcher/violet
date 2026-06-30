@@ -63,7 +63,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
 [unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.1...master
-[v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.5.1
+[v0.5.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://codeberg.org/LunarWatcher/violet/releases/tag/v0.3.0
