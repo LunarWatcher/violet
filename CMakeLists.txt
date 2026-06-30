@@ -50,8 +50,8 @@ FetchContent_Declare(stc
 FetchContent_Declare(minilog
     GIT_REPOSITORY https://github.com/LunarWatcher/minilog
 )
-FetchContent_Declare(cli11
-    GIT_REPOSITORY https://github.com/LunarWatcher/CLI11
+FetchContent_Declare(cli12
+    GIT_REPOSITORY https://github.com/LunarWatcher/CLI12
     GIT_TAG main
 )
 FetchContent_Declare(json
@@ -65,7 +65,7 @@ FetchContent_Declare(inja
 FetchContent_MakeAvailable(
     stc
     minilog
-    cli11
+    cli12
     json
     inja
 )

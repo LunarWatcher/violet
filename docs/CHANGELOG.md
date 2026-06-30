@@ -17,6 +17,12 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.5.1] (2026-06-30)
+
+### Fixed
+
+* Handled breaking change in CLI12
+
 ## [v0.5.0] (2026-06-25)
 
 ### Added
@@ -56,7 +62,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.1...master
+[v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://codeberg.org/LunarWatcher/violet/releases/tag/v0.3.0

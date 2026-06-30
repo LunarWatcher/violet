@@ -31,7 +31,7 @@ add_library(violetsrc STATIC
 
 target_include_directories(violetsrc PUBLIC .)
 target_link_libraries(violetsrc PUBLIC
-    CLI11::CLI11
+    CLI12::CLI12
     nlohmann_json::nlohmann_json
     pantor::inja
     stc

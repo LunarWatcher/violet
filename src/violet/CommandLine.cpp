@@ -58,7 +58,7 @@ int violet::cliMain(int argc, char** argv) {
     );
     withStandardFlags(cmdServe);
 
-    CLI11_PARSE(app, argc, argv);
+    CLI12_PARSE(app, argc, argv);
 
     if (cmdVersion->parsed()) {
         std::cout << "violet " << VIOLET_VERSION << std::endl;
