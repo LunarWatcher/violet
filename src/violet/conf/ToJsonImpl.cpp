@@ -54,6 +54,10 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
         dest.layout = src.at("layout").get<std::string>();
     }
 
+    if (auto it = src.find("hidden"); it != src.end() && !it->is_null()) {
+        dest.hidden = src.at("hidden").get<bool>();
+    }
+
     if (auto it = src.find("date"); it != src.end() && !it->is_null()) {
         if (it->is_string()) {
             auto val = it->get<std::string>();

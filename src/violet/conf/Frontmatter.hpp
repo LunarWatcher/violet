@@ -27,6 +27,8 @@ struct Frontmatter {
     std::optional<ListingFrontmatter> listing;
     std::optional<std::string> summary;
 
+    bool hidden = false;
+
     std::unordered_map<std::string, std::unordered_set<std::string>> taxonomies;
 
     nlohmann::json data;

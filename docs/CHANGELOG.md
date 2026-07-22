@@ -10,12 +10,19 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `BREAKING:` - changes that require changes as part of an update
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
-* `Theme(theme name)` - changes made to specific themes
+* `Theme(theme name)` - changes made to specific builtin themes
 
 {{ page.table_of_contents }}
 
 
 ## [unreleased]
+
+### Changed
+
+* BREAKING: explicit filtering that removed `404.html` has been replaced with `"hidden": true` in the frontmatter. This allows for site host-agnostic 404 pages.
+  * This largely just means `404.html` in custom themes needs to have `hidden: true` added if it's in a folder where there's a file iterator.
+
+    The default theme has already been patched, since it makes heavy use of file iteration by default.
 
 ## [v0.5.1] (2026-06-30)
 

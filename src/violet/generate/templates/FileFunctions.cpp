@@ -42,7 +42,6 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
                     entryPath.extension() != ".md"
                     && entryPath.extension() != ".html"
                 )
-                || entryPath.filename() == "404.html"
             ) {
                 return;
             }
@@ -56,7 +55,10 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
                 filePath
             );
 
-            if (metadata.frontmatter.isAsset) {
+            if (
+                metadata.frontmatter.isAsset
+                || metadata.frontmatter.hidden
+            ) {
                 return;
             }
 
@@ -103,7 +105,6 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
                     entryPath.extension() != ".md"
                     && entryPath.extension() != ".html"
                 )
-                || entryPath.filename() == "404.html"
             ) {
                 return;
             }
@@ -116,7 +117,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
             );
-            if (!metadata.frontmatter.isAsset) {
+            if (!metadata.frontmatter.isAsset && !metadata.frontmatter.hidden) {
                 pages.push_back(metadata.frontmatter);
             }
         }
@@ -155,7 +156,6 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
                     entryPath.extension() != ".md"
                     && entryPath.extension() != ".html"
                 )
-                || entryPath.filename() == "404.html"
             ) {
                 return;
             }
@@ -167,7 +167,10 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
                 filePath
             );
 
-            if (metadata.frontmatter.isAsset) {
+            if (
+                metadata.frontmatter.isAsset
+                || metadata.frontmatter.hidden
+            ) {
                 return;
             }
 

@@ -62,7 +62,6 @@ Paginator::Paginator(
                     entryPath.extension() != ".md"
                     && entryPath.extension() != ".html"
                 )
-                || entryPath.filename() == "404.html"
                 || entryPath.filename() == "README.md"
                 || entryPath.filename() == "index.md"
             ) {
@@ -75,6 +74,13 @@ Paginator::Paginator(
             auto& metadata = metaCache.loadMetadata(
                 filePath
             );
+
+            if (
+                metadata.frontmatter.isAsset
+                || metadata.frontmatter.hidden
+            ) {
+                return;
+            }
             fm.push_back(&metadata.frontmatter);
         }
     );
