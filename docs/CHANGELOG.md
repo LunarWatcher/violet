@@ -22,8 +22,6 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * BREAKING: explicit filtering that removed `404.html` has been replaced with `"hidden": true` in the frontmatter. This allows for site host-agnostic 404 pages.
   * This largely just means `404.html` in custom themes needs to have `hidden: true` added if it's in a folder where there's a file iterator.
 
-    The default theme has already been patched, since it makes heavy use of file iteration by default.
-
 ## [v0.5.1] (2026-06-30)
 
 ### Fixed
