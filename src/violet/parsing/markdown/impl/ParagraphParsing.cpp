@@ -26,7 +26,40 @@ void Markdown::parseParagraphContent(
             content << " ";
             hasDanglingNewline = false;
         }
-        if (ch == '*') {
+        if (ch == '\\') {
+            // We lock the stream. If we do not find a match for the \\, we revert and append the backslash. The next
+            // character is then treated as usual. This avoids weird problems where \ is just consumed arbitrarily. This
+            // means that the text literal "\n" (string content: "\\n", R"(\n)") isn't rendered as just "n". I don't
+            // think this will ever come up, but limiting the set of characters that cause a problem should at least
+            // reduce the amount of redundant \\s required.
+            LockStreamPos lock(in);
+            char next;
+            in >> next;
+            switch (next) {
+            case '\\':
+            case '*':
+            case '_':
+            case '[':
+            case ']':
+            case '(':
+            case ')':
+            case '`':
+                content << next;
+                lock.commit();
+                break;
+            case '{': // templates
+            case '<':
+            case '}':
+            case '>':
+                htmlEscape(next, content);
+                lock.commit();
+                break;
+            default:
+                lock.revert();
+                content << '\\';
+                break;
+            }
+        } else if (ch == '*') {
             auto isBold = in.peek() == '*';
             if (isBold) {
                 std::ignore = in.get();

@@ -17,12 +17,18 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+
+## [v0.6.0] (2026-07-22)
+
+### Added
+
+* Better template parsing, as well as proper HTML block identification. Template _blocks_ and HTML blocks are now left alone. Previously, only individual lines with a template were handled.
+* Syntax escaping in text \o/ \[writing with brackets now works again\]
+
 ### Changed
 
 * BREAKING: explicit filtering that removed `404.html` has been replaced with `"hidden": true` in the frontmatter. This allows for site host-agnostic 404 pages.
   * This largely just means `404.html` in custom themes needs to have `hidden: true` added if it's in a folder where there's a file iterator.
-
-## [v0.5.1] (2026-06-30)
 
 ### Fixed
 
@@ -67,8 +73,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.1...master
-[v0.5.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.5.1
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.6.0...master
+[v0.6.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://codeberg.org/LunarWatcher/violet/releases/tag/v0.3.0

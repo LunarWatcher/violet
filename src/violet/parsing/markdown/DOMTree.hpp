@@ -10,7 +10,11 @@ enum class NodeType {
     DocumentRoot = 1,
     // Special: The previous block has ended
     BlockEnd = 2,
-    // Special: used for lines with {{ templates }}
+    // Special: used for lines with {{ templates }}, as well as raw HTML. This MAY be a block that includes a whole
+    // range.
+    // Separate types are not used for {{ templates }} and <html> because it does not matter. Violet does not evaluate
+    // these, so the parser does not need to care about the distinction between the two. Neither of them can be wrapped
+    // in HTML, and that's all we need to care about.
     Template = 3,
 
     // Root nodes

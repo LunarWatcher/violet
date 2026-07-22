@@ -16,6 +16,7 @@ add_executable(tests
 
     src/parsing/ext/SafeCastEnumTests.cpp
 
+    src/parsing/markdown/EscapingTests.cpp
     src/parsing/markdown/HorizontalRuleTests.cpp
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp

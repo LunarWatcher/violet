@@ -35,11 +35,82 @@ In this parser, that's a syntax error. In other parsers, the line usually just g
 ```
 ````
 
-### Raw HTML
+### Raw HTML and raw templates
+
+> [!note]
+>
+> This section has examples that only make sense in the source view. If you're on a computer, I strongly suggest opening the devtools to inspect the render examples.
 
 HTML in the markdown doc is not escaped. It's assumed the pages you render are trusted, and that they therefore may contain friendly HTML. To avoid breaking native HTML and introducing extra complexity in the template parsing pipeline, raw HTML is supported.
 
 This also means that, in the event of parser limitations, the parser can be bypassed with raw HTML.
+
+If an HTML block is identified, the rest of the block is NOT parsed as markdown. So, given:
+
+```markdown
+<button onclick='alert("hi")'>**Content**</button>
+```
+
+You'll see:
+
+> <button onclick='alert("hi")'>**Content**</button>
+
+> [!warning]
+>
+> Please note the use of the word "block"; a block is classified as anything that can be identified as a continuous block of HTML, potentially with empty lines within them. Same goes for templates. This is considered an HTML block:
+> ```markdown
+> <div>
+>   **content**
+> </div>
+> ```
+> > <div>
+> >   **content**
+> > </div>
+> The content is not explicitly HTML, but the indent identifies it as part of the block. Similarly, sequential lines of HTML are all considered one block even if there is no indent:
+> ```markdown
+> <div>
+> <p>content</p>
+> </div>
+> ```
+> > <div>
+> > <p>content</p>
+> > </div>
+>
+> If there is no indent and no HTML indicators, the block breaks. This is a raw HTML block, followed by a markdown paragraph, followed by a raw HTML block
+> ```markdown
+> <div>
+> **content**
+> </div>
+> ```
+> 
+> > <div>
+> > **content**
+> > </div>
+>
+> This makes Violet's HTML and template identification very context-dependent, and you can use this to break out of HTML parsing to add fancy syntax without breaking markdown parsing - and without markdown parsing being too aggressively in the way.
+
+#### Escaping templates
+
+If you start a line with {, it will be identified as a template, even if it isn't. You must therefore escape `{` if it's at the start of a line:
+
+> ```markdown
+> \{ this avoids template identification
+> { this line is treated as a raw template, and is therefore not in a paragraph element
+>
+> Brackets anywhere else do not need escaping: { 
+> ```
+> > \{ this avoids template identification
+> > { this line is treated as a raw template, and is therefore not in a paragraph element
+> >
+> > Brackets anywhere else do not need escaping: { 
+
+See also the section on [escaping syntax elements](#escaping-syntax-elements)
+
+#### Tangent: HTML semantics
+
+Violet's markdown parser has no understanding of HTML and templating semantics. In theory, violet _could_ parse the HTML to identify content nodes that it could them parse, but this would require an HTML parser as well, and that's a _lot_ more involved.
+
+As a consequence, violet doesn't parse markdown in HTML in part as a feature, and in part because it can't.
 
 ### UTF-8 or ascii input is required
 
@@ -378,3 +449,59 @@ Rendered:
 >
 > This is a pretend header
 > ------------------------
+
+## Escaping syntax elements
+
+Syntax elements **in text** are escaped with `\`. Code blocks do not support escaping in the same way. 
+
+### In text
+
+As mentioned, syntax elements in text are escaped with `\`. This only has a effect on a few characters, listed below. If not escaping a syntax element, the `\` has no effect. For example, typing `\n` results in the literal text \n being showed, instead of just "n". This means you don't have to escape your backslashes when used before most standard letters.
+
+The characters that are affected are either rendered literally, meaning the character is just inserted into the resulting text, or is rendered as HTML-escaped text. (i.e. `&gt;` instead of the literal `>` character). The visible and copied output is still identical.
+
+**Rendered literally:**
+
+* `*` (`\*\*text\*\*`: \*\*text\*\*)
+* `\` (`\\`: \\)
+* `_` (`\_`: \_)
+* `[`, `]` (`\[brackets\]`: \[brackets\])
+* `(`, `)` (no preview: has no functional effect outside links)
+* `` ` `` (`` \` ``: \`)
+
+**HTML-escaped:**
+
+* `{`, `}` (`\{\{ page.table\_of\_contents \}\}`: \{\{ page.table\_of\_contents \}\})
+  * Very useful to escape if you ever have anything outside code that could be misinterpreted for a template
+* `<`, `>` (`\<div\>`: \<div\>)
+
+### In code blocks
+
+The only real use-cases for escaping elements in a code block is if you're using backticks inside a codeblock. The way to get around this is to add more backticks to the fence.
+
+`````markdown
+Inline: ``code with extra ` backtick``
+
+Inline: ``code with trailing backtick (NOTE: the space after the backtick is loadbearing): ` ``
+
+Code block:
+````markdown
+```markdown
+This shows a code block in a codeblock
+```
+````
+`````
+
+> Inline: ``code with extra ` backtick``
+> 
+> Inline: ``code with trailing backtick (NOTE: the space after the backtick is loadbearing): ` ``
+>
+> Code block:
+> ````markdown
+> ```markdown
+> This shows a code block in a codeblock
+> ```
+> ````
+
+There is no limit on the maximum number of backticks. Full code blocks require a minimum of 3, but if you ever end up with a risk of a mismatch, I recommend using `{number of backticks inside the block} + 1`. The outer fence MUST always have more backticks than the number of sequential inner backticks. Otherwise, it'll be parsed to an invalid code block
+

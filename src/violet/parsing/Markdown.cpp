@@ -136,7 +136,7 @@ Markdown::NodeType Markdown::resolveMajorMode(
         while (in.peek() == ' ') {
             std::ignore = in.get();
         }
-        if (in.peek() == '{') {
+        if (in.peek() == '{' || in.peek() == '<') {
             mode = NodeType::Template;
         } else {
         paragraph:
