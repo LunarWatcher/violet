@@ -24,6 +24,9 @@ FileFunctions::FileFunctions(InjaManager& man) : man(man) {
     man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
         return listPagesByTaxonomy(args);
     });
+    man.env.add_callback("loadJson", 2, [this](auto& args) {
+        return loadJson(args);
+    });
 }
 nlohmann::json listPagesPaginated(inja::Arguments& args);
 
@@ -259,6 +262,53 @@ nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
     }
 
     return out;
+}
+
+nlohmann::json FileFunctions::loadJson(inja::Arguments& args) {
+    const auto& frontmatter = *args.at(0);
+    auto fn = args.at(1)->get<std::string>();
+
+    std::filesystem::path p;
+    if (fn.starts_with("/")) {
+        if (fn.starts_with("//")) {
+            throw std::runtime_error("Absolute paths cannot start with two slashes!");
+        }
+        p = this->man.opts.root / fn.substr(1);
+    } else {
+        p = std::filesystem::path {
+            frontmatter.at(violet::constants::InternalPathRef).get<std::string>()
+        } / fn;
+    }
+
+    // This feels bad, but it should work.
+    // Should probably turn this into a standard function somewhere
+    p = std::filesystem::canonical(p);
+    if (!p.string().starts_with(this->man.opts.root.string())) {
+        minilog::error(
+            "loadJson found possible root escaping: fn = {}, resolved path = {}",
+            fn, p.string()
+        );
+        throw std::runtime_error(
+           "loadJson found possible root escaping. See log messages."
+        );
+    }
+
+    std::ifstream f(p);
+    if (!f)  {
+        minilog::error(
+            "Failed to open {}", p.string()
+        );
+        throw std::runtime_error("failed to open file");
+    }
+
+    nlohmann::json data;
+    try {
+        f >> data;
+    } catch (...) {
+        minilog::error("Failed to parse json in {}", p.string());
+        throw;
+    }
+    return data;
 }
 
 }

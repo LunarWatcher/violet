@@ -20,6 +20,8 @@ public:
     nlohmann::json listPagesPaginated(inja::Arguments& args);
 
     nlohmann::json paginatedUrl(inja::Arguments& args);
+
+    nlohmann::json loadJson(inja::Arguments& args);
 };
 
 }
