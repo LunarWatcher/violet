@@ -11,7 +11,7 @@ The `_violet-meta.json` file is meant to be loaded with javascript by the page t
 
 The schema may change, but removals are actively avoided to this schema in particular to maintain backwards compatibility. New fields may be added at any time, so if you run some weird JSON loading system that requires a hard-coded schema to be able to load the file at all, it will likely start failing at some point.
 
-```
+```json
 {
     // Defines numbers related to the input files. This always describes the raw number of input files, and not their output.
     // A paginated page with something absurd like 1000 pages in its list will only count as 1 page here
@@ -36,7 +36,7 @@ The schema may change, but removals are actively avoided to this schema in parti
         "started_at": 12345678,
         // The version of violet the page was built with.
         // Debug versions differ from the major.minor.patch version system, and have an extra hash appended - please be aware of this if you try parsing the versions.
-        // The exact format depends on the output of `git describe --tags --always`, but can look like 
+        // The exact format depends on the output of `git describe --tags --always`, but can look like
         // v0.6.0-2-g66477f8
         "version": "0.7.0"
     }
