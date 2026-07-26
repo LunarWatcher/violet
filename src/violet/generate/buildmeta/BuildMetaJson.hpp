@@ -40,4 +40,10 @@ void to_json(nlohmann::json& out, const Output& in);
 void to_json(nlohmann::json& out, const Build& in);
 void to_json(nlohmann::json& out, const MetadataJson& in);
 
+// Only used for tests
+void from_json(const nlohmann::json& in, Input& out);
+void from_json(const nlohmann::json& in, Output& out);
+void from_json(const nlohmann::json& in, Build& out);
+void from_json(const nlohmann::json& in, MetadataJson& out);
+
 }

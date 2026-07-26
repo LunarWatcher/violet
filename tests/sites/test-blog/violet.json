@@ -1,6 +1,7 @@
 {
     "name": "Test blog",
     "description": "Used for simulating a blog in unit and integration tests",
+    "metadata": true,
     "data": {
         "domain": "https://example.com",
         "author": {

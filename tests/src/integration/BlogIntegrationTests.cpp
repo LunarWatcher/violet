@@ -2,14 +2,48 @@
 #include "fixtures/TestSiteGenerator.hpp"
 #include "utils/FileReader.hpp"
 #include "utils/StringUtils.hpp"
+#include "violet/generate/buildmeta/BuildMeta.hpp"
 #include <catch2/catch_test_macros.hpp>
+
+#include <nlohmann/json.hpp>
 
 TEST_CASE("Blog integration tests") {
     tests::TestSiteGenerator testGen {
         tests::SiteVariant::BlogTestSite
     };
     testGen.generateWithAsserts();
+    
+    SECTION("The metadata should be correct") {
+        std::ifstream f(testGen.buildPath() / "_violet-meta.json");
+        INFO("Trying to open _violet-meta.json");
+        REQUIRE(bool(f));
 
+        nlohmann::json j;
+        f >> j;
+
+        violet::meta::MetadataJson metadata = j;
+        REQUIRE(metadata.input.pages == 13); // the number of .md and .atom files, plus one css file (style.css)
+        REQUIRE(metadata.input.files == 1); // non-template.css
+
+        REQUIRE(
+            metadata.output.pages
+            ==
+            (
+                // The number of .md and .atom files, plus one CSS file (see previous assertion)
+                13
+                // the blog/README.md paginated page list generates itself plus 5 more `index.html`s
+                + 5
+            )
+        );
+
+        {
+            // Note: the rest of the build metadata (at the time of writing) cannot be tested. version is a constant so
+            // testing it is moot, and the start time is set to a const so it cannot be deserialized.
+            INFO("This assertion should only fail if violet gets REALLY fucking slow, is run on a really slow disk,"
+                "or (and this is the one we care about) the build millis wasn't saved properly.");
+            REQUIRE(metadata.build.buildMillis < 10000);
+        }
+    }
     SECTION("The Atom feed should exist and be generated from feed.inja") {
         std::ifstream f(testGen.buildPath() / "blog/feed.atom");
         INFO("Trying to open blog/feed.atom");
