@@ -142,3 +142,34 @@ The size of each page. Default value: 50
 
 The page number to load. Default value: 1
 
+## `loadJson(object, filename_or_path)`
+
+*Added in 0.7.0*
+
+> [!warning]
+>
+> Due to apparent limitations in inja, there's currently no way to specify a path relative to an include or another non-page object. Please be mindful of this while using this function
+
+This function is used to load JSON files into variables. Can be useful if you need to contain large amounts of structured data and don't want to do so in inja.
+
+Example use:
+
+```inja
+{% set linkCategories = loadJson(page, "/_templates/outlinks/data.json") %}
+```
+
+If you keep JSON files alongside content, and don't want them to be included in the finished render, use the [exclude property in `violet.json`](/Config.md).
+
+### Arguments
+
+#### `object`
+
+A page or site object. Used to build relative URLs.
+
+#### `filename_or_path`
+
+A path to the file.
+
+* If the path is absolute: the path is relative to the site root (the folder containing `violet.json`)
+* If relative: the path is relative to the object (either the site, which is equivalent to passing an absolute path, or a page)
+

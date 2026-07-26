@@ -17,6 +17,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* `loadJson()` for loading JSON files into variables.
 
 ## [v0.6.0] (2026-07-22)
 
