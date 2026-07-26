@@ -30,10 +30,18 @@ TEST_CASE("Basic site tests") {
 
         filelist::testFileIterationExcludesOutputDir(testGen);
 
+        SECTION("Metadata file should not be generated") {
+            REQUIRE_FALSE(
+                std::filesystem::exists(
+                    testGen.buildPath() / "_violet-meta.json"
+                )
+            );
+        }
+
         SECTION("Secrets should be excluded") {
             INFO("The secrets folder is explicitly excluded in violet.conf");
-            REQUIRE(
-                !std::filesystem::exists(
+            REQUIRE_FALSE(
+                std::filesystem::exists(
                     testGen.buildPath() / "secrets"
                 )
             );
