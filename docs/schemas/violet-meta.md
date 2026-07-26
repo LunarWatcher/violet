@@ -17,9 +17,10 @@ The schema may change, but removals are actively avoided to this schema in parti
     // A paginated page with something absurd like 1000 pages in its list will only count as 1 page here
     // The total number of input files in the project's filesystem is described by input.pages + input.files.
     "input": {
-        // The number of pages, meaning .html (with frontmatter) and .md files with template processing
+        // The number of pages, meaning .html (with frontmatter) and .md files with template processing, as well as .css, .js, and .atom/.xml files rendered with inja.
+        // 
         "pages": 1234,
-        // The number of non-page files, meaning .html (without frontmatter), .js and .css (with or without frontmatter; see current limitations, this will change), and any other files
+        // The number of non-page files, meaning .html (without frontmatter), and any other files not rendered with inja
         // This means anything counted by `pages` is excluded from `files`.
         "files": 1234
     },
@@ -27,6 +28,7 @@ The schema may change, but removals are actively avoided to this schema in parti
     // directory. Please note that "files" is missing here, because input.files == output.files, while
     // output.pages >= input.pages due to paginated pages.
     "output": {
+        // Defines the number of pages rendered through inja.
         "pages": 1234
     },
     "build": {

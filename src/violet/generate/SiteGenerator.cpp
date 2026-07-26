@@ -162,6 +162,7 @@ bool SiteGenerator::processFile(
     std::stringstream content;
     content << in.rdbuf();
 
+    this->buildMeta.registerInputPage();
     switch (parsedFrontmatter.internalFileType) {
     case ProcessedFileType::Asset: {
         minilog::debug("Loaded file is an asset with frontmatter. Doing minimal template parsing");
@@ -172,10 +173,8 @@ bool SiteGenerator::processFile(
             relPath,
             parsedFrontmatter
         );
-        this->buildMeta.registerInputFile();
     } break;
     case ProcessedFileType::Html: {
-        this->buildMeta.registerInputPage();
         minilog::debug("Loaded file is HTML with frontmatter.");
         std::string fileContent = content.str();
 
@@ -186,7 +185,6 @@ bool SiteGenerator::processFile(
         );
     } break;
     case ProcessedFileType::Markdown: {
-        this->buildMeta.registerInputPage();
         minilog::debug("Loaded file is markdown. Parsing...");
         auto parsedPage = Markdown::parseWithContentPostprocessing(
             content,
