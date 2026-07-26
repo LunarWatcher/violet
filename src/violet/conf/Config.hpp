@@ -17,6 +17,8 @@ struct Config {
     std::optional<std::string> theme;
     nlohmann::json data;
 
+    bool metadata = false;
+
     /**
      * Contains a copy of the raw JSON object that created the rest of this struct; used for forwarding to inja.
      */

@@ -3,7 +3,7 @@
 #include "violet/conf/Config.hpp"
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/FileManager.hpp"
-#include "violet/generate/ProcessedFileType.hpp"
+#include "violet/generate/buildmeta/BuildMeta.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
 #include "violet/generate/templates/InjaManager.hpp"
 
@@ -22,6 +22,8 @@ private:
     FileManager fileManager;
     MetadataCache metadataCache;
     InjaManager injaManager;
+
+    meta::BuildMeta buildMeta;
 
     SiteGenerator(
         const GenerateOpts& opts,

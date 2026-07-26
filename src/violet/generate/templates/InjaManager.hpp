@@ -23,7 +23,6 @@ public:
 
     inja::Environment env;
 
-
 public:
     DateTimeFunctions dateTimeFuncs;
     FileFunctions fileFuncs;

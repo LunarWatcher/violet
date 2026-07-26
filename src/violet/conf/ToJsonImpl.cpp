@@ -25,6 +25,10 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         dest.theme = "_default";
     }
 
+    if (auto it = src.find("metadata"); it != src.end() && !it->is_null()) {
+        dest.metadata = it->get<bool>();
+    }
+
     // We manually assemble `raw` to force custom fields into `data`.
     dest.raw = {
         {"name", dest.name},

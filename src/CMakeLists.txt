@@ -9,6 +9,9 @@ add_library(violetsrc STATIC
     violet/generate/FileManager.cpp
     violet/generate/SiteGenerator.cpp
 
+    violet/generate/buildmeta/BuildMeta.cpp
+    violet/generate/buildmeta/BuildMetaJson.cpp
+
     violet/generate/templates/InjaManager.cpp
     violet/generate/templates/DateTimeFunctions.cpp
     violet/generate/templates/FileFunctions.cpp

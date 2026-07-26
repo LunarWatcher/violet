@@ -8,19 +8,19 @@
 
 namespace violet {
 
-struct Metadata {
+struct BuildMeta {
     Frontmatter frontmatter;
     size_t frontmatterByteOffset;
 };
 
 struct OpenData {
-    const Metadata& metadata;
+    const BuildMeta& metadata;
     std::ifstream file;
 };
 
 class MetadataCache {
 private:
-    std::unordered_map<std::string, std::shared_ptr<Metadata>> fileToMetadataCache;
+    std::unordered_map<std::string, std::shared_ptr<BuildMeta>> fileToMetadataCache;
 
     FileManager& fileManager;
 public:
@@ -29,7 +29,7 @@ public:
         FileManager& fileManager
     ) : fileManager(fileManager) {}
 
-    const Metadata& loadMetadata(
+    const BuildMeta& loadMetadata(
         const std::filesystem::path& relPath
     ) {
         if (auto it = fileToMetadataCache.find(relPath); it != fileToMetadataCache.end()) {
@@ -49,7 +49,7 @@ public:
                 "Failed to open " + relPath.string()
             );
         }
-        std::shared_ptr<Metadata> metadata;
+        std::shared_ptr<BuildMeta> metadata;
         if (auto it = fileToMetadataCache.find(relPath); it != fileToMetadataCache.end()) {
             metadata = it->second;
             f.seekg(metadata->frontmatterByteOffset);
@@ -58,7 +58,7 @@ public:
             Frontmatter fm = frontmatter;
             fm.withFilePath(relPath);
 
-            metadata = std::make_shared<Metadata>(
+            metadata = std::make_shared<BuildMeta>(
                 std::move(fm),
                 f.tellg()
             );

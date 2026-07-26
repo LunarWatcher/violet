@@ -31,6 +31,10 @@ SiteGenerator::SiteGenerator(
         this->cfg,
         this->fileManager,
         this->metadataCache
+    ),
+    buildMeta(
+        this->opts,
+        this->cfg
     )
 {}
 
@@ -97,6 +101,8 @@ void SiteGenerator::handleTemplatesAndSave(
             this->fileManager,
             metadataCache
         };
+        minilog::debug("Found {} pages", pag.getTotalPages());
+        this->buildMeta.registerOutputPage(pag.getTotalPages() + 1);
         for (auto it = pag.begin(); it != pag.end(); ++it) {
             if (it.getPage() == 0) {
                 // TODO: it should be possible for <prefix>/page/1/index.html to rel="canonical" to <prefix>/index.html
@@ -130,6 +136,7 @@ void SiteGenerator::handleTemplatesAndSave(
             );
         }
     } else {
+        this->buildMeta.registerOutputPage(1);
         renderAndWrite(
             target,
             relPath,
@@ -165,8 +172,10 @@ bool SiteGenerator::processFile(
             relPath,
             parsedFrontmatter
         );
+        this->buildMeta.registerInputFile();
     } break;
     case ProcessedFileType::Html: {
+        this->buildMeta.registerInputPage();
         minilog::debug("Loaded file is HTML with frontmatter.");
         std::string fileContent = content.str();
 
@@ -177,6 +186,7 @@ bool SiteGenerator::processFile(
         );
     } break;
     case ProcessedFileType::Markdown: {
+        this->buildMeta.registerInputPage();
         minilog::debug("Loaded file is markdown. Parsing...");
         auto parsedPage = Markdown::parseWithContentPostprocessing(
             content,
@@ -346,8 +356,13 @@ bool SiteGenerator::generate() {
             }
         cont:
             fileManager.copyRaw(rootDir, relPath, relPath);
+            this->buildMeta.registerInputFile();
         }
     );
+
+    if (success) {
+        this->buildMeta.commit();
+    }
 
     return success;
 }
