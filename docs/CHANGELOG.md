@@ -19,8 +19,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Added
 
-* `loadJson()` for loading JSON files into variables.
-* `_violet-meta.json`
+* Templates: added `loadJson()` for loading JSON files into variables.
+* Added `_violet-meta.json`
   * This file is only generated if `"metadata": true` is set in `violet.json`, and contains metadata about the build
   * For more information, see [the file's schema](/schemas/violet-meta.md)
 
