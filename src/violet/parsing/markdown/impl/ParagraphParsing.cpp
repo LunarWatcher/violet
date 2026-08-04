@@ -304,7 +304,7 @@ void Markdown::parseParagraphContent(
                 content << ch;
             }
 
-            if (!end) {
+            if (!in) {
                 throw SyntaxError(
                     "Malformed template", start
                 );
