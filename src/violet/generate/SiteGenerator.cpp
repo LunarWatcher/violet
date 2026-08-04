@@ -67,18 +67,30 @@ void SiteGenerator::renderAndWrite(
         minilog::error("Failed to open {}", file.string());
         return;
     }
-    auto renderedContent = injaManager.renderPage(
-        fileContent,
-        relPath,
-        frontmatter,
-        pag
-    );
+    try {
+        auto renderedContent = injaManager.renderPage(
+            fileContent,
+            relPath,
+            frontmatter,
+            pag
+        );
 
-    minilog::info("Committing generated page to {}", file.string());
-    f.write(
-        renderedContent.data(),
-        renderedContent.size()
-    );
+        // TODO: this is the output file, not the input file. Need to fix. Should be understandable still, at least for
+        // now.
+        minilog::info("Committing generated page to {}", file.string());
+        f.write(
+            renderedContent.data(),
+            renderedContent.size()
+        );
+    } catch (const inja::RenderError& renderError) {
+        minilog::error(
+            "Failed to render {}: {}",
+            relPath.string(),
+            renderError.what()
+        );
+        throw;
+    }
+
 }
 
 void SiteGenerator::handleTemplatesAndSave(

@@ -17,6 +17,14 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* `~~strike~~` ([#15](https://codeberg.org/LunarWatcher/violet/issues/15))
+
+### Fixed
+
+* Inline templates are now skipped by the markdown renderer
+
 ## [v0.7.0] (2026-07-26)
 
 ### Added

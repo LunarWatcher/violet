@@ -2,6 +2,7 @@
 #include "violet/parsing/markdown/ParseAPI.hpp"
 #include "violet/parsing/markdown/ContextConsumingNodes.hpp"
 #include "violet/util/LockStreamPos.hpp"
+#include <ios>
 #include <iostream>
 
 namespace violet {
@@ -272,6 +273,43 @@ void Markdown::parseParagraphContent(
                 node,
                 context
             );
+        } else if (ch == '{'
+            && (
+                in.peek() == '{' ||
+                in.peek() == '%'
+            )
+        ) { // Inline template workaround
+            size_t start = in.tellg();
+            char second = in.get();
+            char end;
+            switch (second) {
+            case '{':
+                end = '}';
+                break;
+            case '%':
+                end = second;
+                break;
+            default:
+                std::unreachable();
+            }
+            content << ch << second;
+
+            while (in >> std::noskipws >> ch) {
+                if (ch == end) {
+                    if (in.peek() == '}') {
+                        content << end << '}';
+                        break;
+                    }
+                }
+                content << ch;
+            }
+
+            if (!end) {
+                throw SyntaxError(
+                    "Malformed template", start
+                );
+            }
+
         } else if (ch == '\n') {
             if (out->type == NodeType::Anchor) {
                 throw SyntaxError(
