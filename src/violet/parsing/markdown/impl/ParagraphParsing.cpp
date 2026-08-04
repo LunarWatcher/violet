@@ -1,6 +1,5 @@
 #include "violet/parsing/Escaping.hpp"
-#include "violet/parsing/LinkTranslate.hpp"
-#include "violet/parsing/Markdown.hpp"
+#include "violet/parsing/markdown/ParseAPI.hpp"
 #include "violet/parsing/markdown/ContextConsumingNodes.hpp"
 #include "violet/util/LockStreamPos.hpp"
 #include <iostream>

@@ -1,4 +1,5 @@
 #include "Markdown.hpp"
+#include "markdown/ParseAPI.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/exceptions/TracedException.hpp"
 #include "violet/parsing/Escaping.hpp"

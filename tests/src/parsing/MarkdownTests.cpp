@@ -1,4 +1,5 @@
 #include "violet/parsing/Markdown.hpp"
+#include "violet/parsing/markdown/ParseAPI.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace violet::Markdown;

@@ -27,6 +27,7 @@ enum class NodeType {
     Header = 10,
     AnchorDef = 11,
     FootnoteDef = 12,
+
     // Span styles
     Bold = 13,
     Italic = 14,
@@ -34,13 +35,13 @@ enum class NodeType {
     InlineCode = 16,
     Anchor = 17,
     Footnote = 18,
+    Strike = 19,
 
-    UnorderedListEntry = 19,
-    OrderedListEntry = 20,
+    UnorderedListEntry = 20,
+    OrderedListEntry = 21,
 
-    Image = 21,
-    HorizontalRule = 22,
-
+    Image = 22,
+    HorizontalRule = 23,
 };
 
 struct DOMTree {

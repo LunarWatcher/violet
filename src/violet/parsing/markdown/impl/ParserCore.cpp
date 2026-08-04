@@ -1,5 +1,6 @@
 #include <iostream>
 #include <violet/parsing/Markdown.hpp>
+#include "violet/parsing/markdown/ParseAPI.hpp"
 
 #include <string>
 namespace violet {

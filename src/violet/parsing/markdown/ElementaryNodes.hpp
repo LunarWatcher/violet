@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DocumentContext.hpp"
 #include "DOMTree.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 

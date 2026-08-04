@@ -18,7 +18,6 @@ The schema may change, but removals are actively avoided to this schema in parti
     // The total number of input files in the project's filesystem is described by input.pages + input.files.
     "input": {
         // The number of pages, meaning .html (with frontmatter) and .md files with template processing, as well as .css, .js, and .atom/.xml files rendered with inja.
-        // 
         "pages": 1234,
         // The number of non-page files, meaning .html (without frontmatter), and any other files not rendered with inja
         // This means anything counted by `pages` is excluded from `files`.
