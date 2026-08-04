@@ -108,6 +108,10 @@ struct OrderedListEntryNode : public DOMTree {
     OrderedListEntryNode() : DOMTree(NodeType::OrderedListEntry) {}
 };
 
+struct StrikeNode : public DOMTree {
+    StrikeNode() : DOMTree(NodeType::Strike) {}
+};
+
 struct FootnoteNode : public DOMTree {
     const std::string ref;
     FootnoteNode(std::string&& ref)

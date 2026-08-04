@@ -43,6 +43,7 @@ void Markdown::parseParagraphContent(
             case '(':
             case ')':
             case '`':
+            case '~':
                 content << next;
                 lock.commit();
                 break;
@@ -252,7 +253,25 @@ void Markdown::parseParagraphContent(
             }
 
             commitContentNode(content, out);
+            // We just finished parsing the contents of an anchor, so break and return to the parent paragraph or
+            // whatever to let it consume the rest of the line
             break;
+        } else if (ch == '~' && in.peek() == '~') {
+            in.get(); // Consume peeked ~
+
+            commitContentNode(content, out);
+
+            if (out->type == NodeType::Strike) {
+                break;
+            }
+
+            auto* node = new StrikeNode();
+            out->addChild(node);
+            parseParagraphContent(
+                in,
+                node,
+                context
+            );
         } else if (ch == '\n') {
             if (out->type == NodeType::Anchor) {
                 throw SyntaxError(

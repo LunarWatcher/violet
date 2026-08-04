@@ -52,11 +52,13 @@ FetchContent_Declare(minilog
 )
 FetchContent_Declare(cli12
     GIT_REPOSITORY https://github.com/LunarWatcher/CLI12
-    GIT_TAG main
+    GIT_TAG v3.1.0
 )
 FetchContent_Declare(json
-    GIT_REPOSITORY https://github.com/nlohmann/json
-    GIT_TAG v3.12.0
+    # RIP nlohmann/json
+    # TODO (post C++ 26): replace with yyjson reflection wrapper
+    GIT_REPOSITORY https://github.com/LunarWatcher/json
+    GIT_TAG v3.12.0-slopfree
 )
 FetchContent_Declare(inja
     GIT_REPOSITORY https://github.com/pantor/inja

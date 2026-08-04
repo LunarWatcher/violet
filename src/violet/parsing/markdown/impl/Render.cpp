@@ -89,6 +89,9 @@ static void stringifyTreeImpl(
     case Markdown::NodeType::HorizontalRule: {
         ss << "<hr/>";
     } break;
+    case Markdown::NodeType::Strike: {
+        ss << "<strike>";
+    } break;
     default:
         break;
     }
@@ -179,6 +182,9 @@ static void stringifyTreeImpl(
     case Markdown::NodeType::UnorderedListEntry:
         ss << "</li>";
         break;
+    case Markdown::NodeType::Strike: {
+        ss << "</strike>";
+    } break;
     default:
         break;
     }

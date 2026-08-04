@@ -120,9 +120,18 @@ extern void parseTemplate(
     DocumentContext& context
 );
 
-
+/**
+ * Utility method for committing a stringstream as a content node to the parent node (the out param)
+ */
 extern void commitContentNode(
     std::stringstream& content,
     Markdown::DOMTree* out
 );
+
+extern void parseStrike(
+    std::stringstream& in,
+    DOMTree* out,
+    DocumentContext& context
+);
+
 }
