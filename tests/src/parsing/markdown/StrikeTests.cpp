@@ -8,7 +8,7 @@ TEST_CASE("~~strike~~ should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            "<p><strike>content</strike></p>"
+            "<p><s>content</s></p>"
         );
     }
     SECTION("In paragraph") {
@@ -16,7 +16,7 @@ TEST_CASE("~~strike~~ should work") {
         REQUIRE(
             violet::Markdown::parse(ss)
             ==
-            "<p>Text <strike>content</strike> here</p>"
+            "<p>Text <s>content</s> here</p>"
         );
     }
 }

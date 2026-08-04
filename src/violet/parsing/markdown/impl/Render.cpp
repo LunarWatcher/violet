@@ -90,7 +90,7 @@ static void stringifyTreeImpl(
         ss << "<hr/>";
     } break;
     case Markdown::NodeType::Strike: {
-        ss << "<strike>";
+        ss << "<s>";
     } break;
     default:
         break;
@@ -183,7 +183,7 @@ static void stringifyTreeImpl(
         ss << "</li>";
         break;
     case Markdown::NodeType::Strike: {
-        ss << "</strike>";
+        ss << "</s>";
     } break;
     default:
         break;
