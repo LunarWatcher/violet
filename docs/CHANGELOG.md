@@ -24,6 +24,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Fixed
 
 * Inline templates are now skipped by the markdown renderer
+* Made inja errors better describe what file the error is from
 
 ## [v0.7.0] (2026-07-26)
 
