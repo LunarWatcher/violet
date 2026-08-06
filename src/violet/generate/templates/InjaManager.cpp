@@ -73,7 +73,7 @@ std::string InjaManager::renderPage(
         });
     }
 
-    if (!fm.isAsset) {
+    if (fm.hasLayout()) {
         auto templateLocation = this->fileManager.resolveTemplate(
             fm.type,
             fm.getLayout()

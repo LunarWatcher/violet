@@ -49,7 +49,9 @@ struct Frontmatter {
         auto ext = source.extension().string();
         if (ext == ".js" || ext == ".mjs" || ext == ".css") {
             isAsset = true;
-            layout = "";
+            if (!layout) {
+                layout = "none";
+            }
             internalFileType = ProcessedFileType::Asset;
         } else if (ext == ".rss" || ext == ".atom" || ext == ".xml") {
             internalFileType = ProcessedFileType::Xml;
@@ -60,16 +62,28 @@ struct Frontmatter {
 
             std::filesystem::path newPath = source;
             if (newPath.filename() != "README.md") {
-                newPath = newPath.replace_extension(".html");
-                newPath = newPath.replace_filename(
+                newPath.replace_extension(".html");
+                newPath.replace_filename(
                     renameFile(
                         newPath.filename().string()
                     )
                 );
             } else {
-                newPath = newPath.replace_filename("index.html");
+                newPath.replace_filename("index.html");
             }
             internalUrl = newPath;
+        } else if (ext == ".in") {
+            internalFileType = ProcessedFileType::InFile;
+            std::filesystem::path newPath = source;
+            newPath.replace_extension();
+            if (newPath.string() == "") {
+                throw std::runtime_error("`.in` is an illegal filename");
+            }
+            internalUrl = newPath;
+
+            if (!layout) {
+                layout = "none";
+            }
         } else {
             throw std::runtime_error(
                 std::format(
@@ -87,6 +101,10 @@ struct Frontmatter {
             *title,
             internalUrl
         );
+    }
+
+    bool hasLayout() const noexcept {
+        return !layout.has_value() || *layout != "none";
     }
 
     std::string getLayout() const noexcept {

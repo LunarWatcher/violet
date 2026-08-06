@@ -234,6 +234,16 @@ bool SiteGenerator::processFile(
             parsedFrontmatter
         );
     } break;
+    case ProcessedFileType::InFile: {
+        minilog::debug("Loaded file is a .in file.");
+        std::string fileContent = content.str();
+
+        handleTemplatesAndSave(
+            std::move(fileContent),
+            parsedFrontmatter.internalUrl,
+            parsedFrontmatter
+        );
+    } break;
     case ProcessedFileType::Uninitialized:
         throw std::runtime_error("Developer error: internalFileType was not initialized!");
     }
@@ -363,6 +373,9 @@ bool SiteGenerator::generate() {
                     success &= *result;
                     return;
                 }
+            } else if (ext == ".in") {
+                success &= processFile(rootDir, relPath);
+                return;
             }
         cont:
             fileManager.copyRaw(rootDir, relPath, relPath);

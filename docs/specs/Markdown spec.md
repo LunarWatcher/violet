@@ -117,7 +117,7 @@ See also the section on [escaping syntax elements](#escaping-syntax-elements)
 
 #### Tangent: HTML semantics
 
-Violet's markdown parser has no understanding of HTML and templating semantics. In theory, violet _could_ parse the HTML to identify content nodes that it could them parse, but this would require an HTML parser as well, and that's a _lot_ more involved.
+Violet's markdown parser has no understanding of HTML and templating semantics. In theory, violet *could* parse the HTML to identify content nodes that it could them parse, but this would require an HTML parser as well, and that's a *lot* more involved.
 
 As a consequence, violet doesn't parse markdown in HTML in part as a feature, and in part because it can't.
 

@@ -9,6 +9,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 * `BREAKING:` - changes that require changes as part of an update
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
+* `Markdown:` - changes made to the markdown engine
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
 * `Theme(theme name)` - changes made to specific builtin themes
 
@@ -17,9 +18,19 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.8.0] (2026-08-06)
+
 ### Added
 
-* `~~strike~~` ([#15](https://codeberg.org/LunarWatcher/violet/issues/15))
+* Allow non-markdown, non-html, and non-asset files to be processed via the extra `.in` extension ([#14](https://codeberg.org/LunarWatcher/violet/issues/14))
+  * To process a `.txt` file for example, it would need to be called `filename.txt.in`
+* Markdown: `~~strike~~` ([#15](https://codeberg.org/LunarWatcher/violet/issues/15))
+* `"layout": "none"` can be used to fully disable layouts.
+  * This also means `none.inja` is now an illegal template filename that will never be used.
+
+### Changed
+
+* Assets (`.js`, `.css`, `.mjs`) are now allowed to have layouts, but the default layout is `none`.
 
 ### Fixed
 
@@ -39,8 +50,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Added
 
-* Better template parsing, as well as proper HTML block identification. Template _blocks_ and HTML blocks are now left alone. Previously, only individual lines with a template were handled.
-* Syntax escaping in text \o/ \[writing with brackets now works again\]
+* Markdown: Better template parsing, as well as proper HTML block identification. Template _blocks_ and HTML blocks are now left alone. Previously, only individual lines with a template were handled.
+* Markdown: Syntax escaping in text \o/ \[writing with brackets now works again\]
 
 ### Changed
 
@@ -55,7 +66,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Added
 
-* Horizontal rules are now supported (`---` separators)
+* Markdown: Horizontal rules are now supported (`---` separators)
 * Allowed RSS/ATOM (`.atom`, `.rss`, `.xml`) to be passed through template rendering
 * Allowed some assets (`.css`, `.js`, `.mjs`) to be passed through template rendering. This is a weaker version where no base template is used, i.e. the templates operate directly on the asset. Mainly intended to let `{{ site.prefix }}` be used in CSS files
 * Templates: added the `now()` function for use with the time parsing functions. Example use: `{{ formatDate(now(), "%FT%T%z") }}`
@@ -90,7 +101,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.7.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.8.0...master
+[v0.8.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...v0.5.0

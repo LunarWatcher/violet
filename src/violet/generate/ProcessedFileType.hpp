@@ -6,6 +6,10 @@ enum class ProcessedFileType {
     Html,
     Markdown,
     Xml,
-    Asset
+    Asset,
+    /**
+     * Special `.in` filetype  
+     */
+    InFile,
 };
 }
