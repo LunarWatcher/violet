@@ -30,3 +30,12 @@ If you need to load any other file with templating support, for example to gener
 >
 > There is currently no way to escape such content. HTML and HTML-shaped things have the `htmlEscape` method, and XML in particular lets you use CData that gets around more of it, but violet currently lacks a general/customizable escaping function. Such a function is planned for 0.9.0.
 
+This is then processed to a JSON file with the title and relative URL of every page on the site, as you would expect. These also support frontmatter, but it is not required.
+
+## URL translation for non-supported filetypes
+
+Non-supported filetypes do not have URL translation, beyond stripping `.in` from the path. This means that if you create an invalidly named file, it will have that same invalid name in the output. In the future, these may be subject to the same URL normalization methods.
+
+## Limitations in iteration
+
+At this time, `.in` files are fully omitted from `listPages`. A separate function is planned but not scheduled, as I do not see any immediate need to iterate over such files. If you have such a need, please open an issue.
