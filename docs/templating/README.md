@@ -19,7 +19,7 @@ These two can live together: project-local templates take precedence over the ac
 * `.md`, `.html`: standard content files, defaults to `"layout": "single_page"`
 * `.js`, `.mjs`, `.css`: asset files, defaults to `"layout": "none"`
 * `.xml`, `.rss`, `.atom`: feed files, defaults to `"layout": "feed"`. Note that you can have `.xml` files that aren't feeds, as there are no URL translations, this is just the default assumption. For RSS and ATOM feeds, see [RSS and atom feeds](/RSS and atom feeds.md)
-* `.in`: a special extension that's stripped, and indicates that the file should be template-processed. See [templating non-supported filetypes](Templating non-supported filetypes.md)
+* `.in`: a special extension that's stripped, and indicates that the file should be template-processed. See [templating non-supported filetypes](Templating non-supported filetypes.md). Defaults to `"layout": "none"`.
 * Everything else: copied verbatim without template processing.
 
 ## Special includes
