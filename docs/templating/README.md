@@ -14,6 +14,14 @@ Violet provides two ways to provide templates for pages:
 
 These two can live together: project-local templates take precedence over the active theme, and can be used to extend and existing theme. A whole site can also be implemented entirely without a theme using exclusively project-local templates.
 
+## Filetypes and default layouts
+
+* `.md`, `.html`: standard content files, defaults to `"layout": "single_page"`
+* `.js`, `.mjs`, `.css`: asset files, defaults to `"layout": "none"`
+* `.xml`, `.rss`, `.atom`: feed files, defaults to `"layout": "feed"`. Note that you can have `.xml` files that aren't feeds, as there are no URL translations, this is just the default assumption. For RSS and ATOM feeds, see [RSS and atom feeds](/RSS and atom feeds.md)
+* `.in`: a special extension that's stripped, and indicates that the file should be template-processed. See [templating non-supported filetypes](Templating non-supported filetypes.md)
+* Everything else: copied verbatim without template processing.
+
 ## Special includes
 
 Violet has a couple special includes you can use.
@@ -41,7 +49,7 @@ Additionally, there are two that may be available depending on the page context:
 
 As currently implemented, there are a fair few things you need to keep track of yourself while writing templates.
 
-### `{{ site.prefix }}` must be present on all absolute internal URLs in templates
+### `{{ site.prefix }}` must be present on all absolute internal URLs in templates and non-markdown files
 
 This does not apply to links in markdown, it exclusively applies to links in the inja templates.
 
