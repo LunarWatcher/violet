@@ -4,7 +4,9 @@
 #include "violet/algorithm/SortMethod.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/data/Constants.hpp"
+#include "violet/data/RenderResult.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
+#include "violet/parsing/Markdown.hpp"
 
 namespace violet {
 
@@ -26,6 +28,9 @@ FileFunctions::FileFunctions(InjaManager& man) : man(man) {
     });
     man.env.add_callback("loadJson", 2, [this](auto& args) {
         return loadJson(args);
+    });
+    man.env.add_callback("render", 1, [this](auto& args) {
+        return render(args);
     });
 }
 nlohmann::json listPagesPaginated(inja::Arguments& args);
@@ -309,6 +314,65 @@ nlohmann::json FileFunctions::loadJson(inja::Arguments& args) {
         throw;
     }
     return data;
+}
+
+nlohmann::json FileFunctions::render(inja::Arguments& args) {
+    auto fm = args.at(0)->get<Frontmatter>();
+
+    // TODO: desperately need better out of bounds path checking
+    if (fm.internalPath.starts_with("/") || fm.internalPath.contains("..")) {
+        throw std::runtime_error("Path passed to render breaks project containment");
+    }
+
+    auto path = std::filesystem::path(fm.internalPath);
+    auto [ metadata, in ] = this->man.metaCache.openFile(
+        path
+    );
+
+    std::stringstream fileContent;
+    fileContent << in.rdbuf();
+    RenderResult res;
+    std::string rawContent;
+
+    Frontmatter safeFm = metadata.frontmatter;
+
+    switch (safeFm.internalFileType) {
+    case ProcessedFileType::Markdown: {
+        auto page = violet::Markdown::parseWithContentPostprocessing(
+            fileContent,
+            std::bind(
+                projectBasedTranslator,
+                this->man.cfg.prefix,
+                this->man.opts.root,
+                fm.internalPath,
+                std::placeholders::_1
+            )
+        );
+        rawContent = page.parsedContents;
+        safeFm.tableOfContents = page.tableOfContents;
+    } break;
+    case ProcessedFileType::Html:
+    case ProcessedFileType::Xml:
+    case ProcessedFileType::Asset:
+    case ProcessedFileType::InFile:
+        rawContent = fileContent.str();
+        break;
+    case ProcessedFileType::Uninitialized:
+        [[unlikely]]
+        throw std::runtime_error(
+            "Critical engine bug: internalFileType not initialized."
+        );
+    default:
+        [[unlikely]]
+        throw std::runtime_error("Illegal value of internalFileType injected");
+    }
+
+    res.content = this->man.env.render(
+        rawContent,
+        this->man.buildCommonContext(safeFm)
+    );
+
+    return res;
 }
 
 }

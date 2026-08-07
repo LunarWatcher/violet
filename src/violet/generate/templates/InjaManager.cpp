@@ -45,17 +45,22 @@ InjaManager::InjaManager(
     });
 }
 
+nlohmann::json InjaManager::buildCommonContext(const Frontmatter& pageFm) {
+    
+    return {
+        {"page", pageFm},
+        {"site", this->cfg.raw},
+        {"violet", violet::violet_global}
+    };
+}
+
 std::string InjaManager::renderPage(
     const std::string& fileContent,
     const std::filesystem::path&, // TODO: what was the idea with this arg?
     const Frontmatter& fm,
     Paginator::iterator* pagIt
 ) {
-    nlohmann::json context = {
-        {"page", fm},
-        {"site", this->cfg.raw},
-        {"violet", violet::violet_global}
-    };
+    auto context = buildCommonContext(fm);
 
     if (pagIt != nullptr) {
         std::vector<nlohmann::json> pages;

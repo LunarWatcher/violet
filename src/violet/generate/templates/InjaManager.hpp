@@ -39,6 +39,8 @@ public:
     InjaManager(InjaManager&) = delete;
     InjaManager(InjaManager&&) = delete;
 
+    nlohmann::json buildCommonContext(const Frontmatter& pageFm);
+
     std::string renderPage(
         const std::string& fileContent,
         const std::filesystem::path& fileSource,

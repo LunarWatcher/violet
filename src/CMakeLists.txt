@@ -6,6 +6,8 @@ add_library(violetsrc STATIC
 
     violet/conf/ToJsonImpl.cpp
 
+    violet/data/RenderResult.cpp
+
     violet/generate/FileManager.cpp
     violet/generate/SiteGenerator.cpp
 

@@ -29,6 +29,9 @@
             {% else %}
                 <summary>No summary available! :(</summary>
             {% endif %}
+            <content type="html">
+                {{ htmlEscape(render(entry).content) }}
+            </content>
             <author>
                 <name>{{ site.data.author.name }}</name>
                 <email>{{ site.data.author.email }}</email>

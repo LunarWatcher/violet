@@ -143,6 +143,11 @@ This example is the same in principle as the standalone example. Its comments ap
             {% if existsIn(entry, "summary") %}
                 <summary><![CDATA[{{ entry.summary }}]]></summary>
             {% endif %}
+            <!-- New in violet 0.9.0: render() lets the content of other pages be included.
+            We htmlEscape() the contents to avoid CDATA or xhtml -->
+            <content type="html">
+                {{ htmlEscape(render(entry).content) }}
+            </content>
             <author>
                 <name>Olivia</name>
                 <email>email@example.com</email>

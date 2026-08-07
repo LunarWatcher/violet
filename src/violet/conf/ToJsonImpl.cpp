@@ -2,6 +2,7 @@
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/conf/ThemeConfig.hpp"
 #include "violet/data/Constants.hpp"
+#include "violet/generate/ProcessedFileType.hpp"
 #include "violet/parsing/DateTimeParsing.hpp"
 
 void violet::from_json(const nlohmann::json& src, Config& dest) {
@@ -100,7 +101,18 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     if (auto it = src.find("summary"); it != src.end() && !it->is_null()) {
         dest.summary = it->get<std::string>();
     }
+    if (auto it = src.find(constants::InternalFileTypeRef); it != src.end() && it->is_number()) {
+        dest.internalFileType = static_cast<ProcessedFileType>(it->get<int>());
 
+        auto val = static_cast<int>(dest.internalFileType);
+        if (val < static_cast<int>(ProcessedFileType::Uninitialized)
+            || val > static_cast<int>(ProcessedFileType::InFile)
+        ) {
+            throw std::runtime_error(
+                "Illegal internal filetype found. Have you been tampering with frontmatter objects?"
+            );
+        }
+    }
 }
 
 void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
@@ -131,12 +143,13 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     dest["taxonomies"] = src.taxonomies;
 
     dest["data"] = src.data;
-    dest[violet::constants::InternalPathRef] = src.internalPath;
     dest["url"] = src.internalUrl;
     dest["table_of_contents"] = src.tableOfContents;
     if (src.summary) {
         dest["summary"] = src.summary;
     }
+    dest[violet::constants::InternalPathRef] = src.internalPath;
+    dest[violet::constants::InternalFileTypeRef] = static_cast<int>(src.internalFileType);
 }
 
 // TODO: isn't this internal data that we don't want to re-expose again?

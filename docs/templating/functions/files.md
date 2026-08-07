@@ -7,6 +7,36 @@
 
 {{ page.table_of_contents }}
 
+## `render(frontmatterRef)`
+
+*Added in 0.9.0*
+
+This function is used to render content in other files. To render content in the current file, the correcet method is to use `{% include "content" %}`.
+
+The output varies by what filetype the frontmatter is for:
+
+* Markdown files: Processed HTML
+* Everything else: raw text content
+
+The frontmatter must never be built by hand, but rather be the `page` object for the page currently being rendered, or be a page object associated with one of the file iteration functions `listPages`, `treePages`, etc.; the list functions are declared on this page
+
+### Arguments
+
+#### `frontmatterRef`
+
+The frontmatter object to render.
+
+### Return value
+
+```json
+{
+    "content": "The rendered or literal content of the associated file"
+}
+```
+
+The return value is an object to allow for future expansions (notably, a generated `.summary`)
+
+
 ## `listPages(object, location)`
 
 This function recursively lists pages from the provided `location`. The return value is a flat list of frontmatters (see [the frontmatter schema spec](/schemas/Frontmatter.md)).

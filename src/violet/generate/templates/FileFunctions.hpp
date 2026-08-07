@@ -22,6 +22,7 @@ public:
     nlohmann::json paginatedUrl(inja::Arguments& args);
 
     nlohmann::json loadJson(inja::Arguments& args);
+    nlohmann::json render(inja::Arguments& args);
 };
 
 }
