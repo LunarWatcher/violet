@@ -8,7 +8,7 @@
 #include "violet/generate/cache/MetadataCache.hpp"
 #include "violet/generate/templates/DateTimeFunctions.hpp"
 #include "violet/generate/templates/FileFunctions.hpp"
-#include "violet/generate/templates/HtmlFunctions.hpp"
+#include "violet/generate/templates/EscapingFunctions.hpp"
 #include "violet/generate/templates/LangFunctions.hpp"
 #include "violet/paginator/Paginator.hpp"
 
@@ -27,7 +27,7 @@ public:
     DateTimeFunctions dateTimeFuncs;
     FileFunctions fileFuncs;
     LangFunctions langFuncs;
-    HtmlFunctions htmlFuncs;
+    EscapingFunctions escapingFuncs;
 
     InjaManager(
         GenerateOpts& opts,

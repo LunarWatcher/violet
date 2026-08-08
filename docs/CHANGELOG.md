@@ -25,6 +25,11 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
     In `recursiveInclude`, this is a feature, but in `render()`, that makes it a weaker alternative (or stronger, depending on your point of view). See the docs for `render` for more information
 * Theme(default): Added `render()`ed `<content>` to the default RSS feed.
+* Templates: Added `urlEncode`
+
+### Fixed
+
+* Template preservation in paragraphs no longer results in a trailing `}` after the template
 
 ## [v0.8.0] (2026-08-06)
 

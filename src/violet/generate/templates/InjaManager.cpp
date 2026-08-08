@@ -22,7 +22,7 @@ InjaManager::InjaManager(
     metaCache(metaCache),
     fileFuncs(*this),
     langFuncs(*this),
-    htmlFuncs(*this),
+    escapingFuncs(*this),
     dateTimeFuncs(*this)
 {
     env.set_include_callback([this](

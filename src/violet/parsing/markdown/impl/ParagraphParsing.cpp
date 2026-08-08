@@ -298,6 +298,7 @@ void Markdown::parseParagraphContent(
                 if (ch == end) {
                     if (in.peek() == '}') {
                         content << end << '}';
+                        in.get(); // consume trailing '}'
                         break;
                     }
                 }

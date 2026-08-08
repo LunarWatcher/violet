@@ -1,0 +1,4 @@
+# Moved pages -----------------------------------------------------------------------
+
+# moved in 0.9.0
+/violet/templating/functions/html.html /violet/templating/functions/escaping.html 301
