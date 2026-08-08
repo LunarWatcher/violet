@@ -20,7 +20,7 @@ If you need to load any [unsupported filetype](/templating/README.md#filetypes-a
 
 > [!warning]
 >
-> As with all other filetypes, beware of accidental input injection. In this case, it's avoided with the inja-builtin `replace` function. For HTML, use `htmlEscape`. For XML, use `htmlEscape` in combination with CData.
+> As with all other filetypes, beware of accidental input injection. In this case, it's avoided with the inja-builtin `replace` function. For HTML, use `htmlEscape`. For XML, use `htmlEscape` in combination with CData. See also [the full list of special-purpose escaping functions](/templating/functions/escaping.md).
 
 This is then processed to a JSON file with the title and relative URL of every page on the site, as you would expect. These also support frontmatter, but it is not required.
 
