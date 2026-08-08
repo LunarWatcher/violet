@@ -18,6 +18,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.9.0] (2026-08-08)
+
 ### Added
 
 * Templates: Added `render(frontmatterRef)`, which allows pages from the various iteration functions rendered outside their normal filesystem declaration.
@@ -114,7 +116,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.8.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.9.0...master
+[v0.9.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.6.0
