@@ -1,6 +1,6 @@
 <footer>
     <div id="footer-meta">
-        <p>Page rendered with <a href="https://codeberg.org/LunarWatcher/violet">Violet</a></p>
+        <p>Page rendered with <a href="https://codeberg.org/LunarWatcher/violet">Violet</a> {{ violet.version }}</p>
 
         {% if exists("site.data.repo.license") %}
             <p id="content-license">{{site.data.repo.license}}</p>

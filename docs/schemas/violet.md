@@ -12,6 +12,10 @@ The `violet` global is a utility variable with constants and certain function in
 
 {{ page.table_of_contents }}
 
+## `violet.version`
+
+The version of violet used to build the site. Also available through [violet meta](violet-meta.md), but is also available in a compile-time constant.
+
 ## `violet.datetime`
 
 `violet.datetime` is a utility scope. Its use is optional unless otherwise noted by subcategories.
