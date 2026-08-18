@@ -312,18 +312,11 @@ bool SiteGenerator::generate() {
         cfg.raw["prefix"] = realOutputPath.string();
         cfg.prefix = realOutputPath.string();
     } else if (opts.overridePrefix) {
-        auto prefix = opts.overridePrefix->string();
-        if (prefix.starts_with("/")) {
-            prefix = prefix.substr(1);
-        }
-
         minilog::info(
             "User requested site prefix override to {}",
-            opts.overridePrefix->string()
+            *opts.overridePrefix
         );
-
-        cfg.raw["prefix"] = prefix;
-        cfg.prefix = prefix;
+        cfg.setPrefix(*opts.overridePrefix);
     }
 
 

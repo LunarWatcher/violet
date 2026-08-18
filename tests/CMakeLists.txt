@@ -1,6 +1,10 @@
 add_executable(tests
     src/Main.cpp
 
+    src/config/PrefixValidationTests.cpp
+
+    src/escaping/UrlEscapingTests.cpp
+
     src/fixtures/LoadWorkspace.cpp
     src/fixtures/TestSiteGenerator.cpp
 

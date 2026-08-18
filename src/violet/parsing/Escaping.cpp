@@ -31,11 +31,24 @@ void violet::htmlEscape(
         target << ch;
     }
 }
-
 void violet::urlEncode(
     char ch,
     std::stringstream& target,
     bool includeReserved
+) {
+    urlEncode(
+        ch,
+        target,
+        includeReserved,
+        includeReserved
+    );
+}
+
+void violet::urlEncode(
+    char ch,
+    std::stringstream& target,
+    bool includeReserved,
+    bool includeSlash
 ) {
     if (
         (ch >= 'A' && ch <= 'Z')
@@ -49,7 +62,10 @@ void violet::urlEncode(
         target << ch;
         return;
     }
-    if (!includeReserved) {
+    if (!includeSlash && ch == '/') {
+        target << ch;
+        return;
+    } else if (!includeReserved) {
         switch (ch) {
         case '!':
         case '#':
@@ -61,7 +77,6 @@ void violet::urlEncode(
         case '*':
         case '+':
         case ',':
-        case '/':
         case ':':
         case ';':
         case '=':
@@ -89,11 +104,26 @@ void violet::urlEncode(
     std::stringstream& target,
     bool includeReserved
 ) {
+    urlEncode(
+        str,
+        target,
+        includeReserved,
+        includeReserved
+    );
+}
+
+void violet::urlEncode(
+    const std::string& str,
+    std::stringstream& target,
+    bool includeReserved,
+    bool includeSlash
+) {
     for (auto ch : str) {
         urlEncode(
             ch,
             target,
-            includeReserved
+            includeReserved,
+            includeSlash
         );
     }
 }

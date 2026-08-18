@@ -29,9 +29,23 @@ extern void urlEncode(
 );
 
 extern void urlEncode(
+    char ch,
+    std::stringstream& target,
+    bool includeReserved,
+    bool includeSlash
+);
+
+extern void urlEncode(
     const std::string& str,
     std::stringstream& target,
     bool includeReserved = true
+);
+
+extern void urlEncode(
+    const std::string& str,
+    std::stringstream& target,
+    bool includeReserved,
+    bool includeSlash
 );
 
 }

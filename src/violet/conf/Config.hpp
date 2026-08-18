@@ -1,7 +1,10 @@
 #pragma once
 
+#include "minilog/minilog.hpp"
 #include "violet/data/Constants.hpp"
+#include "violet/parsing/Escaping.hpp"
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
@@ -26,6 +29,38 @@ struct Config {
 
     void imbueRoot(const std::filesystem::path& root) {
         raw[violet::constants::InternalPathRef] = root.string();
+    }
+
+    void setPrefix(const std::string& newPrefix) {
+        if (newPrefix == "/") {
+            prefix = "";
+        } else if (!newPrefix.empty() && !newPrefix.starts_with("/")) {
+            minilog::error(
+                "The prefix must start with a /, or be an empty string, but found \"{}\"",
+                newPrefix
+            );
+            throw std::runtime_error(
+                "Illegal prefix"
+            );
+        } else if (!newPrefix.empty() && newPrefix.ends_with("/")) {
+            minilog::error(
+                "The prefix must not end with a / (unless the entire prefix is \"/\"), but found \"{}\"",
+                newPrefix
+            );
+            throw std::runtime_error(
+                "Illegal prefix"
+            );
+        } else {
+            prefix = newPrefix;
+        }
+
+
+        std::stringstream ss;
+        // TODO: false, false? Not sure if I want includeReserved set to true here, since # in a 
+        urlEncode(prefix, ss, true, false);
+        prefix = ss.str();
+
+        raw["prefix"] = prefix;
     }
 };
 

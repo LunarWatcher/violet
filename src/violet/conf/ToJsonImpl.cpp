@@ -10,7 +10,9 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
     if (auto it = src.find("description"); it != src.end() && !it->is_null()) {
         dest.description = it->get<std::string>();
     }
-    dest.prefix = src.value("prefix", "");
+    dest.setPrefix(
+        src.value("prefix", "")
+    );
     if (auto it = src.find("exclude"); it != src.end()) {
         it->get_to(dest.exclude);
     }

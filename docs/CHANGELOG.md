@@ -26,6 +26,11 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
   The standard caveats with the prefix apply as to the config, i.e. the prefix shouldn't start with an absolute path - however, `/` is especially allowed with `--prefix`, and is equivalent to `"prefix": ""` in `violet.json`.
 
+### Changed
+
+* `prefix` is now URL-encoded
+* Fixed a bug where `"prefix": "/"` caused invalid local paths or paths that otherwise start with a double slash
+
 ## [v0.9.0] (2026-08-08)
 
 ### Added
