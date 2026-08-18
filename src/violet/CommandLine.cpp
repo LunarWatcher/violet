@@ -44,13 +44,23 @@ int violet::cliMain(int argc, char** argv) {
         generateOpts.watch,
         "Whether or not to watch for changes. Not setting this will generate the site and then immediately exit."
     );
-    cmdGenerate->add_flag(
+
+    auto* local = cmdGenerate->add_flag(
         "-l,--local",
         generateOpts.overridePrefixForLocalUse,
         "Whether or not to enable local extensions in the build. This makes a build that's "
         "incompatible with deployment outside your local machine."
     )
         ->default_val(generateOpts.overridePrefixForLocalUse);
+    cmdGenerate->add_option(
+        "-p,--prefix",
+        generateOpts.overridePrefix,
+        "Override the prefix to a custom string. Avoid using this if you can, and prefer to decide "
+        "whether or not you actually want to change the prefix set by your `violet.json`, or if you want --local "
+        "instead. This is useful if you want to use Firefox' local mode mappings"
+    )
+        ->default_val(std::nullopt)
+        ->excludes(local);
 
     auto cmdServe = app.add_subcommand(
         "serve",

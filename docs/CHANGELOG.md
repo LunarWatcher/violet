@@ -8,15 +8,23 @@
 This page contains the changelog for violet. Please note that you'll encounter the following indicators:
 
 * `BREAKING:` - changes that require changes as part of an update
+* `CLI:` and `CLI (subcommand):` - Changes to the command line flags and commands.
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Markdown:` - changes made to the markdown engine
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
 * `Theme(theme name)` - changes made to specific builtin themes
 
+
 {{ page.table_of_contents }}
 
 
 ## [unreleased]
+
+### Added
+
+* CLI (generate): Added `-p,--prefix` for overriding the prefix manually. This is another alternative to `-l` meant for supplying a real path. For example, `--prefix /` can be used to override the prefix to the root level. 
+
+  The standard caveats with the prefix apply as to the config, i.e. the prefix shouldn't start with an absolute path - however, `/` is especially allowed with `--prefix`, and is equivalent to `"prefix": ""` in `violet.json`.
 
 ## [v0.9.0] (2026-08-08)
 

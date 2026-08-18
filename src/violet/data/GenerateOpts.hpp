@@ -21,6 +21,7 @@ struct GenerateOpts {
     bool overridePrefixForLocalUse = false;
 
     std::filesystem::path root = std::filesystem::current_path();
+    std::optional<std::filesystem::path> overridePrefix;
 };
 
 }
