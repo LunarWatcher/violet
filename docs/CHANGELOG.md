@@ -20,6 +20,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.10.0] (2026-09-21)
+
 ### Added
 
 * CLI (generate): Added `-p,--prefix` for overriding the prefix manually. This is another alternative to `-l` meant for supplying a real path. For example, `--prefix /` can be used to override the prefix to the root level.
@@ -130,7 +132,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.9.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...master
+[v0.10.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.9.0...v0.10.0
 [v0.9.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.6.0...v0.7.0

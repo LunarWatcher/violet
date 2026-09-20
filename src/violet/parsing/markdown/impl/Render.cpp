@@ -93,6 +93,7 @@ static void stringifyTreeImpl(
         auto imgNode = static_cast<const Markdown::ImageNode*>(tree);
         ss << "<img"
            << " src=\"" << imgNode->getUrl(context) << "\""
+            // TODO: HTML escape? Has this been done already?
            << " alt=\"" << imgNode->alt << "\""
            << " />";
     } break;
