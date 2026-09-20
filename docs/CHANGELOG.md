@@ -22,9 +22,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Added
 
-* CLI (generate): Added `-p,--prefix` for overriding the prefix manually. This is another alternative to `-l` meant for supplying a real path. For example, `--prefix /` can be used to override the prefix to the root level. 
+* CLI (generate): Added `-p,--prefix` for overriding the prefix manually. This is another alternative to `-l` meant for supplying a real path. For example, `--prefix /` can be used to override the prefix to the root level.
 
   The standard caveats with the prefix apply as to the config, i.e. the prefix shouldn't start with an absolute path - however, `/` is especially allowed with `--prefix`, and is equivalent to `"prefix": ""` in `violet.json`.
+* Markdown: Added support for checklists (`- [ ]` and `- [x]`)
 
 ### Changed
 
