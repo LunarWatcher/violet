@@ -82,7 +82,7 @@ static void stringifyTreeImpl(
         ss << "<li>";
 
         if (auto node = dynamic_cast<const Markdown::CheckboxEntryNode*>(tree); node != nullptr) {
-            ss << "<input type=\"checkbox\" disabled";
+            ss << "<input class=\"violet-checklist\" type=\"checkbox\" disabled";
             if (node->checked) {
                 ss << " checked";
             }

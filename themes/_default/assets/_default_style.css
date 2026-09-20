@@ -160,6 +160,10 @@ pre > code {
     padding: 4px;
 }
 
+.violet-checklist {
+    float: left;
+}
+
 .inline-list span {
     color: #666666;
 }

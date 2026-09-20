@@ -320,6 +320,18 @@ Each level of the list is indented by precisely two spaces. Similarly, content c
     1. with sub-numbered list
 ```
 
+### Checklists
+
+```markdown
+- [ ] Unchecked list item
+  - [ ] Nested list item
+- [x] Checked list item
+```
+
+> - [ ] Unchecked list item
+>   - [ ] Nested list item
+> - [x] Checked list item
+
 ## Blockquotes
 
 Blockquotes are implemented with `>`

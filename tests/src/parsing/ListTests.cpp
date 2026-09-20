@@ -15,7 +15,7 @@ TEST_CASE("Unordered lists", "[markdown]") {
         );
         std::string prefix = "";
         if (checklistChar != '\0') {
-            prefix = "<input type=\"checkbox\" disabled";
+            prefix = "<input class=\"violet-checklist\" type=\"checkbox\" disabled";
             if (checklistChar != ' ') {
                 prefix += " checked";
             }

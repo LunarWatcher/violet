@@ -12,9 +12,9 @@ TEST_CASE("Markdown checklists", "[markdown][checklists]") {
             violet::Markdown::parse(ss)
             ==
             "<ul>"
-                R"(<li><input type="checkbox" disabled/><p>Item</p></li>)"
-                R"(<li><input type="checkbox" disabled checked/><p>Item</p></li>)"
-                R"(<li><input type="checkbox" disabled/><p>Item</p></li>)"
+                R"(<li><input class="violet-checklist" type="checkbox" disabled/><p>Item</p></li>)"
+                R"(<li><input class="violet-checklist" type="checkbox" disabled checked/><p>Item</p></li>)"
+                R"(<li><input class="violet-checklist" type="checkbox" disabled/><p>Item</p></li>)"
             "</ul>"
         );
     }
@@ -27,9 +27,9 @@ TEST_CASE("Markdown checklists", "[markdown][checklists]") {
             violet::Markdown::parse(ss)
             ==
             "<ul>"
-                R"(<li><input type="checkbox" disabled/><p>Item</p></li>)"
+                R"(<li><input class="violet-checklist" type="checkbox" disabled/><p>Item</p></li>)"
                 R"(<li><p>Item</p></li>)"
-                R"(<li><input type="checkbox" disabled checked/><p>Item</p></li>)"
+                R"(<li><input class="violet-checklist" type="checkbox" disabled checked/><p>Item</p></li>)"
             "</ul>"
         );
     }
@@ -41,9 +41,9 @@ TEST_CASE("Markdown checklists", "[markdown][checklists]") {
             violet::Markdown::parse(ss)
             ==
             "<ul>"
-                R"(<li><input type="checkbox" disabled/><p>Item</p>)"
+                R"(<li><input class="violet-checklist" type="checkbox" disabled/><p>Item</p>)"
                     "<ul>"
-                        R"(<li><input type="checkbox" disabled checked/><p>Item</p></li>)"
+                        R"(<li><input class="violet-checklist" type="checkbox" disabled checked/><p>Item</p></li>)"
                     "</ul>"
                 "</li>"
             "</ul>"
