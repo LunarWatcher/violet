@@ -6,6 +6,7 @@
 #include "violet/parsing/markdown/DocumentContext.hpp"
 #include "violet/parsing/markdown/ElementaryNodes.hpp"
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 namespace violet {
@@ -77,7 +78,16 @@ static void stringifyTreeImpl(
         break;
     case Markdown::NodeType::OrderedListEntry:
     case Markdown::NodeType::UnorderedListEntry:
+    case Markdown::NodeType::UnorderedListChecklistEntry:
         ss << "<li>";
+
+        if (auto node = dynamic_cast<const Markdown::CheckboxEntryNode*>(tree); node != nullptr) {
+            ss << "<input type=\"checkbox\" disabled";
+            if (node->checked) {
+                ss << " checked";
+            }
+            ss << "/>";
+        }
         break;
     case Markdown::NodeType::Image: {
         auto imgNode = static_cast<const Markdown::ImageNode*>(tree);
@@ -180,6 +190,7 @@ static void stringifyTreeImpl(
         break;
     case Markdown::NodeType::OrderedListEntry:
     case Markdown::NodeType::UnorderedListEntry:
+    case Markdown::NodeType::UnorderedListChecklistEntry:
         ss << "</li>";
         break;
     case Markdown::NodeType::Strike: {

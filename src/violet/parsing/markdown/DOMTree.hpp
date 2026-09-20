@@ -38,10 +38,11 @@ enum class NodeType {
     Strike = 19,
 
     UnorderedListEntry = 20,
-    OrderedListEntry = 21,
+    UnorderedListChecklistEntry = 21,
+    OrderedListEntry = 22,
 
-    Image = 22,
-    HorizontalRule = 23,
+    Image = 23,
+    HorizontalRule = 24,
 };
 
 struct DOMTree {

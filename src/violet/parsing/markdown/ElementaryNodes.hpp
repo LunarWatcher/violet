@@ -100,6 +100,10 @@ struct UnorderedListNode : public DOMTree {
 struct UnorderedListEntryNode : public DOMTree {
     UnorderedListEntryNode() : DOMTree(NodeType::UnorderedListEntry) {}
 };
+struct CheckboxEntryNode : public DOMTree {
+    const bool checked;
+    CheckboxEntryNode(bool checked) : DOMTree(NodeType::UnorderedListChecklistEntry), checked(checked) {}
+};
 
 struct OrderedListNode : public DOMTree {
     OrderedListNode() : DOMTree(NodeType::OrderedList) {}

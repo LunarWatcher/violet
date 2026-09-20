@@ -180,8 +180,9 @@ bool Markdown::prepareStream(
         switch (curr->type) {
         case NodeType::Quote:
         case NodeType::Callout:
-        case NodeType::UnorderedList:
-        case NodeType::OrderedList:
+        case NodeType::UnorderedListEntry:
+        case NodeType::UnorderedListChecklistEntry:
+        case NodeType::OrderedListEntry:
         case NodeType::FootnoteDef:
             types.push_back(curr->type);
             break;
@@ -208,7 +209,7 @@ bool Markdown::prepareStream(
                     std::ignore = in.get();
                 }
                 break;
-            case NodeType::UnorderedList:
+            case NodeType::UnorderedListEntry:
                 if (includeBullets && (in.peek() == '*' || in.peek() == '-')) {
                     std::ignore = in.get();
                     if (in.peek() == ' ') {
@@ -221,7 +222,33 @@ bool Markdown::prepareStream(
                     goto rollback;
                 }
                 break;
-            case NodeType::OrderedList:
+            case NodeType::UnorderedListChecklistEntry:
+                if (includeBullets && (in.peek() == '*' || in.peek() == '-')) {
+                    std::ignore = in.get();
+                    while (in.peek() == ' ') { // Consume spaces
+                        std::ignore = in.get();
+                    }
+
+                    if (in.peek() != '[') {
+                        goto rollback;
+                    }
+                    
+                    while (in.peek() != ']') {
+                        std::ignore = in.get();
+                    }
+                    std::ignore = in.get(); // Consume bracket
+
+                    while (in.peek() == ' ') { // Consume spaces
+                        std::ignore = in.get();
+                    }
+                } else if (
+                    !in.readsome(buff.data(), buff.size())
+                    || std::string_view{buff} != "  "
+                ) {
+                    goto rollback;
+                }
+                break;
+            case NodeType::OrderedListEntry:
                 int n;
                 if (includeBullets && in >> n) {
                     if (in.peek() != '.') {
@@ -517,14 +544,38 @@ void Markdown::parseUnorderedList(
     DOMTree* out,
     DocumentContext& context
 ) {
+    thread_local std::array<char, 5> buffer; 
     auto node = new UnorderedListNode();
     out->addChild(node);
 
     while(in && resolveMajorMode(in, out) == NodeType::UnorderedList) {
-        auto entry = new UnorderedListEntryNode();
-        node->addChild(entry);
+        LockStreamPos lock(in);
+        prepareStream(in, out);
+        auto read = in.readsome(buffer.data(), 5);
+        DOMTree* entryNode;
+        // std::cout << std::string_view(buffer.begin(), buffer.end()) << std::endl;
+
+        // TODO: this isn't elegant, but it works. It has to be like this because the includeBullets system is weak
+        if (
+            // Don't run checks if there's <5 chars in the stream
+            read == 5
+            && (
+                std::string_view(buffer.data() + 1, 4) == " [ ]"
+                || std::string_view(buffer.data() + 1, 4) == " [x]"
+                || std::string_view(buffer.data() + 1, 4) == " [X]"
+            )
+        ) {
+            entryNode = new CheckboxEntryNode(
+                buffer[3] == 'x' || buffer[3] == 'X'
+            );
+        } else {
+            entryNode = new UnorderedListEntryNode();
+        }
+        lock.revert();
+        node->addChild(entryNode);
+
         bool bulletBoundries = true;
-        while (in && nextMajorMode(in, entry, context, bulletBoundries)) {
+        while (in && nextMajorMode(in, entryNode, context, bulletBoundries)) {
             bulletBoundries = false;
         }
     }
