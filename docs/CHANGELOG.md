@@ -20,6 +20,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Changed
+
+* `//` and path upward traversal are no longer allowed in the prefix
+
 ## [v0.10.0] (2026-09-21)
 
 ### Added

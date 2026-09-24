@@ -26,4 +26,14 @@ TEST_CASE("Prefix /-ness should be validated") {
         REQUIRE_NOTHROW(dummy.setPrefix("/"));
         REQUIRE(dummy.prefix == "");
     }
+
+    SECTION("Double slashes are not allowed") {
+        REQUIRE_THROWS(dummy.setPrefix("//test"));
+        REQUIRE_THROWS(dummy.setPrefix("/test//component"));
+    }
+
+    SECTION("Path traversal is not allowed") {
+        REQUIRE_THROWS(dummy.setPrefix("/../whatever"));
+        REQUIRE_THROWS(dummy.setPrefix("/test/.."));
+    }
 }
