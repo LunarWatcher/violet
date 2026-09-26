@@ -24,6 +24,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 * CLI (generate): Added `--root`, largely for debug and E2E test purposes
 
+### Fixed
+
+* Fixed a bug where a bug in list parsing caused `* 0.10.0` to trigger an infinite parsing loop ([#17](https://codeberg.org/LunarWatcher/violet/issues/17))
+
 ## [v0.11.0] (2026-09-26)
 
 ### Added
@@ -36,7 +40,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Fixed
 
-* v0.10.0's addition of `--prefix` broke prefixes due to a CLI12 oddity
+* 0.10.0's addition of `--prefix` broke prefixes due to a CLI12 oddity
   * Technical summary: `add_option(...)->default_val(std::nullopt)` causes the value to be initialized to an empty string rather than an empty optional. This caused the prefix to always default to a string, and break all pages where `prefix != ""`.
 
 ## [v0.10.0] (2026-09-21) (RETRACTED)

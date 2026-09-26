@@ -32,6 +32,8 @@ add_executable(tests
     src/parsing/markdown/TemplateParsing.cpp
     src/parsing/markdown/ToCGenerationTests.cpp
 
+    src/parsing/markdown/regression/17-ListShapedListContent.cpp
+
     src/utils/FileReader.cpp
 )
 

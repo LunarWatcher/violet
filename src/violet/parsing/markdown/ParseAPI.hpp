@@ -33,7 +33,8 @@ extern bool nextMajorMode(
     std::stringstream& in,
     DOMTree* tree,
     DocumentContext& context,
-    bool bulletBoundries = true
+    bool bulletBoundries = true,
+    bool allowList = true
 );
 
 extern void parseHorizontalRule(

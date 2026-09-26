@@ -575,7 +575,7 @@ void Markdown::parseUnorderedList(
         node->addChild(entryNode);
 
         bool bulletBoundries = true;
-        while (in && nextMajorMode(in, entryNode, context, bulletBoundries)) {
+        while (in && nextMajorMode(in, entryNode, context, bulletBoundries, !bulletBoundries)) {
             bulletBoundries = false;
         }
     }
@@ -593,7 +593,7 @@ void Markdown::parseOrderedList(
         auto entry = new OrderedListEntryNode();
         node->addChild(entry);
         bool bulletBoundries = true;
-        while (in && nextMajorMode(in, entry, context, bulletBoundries)) {
+        while (in && nextMajorMode(in, entry, context, bulletBoundries, !bulletBoundries)) {
             bulletBoundries = false;
         }
     }
@@ -731,7 +731,8 @@ bool Markdown::nextMajorMode(
     std::stringstream& in,
     DOMTree* tree,
     DocumentContext& context,
-    bool bulletBoundries
+    bool bulletBoundries,
+    bool allowList
 ) {
     auto type = resolveMajorMode(in, tree, bulletBoundries);
     // Filter out types that are only legal under the doc root
@@ -763,10 +764,18 @@ bool Markdown::nextMajorMode(
         parseCallout(in, tree, context);
     } break;
     case NodeType::UnorderedList: {
-        parseUnorderedList(in, tree, context);
+        if (allowList) {
+            parseUnorderedList(in, tree, context);
+        } else {
+            parseParagraph(in, tree, context);
+        }
     } break;
     case NodeType::OrderedList: {
-        parseOrderedList(in, tree, context);
+        if (allowList) {
+            parseOrderedList(in, tree, context);
+        } else {
+            parseParagraph(in, tree, context);
+        }
     } break;
     case NodeType::AnchorDef: {
         parseAnchorDef(in, tree, context);
