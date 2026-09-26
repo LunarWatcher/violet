@@ -20,6 +20,8 @@ add_library(violetsrc STATIC
     violet/generate/templates/EscapingFunctions.cpp
     violet/generate/templates/LangFunctions.cpp
 
+    violet/init/InitModule.cpp
+
     violet/paginator/Paginator.cpp
     violet/paginator/SortPredicates.cpp
 

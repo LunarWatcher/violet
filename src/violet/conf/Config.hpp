@@ -68,4 +68,13 @@ struct Config {
 
 extern void from_json(const nlohmann::json& src, Config& dest);
 
+/**
+ * Converts a Config object to JSON.
+ *
+ * \note This is only intended for creating config programmatically. For passing a loaded Config to a template, use
+ *      `config.raw` instead. This is a cached version of the JSON so it doesn't need to be continuously regenerated and
+ *      reallocated.
+ */
+extern void to_json(nlohmann::json& dest, const Config& src);
+
 }

@@ -172,3 +172,19 @@ void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {
         {"mount", dest.mount},
     };
 }
+
+void violet::to_json(nlohmann::json& dest, const Config& src) {
+    dest["name"] = src.name;
+    if (src.description) {
+        dest["description"] = *src.description;
+    }
+
+    dest["prefix"] = src.prefix;
+    dest["exclude"] = src.exclude;
+
+    if (src.theme) {
+        dest["theme"] = *src.theme;
+    }
+
+    dest["data"] = src.data;
+}

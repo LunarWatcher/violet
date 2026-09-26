@@ -1,7 +1,9 @@
 #include "CommandLine.hpp"
 #include "CLI/CLI.hpp"
 #include "minilog/minilog.hpp"
+#include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/SiteGenerator.hpp"
+#include "violet/init/InitModule.hpp"
 #include <CLI/CLI.hpp>
 
 void violet::withStandardFlags(CLI::App* app) {
@@ -18,22 +20,7 @@ void violet::withStandardFlags(CLI::App* app) {
     );
 }
 
-int violet::cliMain(int argc, char** argv) {
-    CLI::App app {
-        "C++-based static site generator",
-    };
-    GenerateOpts generateOpts;
-
-    minilog::setLevel(minilog::Level::Info);
-    app.require_subcommand(1, 1);
-
-    argv = app.ensure_utf8(argv);
-
-    auto cmdVersion = app.add_subcommand(
-        "version",
-        "Outputs the version"
-    );
-
+CLI::App* violet::generateCommand(CLI::App& app, violet::GenerateOpts& generateOpts) {
     auto cmdGenerate = app.add_subcommand(
         "generate",
         "Converts the input project (always in the working directory) to a generated site"
@@ -62,11 +49,61 @@ int violet::cliMain(int argc, char** argv) {
         ->default_val(std::nullopt)
         ->excludes(local);
 
+    return cmdGenerate;
+}
+
+CLI::App* violet::initCommand(CLI::App& app, violet::InitOpts& initOpts) {
+    auto cmdInit = app.add_subcommand(
+        "init",
+        "Initializes a specified folder with a violet.json."
+    );
+
+    cmdInit->add_option(
+        "folder",
+        initOpts.folder,
+        "What folder to generate in"
+    )
+        ->required(true);
+
+
+    return cmdInit;
+}
+
+CLI::App* violet::serveCommand(CLI::App& app) {
     auto cmdServe = app.add_subcommand(
         "serve",
         "Currently not implemented, but will exist in the future:tm:"
     );
     withStandardFlags(cmdServe);
+
+    return cmdServe;
+}
+
+CLI::App* violet::versionCommand(CLI::App& app) {
+    auto cmdVersion = app.add_subcommand(
+        "version",
+        "Outputs the version"
+    );
+
+    return cmdVersion;
+}
+
+int violet::cliMain(int argc, char** argv) {
+    CLI::App app {
+        "C++-based static site generator",
+    };
+    GenerateOpts generateOpts;
+    InitOpts initOpts;
+
+    minilog::setLevel(minilog::Level::Info);
+    app.require_subcommand(1, 1);
+
+    argv = app.ensure_utf8(argv);
+
+    auto* cmdGenerate = generateCommand(app, generateOpts);
+    auto* cmdInit = initCommand(app, initOpts);
+    auto* cmdServe = serveCommand(app);
+    auto* cmdVersion = versionCommand(app);
 
     CLI12_PARSE(app, argc, argv);
 
@@ -80,6 +117,8 @@ int violet::cliMain(int argc, char** argv) {
             "been implemented. What did you expect this would do?"
             << std::endl;
         return -1;
+    } else if (cmdInit->parsed()) {
+        return initMain(initOpts);
     }
     return 0;
 }

@@ -20,6 +20,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* `violet init` for quickly setting up a template repo
+
 ### Changed
 
 * `//` and path upward traversal are no longer allowed in the prefix
