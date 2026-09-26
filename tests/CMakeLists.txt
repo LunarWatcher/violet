@@ -3,6 +3,9 @@ add_executable(tests
 
     src/config/PrefixValidationTests.cpp
 
+    src/e2e/GenerateCommandTests.cpp
+    src/e2e/SelfTests.cpp
+
     src/escaping/UrlEscapingTests.cpp
 
     src/fixtures/LoadWorkspace.cpp

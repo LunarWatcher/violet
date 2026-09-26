@@ -20,11 +20,15 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* CLI (generate): Added `--root`, largely for debug and E2E test purposes
+
 ## [v0.11.0] (2026-09-26)
 
 ### Added
 
-* `violet init` for quickly setting up a template repo
+* CLI (init): Added the `init` command for quickly setting up a template repo
 
 ### Changed
 
@@ -32,7 +36,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Fixed
 
-* 0.10.0's addition of `--prefix` broke prefixes due to a CLI12 oddity
+* v0.10.0's addition of `--prefix` broke prefixes due to a CLI12 oddity
   * Technical summary: `add_option(...)->default_val(std::nullopt)` causes the value to be initialized to an empty string rather than an empty optional. This caused the prefix to always default to a string, and break all pages where `prefix != ""`.
 
 ## [v0.10.0] (2026-09-21) (RETRACTED)
@@ -152,7 +156,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
 [unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.0...master
-[v0.10.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...v0.11.0
+[v0.11.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...v0.11.0
 [v0.10.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.9.0...v0.10.0
 [v0.9.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.7.0...v0.8.0

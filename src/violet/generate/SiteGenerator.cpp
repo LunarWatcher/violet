@@ -99,7 +99,7 @@ void SiteGenerator::handleTemplatesAndSave(
     const Frontmatter& frontmatter
 ) {
     minilog::debug("Rendering templates of {}", relPath.string());
-    auto target = this->opts.outputFolder / relPath;
+    auto target = this->opts.root / this->opts.outputFolder / relPath;
     std::filesystem::create_directories(
         target.parent_path()
     );
@@ -404,7 +404,10 @@ std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::l
 
     if (!f) {
         return std::unexpected(
-            "No violet.json in current working directory."
+            std::format(
+                "No violet.json in project root ({}).",
+                opts.root.string()
+            )
         );
     }
 

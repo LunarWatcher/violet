@@ -5,6 +5,7 @@
 #include "violet/generate/SiteGenerator.hpp"
 #include "violet/init/InitModule.hpp"
 #include <CLI/CLI.hpp>
+#include <filesystem>
 
 void violet::withStandardFlags(CLI::App* app) {
     app->add_flag_function(
@@ -47,6 +48,13 @@ CLI::App* violet::generateCommand(CLI::App& app, violet::GenerateOpts& generateO
         "instead. This is useful if you want to use Firefox' local mode mappings"
     )
         ->excludes(local);
+
+    cmdGenerate->add_option(
+        "-r,--root",
+        generateOpts.root,
+        "Override the root. This defaults to the current working directory, and must be an absolute path"
+    )
+        ->default_val(std::filesystem::current_path());
 
     return cmdGenerate;
 }
