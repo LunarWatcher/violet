@@ -52,6 +52,14 @@ TEST_CASE("Inline code should not consume duplicated characters", "[markdown][in
             "<ol><li><p><code>--root</code></p></li></ol>"
         );
     }
+    SECTION("1. should not be consumed in code in an ordered list") {
+        ss << "1. `1. root`";
+        REQUIRE(
+            violet::Markdown::parse(ss)
+            ==
+            "<ol><li><p><code>1. root</code></p></li></ol>"
+        );
+    }
 
     SECTION("The patch should not fuck inline code on a newline") {
         std::map<std::string, std::string> listRenderMap {
