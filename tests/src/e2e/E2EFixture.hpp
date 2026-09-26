@@ -27,10 +27,7 @@ struct E2EFixture {
         .metadata = true,
     };
 
-    E2EFixture() noexcept {
-        conf.imbueRoot(dir);
-    }
-
+    E2EFixture() noexcept = default;
 
     void loadSite() {
         {
