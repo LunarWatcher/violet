@@ -26,7 +26,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Fixed
 
-* Fixed a bug where a bug in list parsing caused `* 0.10.0` to trigger an infinite parsing loop ([#17](https://codeberg.org/LunarWatcher/violet/issues/17))
+* Fixed a bug in list parsing that caused `* 0.10.0` to trigger an infinite parsing loop ([#17](https://codeberg.org/LunarWatcher/violet/issues/17))
+* Fixed a bug where code inside an unordered list erroneously consumed the first character after the open tag ([#18](https://codeberg.org/LunarWatcher/violet/issues/18))
 
 ## [v0.11.0] (2026-09-26)
 

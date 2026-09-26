@@ -317,7 +317,10 @@ void Markdown::parseCodeBlockContent(
 ) {
     char ch;
     std::stringstream content;
-    prepareStream(in, out);
+    // Inline code is pre-prepared by its parent statement. Only code blocks need to prepare the stream.
+    if (out->type == NodeType::CodeBlock) {
+        prepareStream(in, out);
+    }
     while (in >> std::noskipws >> ch) {
         if (
             ch == '\n'
