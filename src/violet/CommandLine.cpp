@@ -46,7 +46,6 @@ CLI::App* violet::generateCommand(CLI::App& app, violet::GenerateOpts& generateO
         "whether or not you actually want to change the prefix set by your `violet.json`, or if you want --local "
         "instead. This is useful if you want to use Firefox' local mode mappings"
     )
-        ->default_val(std::nullopt)
         ->excludes(local);
 
     return cmdGenerate;
