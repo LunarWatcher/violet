@@ -50,6 +50,15 @@ Comments are nice, sure, but they can always be substituted by a decent commit h
 
 As a consequence, while violet's config files are comment-free JSON, the documentation uses jsonc to be able to explain things inline. If you copy-paste config, you must remove the comments before running, or violet will error out.
 
+## Some sites using Violet
+
+My [personal website](https://lunarwatcher.codeberg.page/) was the motivation behind violet, and at the time of writing, uses most of the available features. You can also maybe find more websites using Violet by searching the `violet-ssg` topic on Codeberg or GitHub:
+
+* [`violet-ssg` on Codeberg](https://codeberg.org/explore/repos?q=violet-ssg&topic=1)
+* [`violet-ssg` on GitHub](https://github.com/topics/violet-ssg)
+
+If you use Violet in an open-source website, consider adding the topic to your repo so it's more easily discoverable. There's also a [webring for violet sites](https://lunarwatcher.codeberg.page/violet-webring/), also built on violet.
+
 ## Getting started
 
 See [Getting started](/Getting started.md)

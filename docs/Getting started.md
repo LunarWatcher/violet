@@ -34,7 +34,7 @@ On GitHub releases, you can find [precompiled binaries for x86_64 Linux](https:/
 
 ## Setting up a project
 
-First, you'll need a `violet.json`:
+First, you'll need a `violet.json`. You can quickly generate a full one by running `violet init ./`, or start with a bare minimum one:
 
 ```json
 {
@@ -62,7 +62,8 @@ Deployment builds are done without the `-l` flag, so just `violet generate`. Not
 
 ### Manual deployments
 
-The recommended way to deploy manually is to use a script like this:
+The recommended way to deploy manually is to use a script like this. This script is copied from what I use on my own website:
+
 ```bash
 #!/usr/bin/bash
 
