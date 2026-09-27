@@ -4,6 +4,7 @@
 #include "violet/data/InitOpts.hpp"
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
 
 // This pattern is starting to grow on me
@@ -53,6 +54,25 @@ bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::In
     return true;
 }
 
+void dumpHelp() {
+    std::cout << R"(
+Next steps:
+
+* Edit violet.json to make it project-specific. It currently contains placeholder values.
+* Not sure where to start? There's a guide for getting started you might like:
+  https://lunarwatcher.codeberg.page/violet/getting-started.html
+* Looking for templating/theming docs? See
+  https://lunarwatcher.codeberg.page/violet/templating/index.html
+
+Please note that violet itself is in early development, and may be lacking in documentation.
+Well, there's plenty of docs, but they're not necessarily structured well because writing
+good docs is fucken hard.
+
+If you struggle with the docs, please open an issue:
+  https://codeberg.org/LunarWatcher/violet
+)";
+}
+
 }
 
 int violet::initMain(const violet::InitOpts& opts) {
@@ -77,5 +97,7 @@ int violet::initMain(const violet::InitOpts& opts) {
     }
 
     minilog::info("Violet project successfully initialized");
+
+    dumpHelp();
     return 0;
 }

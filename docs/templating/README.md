@@ -58,4 +58,5 @@ When writing an absolute link, you must specify `{{ site.prefix }}`. Even if you
 Prefixing all absolute URLs with `{{ site.prefix }}` lets `violet generate -l` builds work, and lets browsers render the page properly, and is noop if you do deploy at `/`.
 
 **DO:** `<a href="{{ site.prefix }}/absolute/url">text</a>`
+
 **DON'T:** `<a href="/absolute/url">text</a>` - will not link correctly when building with `violet generate -l`

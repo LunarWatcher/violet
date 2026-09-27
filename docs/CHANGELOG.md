@@ -20,6 +20,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* CLI (init): Help/quickstart links after `violet init` runs successfully
 
 ## [v0.11.1] (2026-09-26)
 
