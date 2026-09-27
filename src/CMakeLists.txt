@@ -1,12 +1,14 @@
 add_executable(violet
     violet/Main.cpp
 )
+set_source_files_properties(violet/data/GitVersion.cpp PROPERTIES COMPILE_DEFINITIONS -DVIOLET_VERSION="${VIOLET_VERSION}")
 add_library(violetsrc STATIC
     violet/CommandLine.cpp
 
     violet/conf/ToJsonImpl.cpp
 
     violet/data/RenderResult.cpp
+    violet/data/GitVersion.cpp
 
     violet/generate/FileManager.cpp
     violet/generate/SiteGenerator.cpp

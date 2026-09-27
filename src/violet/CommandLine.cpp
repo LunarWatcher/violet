@@ -2,6 +2,7 @@
 #include "CLI/CLI.hpp"
 #include "minilog/minilog.hpp"
 #include "violet/data/GenerateOpts.hpp"
+#include "violet/data/GitVersion.hpp"
 #include "violet/generate/SiteGenerator.hpp"
 #include "violet/init/InitModule.hpp"
 #include <CLI/CLI.hpp>
@@ -115,7 +116,7 @@ int violet::cliMain(int argc, char** argv) {
     CLI12_PARSE(app, argc, argv);
 
     if (cmdVersion->parsed()) {
-        std::cout << "violet " << VIOLET_VERSION << std::endl;
+        std::cout << "violet " << violet::GitVersion() << std::endl;
     } else if (cmdGenerate->parsed()) {
         return generateMain(generateOpts);
     } else if (cmdServe->parsed()) {
