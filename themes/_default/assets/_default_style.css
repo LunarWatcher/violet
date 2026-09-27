@@ -7,6 +7,7 @@ https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE
     --violet-theme-default-dark-violet: #7F00FF;
     --violet-theme-default-lavender: #bf8bff;
     --violet-theme-default-grey: #1e1e1e;
+    --violet-theme-default-background-purple: #d4c0ff;
 
     --violet-colour-note: blue;
     --violet-colour-info: var(--violet-theme-default-dark-violet);
@@ -187,6 +188,36 @@ blockquote p {
     margin: 4px;
 }
 
+/* Tables */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 2px solid var(--violet-theme-default-dark-violet);
+}
+
+tr:nth-child(even) {
+    background-color: var(--violet-theme-default-background-purple);
+}
+
+thead tr {
+    background-color: var(--violet-theme-default-dark-violet) !important;
+    color: white;
+}
+
+th,td {
+    padding: 8px;
+}
+
+thead {
+    font-weight: bold;
+}
+
+/* Callouts */
+
 .callout-note > .callout-title {
     color: var(--violet-colour-note);
 }
@@ -206,7 +237,10 @@ blockquote p {
     color: var(--violet-colour-caution);
 }
 
-/* TODO: replace with better-designed SVGs */
+/* TODO: replace with better-designed SVGs
+TODO: codeberg:LunarWatcher/pages has 5/6 of these. Tip is currently missing because the iconography for it is hard to
+do in a rawdogged SVG
+*/
 .callout-note > .callout-title::before {
     content: "✏ ";
 }

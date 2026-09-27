@@ -75,6 +75,9 @@ FetchContent_MakeAvailable(
 )
 
 find_program(GIT git)
+# TODO: this results in the full build cache being invalidated every time there's a change that triggers CMake cache
+# invalidation. This causes the variable to change, which causes every downstream dep to rebuild. A single source file
+# built with this variable should get around that problem (though it isn't as convenient as a global definition)
 if (GIT)
     execute_process(COMMAND ${GIT} describe --tags --always
         OUTPUT_VARIABLE VIOLET_VERSION

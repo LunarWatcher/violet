@@ -20,9 +20,12 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.11.2] (2026-09-27)
+
 ### Added
 
 * CLI (init): Help/quickstart links after `violet init` runs successfully
+* Theme (default): added `<table>` lighlighting
 
 ## [v0.11.1] (2026-09-26)
 
@@ -166,7 +169,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.1...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...master
+[v0.11.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...v0.11.0
 [v0.10.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.9.0...v0.10.0

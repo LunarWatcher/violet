@@ -63,5 +63,4 @@ If you use Violet in an open-source website, consider adding the topic to your r
 
 See [Getting started](/Getting started.md)
 
-
 [^json]: Initially used nlohmann/json directly, but of fucking course, nlohmann/json now has AI slop machines contributing. Violet now uses a fork pinned to a mostly slop-free version, with plans to switch to vendored yyjson in a C++26 reflection wrapper once reflection is done and available on arch. Might need to fully fork inja at that point to allow this plan to go through, but until such a time, version pinning to keep the slop machines out is the best I can do.
