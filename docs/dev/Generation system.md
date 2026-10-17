@@ -5,7 +5,7 @@
 ---
 # Page generation system
 
-This page describes how violet generates sites. This is mainly useful for developing violet.
+This page describes how violet generates sites.
 
 ## Main loop: copying, parsing, and generation of explicitly defined files
 

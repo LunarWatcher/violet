@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <string>
+#include <optional>
 
 namespace violet {
 

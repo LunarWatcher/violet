@@ -17,7 +17,7 @@ These are not required to be supported, but are considered the standard minimum 
 
 Taxonomies are primarily implemented for future compatibility. This means they currently only serve as static data objects, and don't render any pages.
 
-Eventually, two lists will be implemented: A standard list containing all pages with a given taxonomy, and a list of all the taxonomies. Due to how much of a pain in the ass this is to store in a filesystem, this has been left as an exercise for future me.
+Eventually, two lists will be implemented: A standard list containing all pages with a given taxonomy, and a list of all the taxonomies. Due to how much of a pain in the ass this is to store in a filesystem, this has been left as   an exercise for future me.
 
 Some notable issues:
 

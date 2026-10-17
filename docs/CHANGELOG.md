@@ -12,13 +12,17 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Markdown:` - changes made to the markdown engine
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
-* `Theme(theme name)` - changes made to specific builtin themes
+* `Theme(theme name):` - changes made to specific builtin themes
 
 
 {{ page.table_of_contents }}
 
 
 ## [unreleased]
+
+### Fixed
+
+* Added missing include in `GenerateOpts` that may or may not break the build on certain compilers
 
 ## [v0.11.2] (2026-09-27)
 

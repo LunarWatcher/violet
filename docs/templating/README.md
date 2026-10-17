@@ -14,14 +14,6 @@ Violet provides two ways to provide templates for pages:
 
 These two can live together: project-local templates take precedence over the active theme, and can be used to extend and existing theme. A whole site can also be implemented entirely without a theme using exclusively project-local templates.
 
-## Filetypes and default layouts
-
-* `.md`, `.html`: standard content files, defaults to `"layout": "single_page"`
-* `.js`, `.mjs`, `.css`: asset files, defaults to `"layout": "none"`
-* `.xml`, `.rss`, `.atom`: feed files, defaults to `"layout": "feed"`. Note that you can have `.xml` files that aren't feeds, as there are no URL translations, this is just the default assumption. For RSS and ATOM feeds, see [RSS and atom feeds](/RSS and atom feeds.md)
-* `.in`: a special extension that's stripped, and indicates that the file should be template-processed. See [templating non-supported filetypes](Templating non-supported filetypes.md). Defaults to `"layout": "none"`.
-* Everything else: copied verbatim without template processing.
-
 ## Special includes
 
 Violet has a couple special includes you can use.
@@ -59,4 +51,4 @@ Prefixing all absolute URLs with `{{ site.prefix }}` lets `violet generate -l` b
 
 **DO:** `<a href="{{ site.prefix }}/absolute/url">text</a>`
 
-**DON'T:** `<a href="/absolute/url">text</a>` - will not link correctly when building with `violet generate -l`
+**DON'T:** `<a href="/absolute/url">text</a>` - will not link correctly when building with `violet generate -l`, and will not link properly in production if `site.prefix != "/"`

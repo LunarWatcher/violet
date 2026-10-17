@@ -9,9 +9,10 @@ Project-local refer to templates that are embedded directly in a site's root. Th
 
 Project-local templates can either be used instead of a theme, or to override parts of (or an entire) theme.
 
-
 * **Layout folder:** `<project root>/_templates`
 * **Partials folder:** `<project root>/_partials`
+
+These are only required if `"theme": null`, and are optional with a theme.
 
 ## Writing templates
 
