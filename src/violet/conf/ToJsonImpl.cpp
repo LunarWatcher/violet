@@ -32,6 +32,17 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         dest.metadata = it->get<bool>();
     }
 
+    if (auto it = src.find("toc-start-level"); it != src.end() && !it->is_null()) {
+        dest.tocStartLevel = it->get<int>();
+        if (dest.tocStartLevel < 1 || dest.tocStartLevel > 6) {
+            throw std::runtime_error(
+                "Markdown headers only allow h1-h6, so toc-start-level must be 1, 2, 3, 4, 5, or 6. "
+                "If you want to disable table of content generation, simply don't include `{{ page.toc }}` in your "
+                "template."
+            );
+        }
+    }
+
     // We manually assemble `raw` to force custom fields into `data`.
     dest.raw = {
         {"name", dest.name},
@@ -181,6 +192,7 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
 
     dest["prefix"] = src.prefix;
     dest["exclude"] = src.exclude;
+    dest["toc-start-level"] = src.tocStartLevel;
 
     if (src.theme) {
         dest["theme"] = *src.theme;

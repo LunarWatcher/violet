@@ -182,7 +182,7 @@ void FileManager::recursivelyIterateFiles(
             // The special _ directories at the root are not processed by the recursion logic, so it must be disabled
             // here.
             // We also blanket disable all <root>/_[dir] folders since these are reserved folders.
-            if (relPath.string().starts_with("_")) {
+            if (relPath.string().starts_with('_')) {
                 it.disable_recursion_pending();
                 continue;
             }

@@ -24,6 +24,7 @@ Markdown::NodeType Markdown::resolveMajorMode(
     bool bulletBoundries
 ) {
     thread_local std::array<char, 3> next;
+    thread_local std::array<char, 9> longerFragmentCheck;
 
     LockStreamPos l(in);
     NodeType mode;
@@ -137,7 +138,20 @@ Markdown::NodeType Markdown::resolveMajorMode(
         while (in.peek() == ' ') {
             std::ignore = in.get();
         }
-        if (in.peek() == '{' || in.peek() == '<') {
+        if (in.peek() == '<') {
+            auto count = in.readsome(longerFragmentCheck.data(), longerFragmentCheck.size());
+            if (count < 8) {
+                mode = NodeType::Template;
+            } else {
+                std::string_view content(longerFragmentCheck.data(), count);
+
+                if (content.starts_with("<http://") || (count == 9 && content.starts_with("<https://"))) {
+                    mode = NodeType::Paragraph;
+                } else {
+                    mode = NodeType::Template;
+                }
+            }
+        } else if (in.peek() == '{') {
             mode = NodeType::Template;
         } else {
         paragraph:

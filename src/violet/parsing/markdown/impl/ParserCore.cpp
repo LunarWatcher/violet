@@ -51,7 +51,8 @@ std::string Markdown::parse(
 
 Markdown::ContentDeclaration Markdown::parseWithContentPostprocessing(
     std::stringstream& in,
-    const LinkTranslator& linkTranslator
+    const LinkTranslator& linkTranslator,
+    int minToCLevel
 ) {
     DOMTree rootTree(NodeType::DocumentRoot);
     DocumentContext context(linkTranslator);
@@ -63,7 +64,11 @@ Markdown::ContentDeclaration Markdown::parseWithContentPostprocessing(
             stringifyTree(&rootTree, context)
         ),
         .tableOfContents = std::move(
-            serializeHeaders(rootTree, context)
+            serializeHeaders(
+                rootTree,
+                context,
+                minToCLevel
+            )
         ),
     };
 }

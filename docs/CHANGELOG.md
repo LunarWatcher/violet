@@ -20,9 +20,20 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.12.0] (2026-10-18)
+
 ### Added
 
 * CLI (init): Added `publish.sh` as part of the generated template site
+* Markdown: Added angle bracket link support (`<https://example.com>`)
+* Markdown: Include "Footnotes" in the ToC (Table of Contents) if present
+* Markdown: Fix bug where headers containing links breaks ToC rendering
+  * Specifically, the URLs rendered as being part of the header took precedence over the URL pointing to the associated header
+* Markdown: Add new config option (`toc-start-level`) to allow skipping earlier header levels. This allows first level headers to be excluded from the ToC if you follow semantically correct HTML, and only have one h1 on a page.
+  * This is largely to avoid including the main header on the page in the ToC. This can already be done if the header is moved into a template, but this isn't always going to be the case.
+  * The default value is 2, so h1 headers will not be included in the ToC anymore. To restore the previous behaviour, set `"toc-start-level": 1`. 
+  * The value can be set to any of the 6 legal header levels - it's only going to be useful when set to 1 (include h1) and 2 (exclude h1), but you can in theory exclusively include `<h6>`es if you have a particularly cursed site where this is useful.
+    * (Supporting this does not add any complexity to the code or config, so might as well support it)
 
 ### Fixed
 
@@ -178,6 +189,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
 [unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...master
+[v0.12.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...v0.11.0

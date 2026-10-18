@@ -274,7 +274,7 @@ nlohmann::json FileFunctions::loadJson(inja::Arguments& args) {
     auto fn = args.at(1)->get<std::string>();
 
     std::filesystem::path p;
-    if (fn.starts_with("/")) {
+    if (fn.starts_with('/')) {
         if (fn.starts_with("//")) {
             throw std::runtime_error("Absolute paths cannot start with two slashes!");
         }
@@ -320,7 +320,7 @@ nlohmann::json FileFunctions::render(inja::Arguments& args) {
     auto fm = args.at(0)->get<Frontmatter>();
 
     // TODO: desperately need better out of bounds path checking
-    if (fm.internalPath.starts_with("/") || fm.internalPath.contains("..")) {
+    if (fm.internalPath.starts_with('/') || fm.internalPath.contains("..")) {
         throw std::runtime_error("Path passed to render breaks project containment");
     }
 

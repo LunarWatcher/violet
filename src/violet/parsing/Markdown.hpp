@@ -9,6 +9,7 @@
 
 namespace violet::Markdown {
 
+const inline LinkTranslator defaultTranslator = [](const auto& in) { return in; };
 
 extern std::string stringifyTree(
     const DOMTree* tree,
@@ -17,7 +18,8 @@ extern std::string stringifyTree(
 
 extern std::string serializeHeaders(
     DOMTree& root,
-    DocumentContext& ctx
+    DocumentContext& ctx,
+    int minToCLevel
 );
 
 extern std::string parse(
@@ -29,9 +31,8 @@ extern std::string parse(
 
 extern ContentDeclaration parseWithContentPostprocessing(
     std::stringstream& in,
-    const LinkTranslator& linkTranslator = [](const std::string& in) {
-        return in;
-    }
+    const LinkTranslator& linkTranslator = defaultTranslator,
+    int minToCLevel = 1
 );
 
 }
