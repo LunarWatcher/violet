@@ -14,8 +14,11 @@ namespace violet {
 static void stringifyTreeImpl(
     const Markdown::DOMTree* tree,
     std::stringstream& ss,
-    Markdown::DocumentContext& context
+    Markdown::DocumentContext& context,
+    bool skipUrls = false
 ) {
+
+    bool hasUrlInTree = skipUrls;
 
     switch (tree->type) {
     case Markdown::NodeType::Content: {
@@ -57,8 +60,11 @@ static void stringifyTreeImpl(
            << type.substr(1) << "</p>";
     } break;
     case Markdown::NodeType::Anchor: {
-        auto* node = static_cast<const Markdown::URLNode*>(tree);
-        ss << "<a href=\"" << node->getUrl(context) << "\">";
+        hasUrlInTree = true;
+        if (!skipUrls) {
+            auto* node = static_cast<const Markdown::URLNode*>(tree);
+            ss << "<a href=\"" << node->getUrl(context) << "\">";
+        }
         break;
     }
     case Markdown::NodeType::Bold: {
@@ -147,7 +153,7 @@ static void stringifyTreeImpl(
         for (size_t i = 0; i < tree->children.size(); ++i) {
             auto& node = tree->children.at(i);
 
-            stringifyTreeImpl(node, ss, context);
+            stringifyTreeImpl(node, ss, context, hasUrlInTree);
         }
     }
 
@@ -169,7 +175,9 @@ static void stringifyTreeImpl(
         ss << "</blockquote>";
     } break;
     case Markdown::NodeType::Anchor: {
-        ss << "</a>";
+        if (!skipUrls) {
+            ss << "</a>";
+        }
     } break;
     case Markdown::NodeType::Bold: {
         ss << "</strong>";

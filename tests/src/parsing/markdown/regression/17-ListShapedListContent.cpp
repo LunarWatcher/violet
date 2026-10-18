@@ -3,6 +3,8 @@
 
 #include "parsing/markdown/fixture/MarkdownFixture.hpp"
 
+namespace {
+
 TEST_CASE_METHOD(tests::MarkdownFixture, "List-shaped content under a list should not cause problems", "[markdown][lists][regression]") {
     std::stringstream ss;
     SECTION("Number under bullet") {
@@ -53,4 +55,6 @@ TEST_CASE_METHOD(tests::MarkdownFixture, "List-shaped content under a list shoul
             "</ol>"
         );
     }
+}
+
 }

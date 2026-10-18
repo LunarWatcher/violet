@@ -27,6 +27,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * CLI (init): Added `publish.sh` as part of the generated template site
 * Markdown: Added angle bracket link support (`<https://example.com>`)
 * Markdown: Include "Footnotes" in the ToC if present
+* Markdown: Fix bug where headers containing links breaks ToC rendering
+  * Specifically, the URLs rendered as being part of the header took precedence over the URL pointing to the associated header
 
 ### Fixed
 
