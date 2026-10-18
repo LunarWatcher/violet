@@ -6,6 +6,9 @@
 # - clang-diagnostic-unused-private-field: Maybe useful eventually, but not right now.
 # - portability-template-virtual-member-function: not important
 # - misc-static-assert: Useful, but currently fucked and whines about all asserts
+# - performance-inefficient-string-concatenation: Useful, but this is done in tests for simplicity, and it
+#   is both useful to be able to do this, and the overhead in tests is meaningless
+# - bugprone-throwing-static-initialization: maybe useful, but doesn't come up much outside a FP in catch2
 Checks: >
   bugprone-*,
   clang-*,
@@ -33,6 +36,9 @@ Checks: >
   -performance-enum-size,
   -readability-*,
   -portability-avoid-pragma-once,
-  -portability-template-virtual-member-function
+  -portability-template-virtual-member-function,
+  -misc-explicit-constructor,
+  -performance-inefficient-string-concatenation,
+  -bugprone-throwing-static-initialization
 
 HeaderFilterRegex: ".*\\/src\\/violet\\/.*"

@@ -20,6 +20,8 @@ struct Config {
     std::optional<std::string> theme;
     nlohmann::json data;
 
+    int tocStartLevel = 2;
+
     bool metadata = false;
 
     /**

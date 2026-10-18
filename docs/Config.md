@@ -25,6 +25,13 @@ This may be, but doesn't have to be the content root for a git repository. As an
     // Whether or not to include metadata with the build, meaning information about the build itself.
     // If true, `{build output}/_violet-meta.json` is added to the build. See its schema spec for more information.
     "metadata": false,
+    // Where to start the ToC. This defaults to 2, which means h1s are not included in the ToC.
+    // This value is inclusive, which means the value must be in the range [1, 6]. This is an integer.
+    // If you only use h1 for the page title (which is semantically correct), and have it in markdown,
+    // this can be used to skip including it in the ToC.
+    // Though this can be set to any of the legal header values, this is in practice only useful with the values 1 and 2,
+    // but the full spectrum is supported because it doesn't affect the code.
+    "toc-start-level": 2,
     // Defines a set of folders to not include in the build. This list, by default, includes
     // all files and folders that start with ".git" in the root folder (incuding .git/, .gitignore, .gitmodules, etc) through a separate exclusion mechanic.
     "exclude": [

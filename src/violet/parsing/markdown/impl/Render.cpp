@@ -259,7 +259,8 @@ std::string Markdown::stringifyTree(
 
 std::string Markdown::serializeHeaders(
     DOMTree& root,
-    DocumentContext& ctx
+    DocumentContext& ctx,
+    int minToCLevel
 ) {
     size_t baseLevel = 90;
 
@@ -272,7 +273,12 @@ std::string Markdown::serializeHeaders(
     for (size_t i = 0; i < root.children.size(); ++i) {
         auto* node = root.children.at(i);
         if (node->type == NodeType::Header) {
-            baseLevel = std::min(baseLevel, static_cast<HeaderNode*>(node)->level - 1);
+            auto level = static_cast<HeaderNode*>(node)->level;
+            // Skip
+            if (level < minToCLevel) {
+                continue;
+            }
+            baseLevel = std::min(baseLevel, level - 1);
         }
     }
 
@@ -291,6 +297,9 @@ std::string Markdown::serializeHeaders(
 
         if (node->type == NodeType::Header) {
             auto* headerNode = static_cast<HeaderNode*>(node);
+            if (headerNode->level < minToCLevel) {
+                continue;
+            }
             auto correctedLevel = headerNode->level - baseLevel;
             if (correctedLevel > lastLevel) {
                 for (size_t i = 0; i < correctedLevel - lastLevel; ++i) {
