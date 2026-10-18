@@ -20,6 +20,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* CLI (init): Added `publish.sh` as part of the generated template site
+
 ### Fixed
 
 * Added missing include in `GenerateOpts` that may or may not break the build on certain compilers

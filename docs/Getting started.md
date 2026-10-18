@@ -62,6 +62,9 @@ Deployment builds are done without the `-l` flag, so just `violet generate`. Not
 
 ### Manual deployments
 
+> [!note]
+> As of 0.12.0, this script is auto-generated with `violet init`.
+
 The recommended way to deploy manually is to use a script like this. This script is copied from what I use on my own website:
 
 ```bash

@@ -12,7 +12,11 @@ namespace {
 
 bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::InitOpts& opts) {
     if (std::filesystem::exists(resolvedTargetPath / "violet.json")) {
-        minilog::error("{} already has a violet.json!", resolvedTargetPath.string());
+        minilog::error(
+            "{} already has a violet.json! You currently cannot re-init an initialized folder. If you want to "
+            "do so anyway, delete violet.json and rerun the init command.",
+            resolvedTargetPath.string()
+        );
         return false;
     }
     
@@ -24,6 +28,7 @@ bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::In
         .description = "Placeholder description",
         .exclude = {
             "LICENSE",
+            "scripts",
         },
         .theme = "_default",
         .data = nlohmann::json::object(),
@@ -54,11 +59,90 @@ bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::In
     return true;
 }
 
+bool setupPublishScript(const std::filesystem::path& outputPath) {
+    // TODO: I'm not super happy with this. If `violet init docs/` in a git repo, the script doesn't end up in the git
+    // root, which just feels wrong. It'll still work, but it doesn't feel good.
+    // Unfortunately, I believe we're still trying to maintain the possibility for windows support, so
+    // stc::Unix::Process won't work for getting the git root. Really need to get around to porting it to Windows as
+    // well.
+    // Not like it really matters since the publish script requires bash to work, but still
+    std::filesystem::path scriptPath = outputPath / "scripts";
+    std::filesystem::path publishScript = scriptPath / "publish.sh";
+
+    if (
+        !std::filesystem::exists(scriptPath)
+        && !std::filesystem::create_directories(scriptPath)
+    ) {
+        minilog::critical("Failed to create script directory!");
+        return false;
+    }
+
+    {
+        std::ofstream f(publishScript);
+        if (!f) {
+            minilog::critical("Failed to open {}", publishScript.string());
+            return false;
+        }
+
+        f << R"(#!/usr/bin/bash
+
+# Setup note: All placeholder values contain FIXME. Search for FIXME and fix all the corresponding things. Make sure to
+# remove the error messages as well.
+
+echo "FIXME: Update CB_REMOTE. This must be a valid remote." && exit 1
+# Note: this does not need to be a codeberg URL, nor an SSH URL. You can also add more remotes if you want.
+CB_REMOTE="git@codeberg.org:FIXME/FIXME"
+
+# Note: We avoid using BASH_SOURCE largely because it seems to be incompatible with worktrees, based on a similar
+# problem I ran into at work. There's lots of ways to do this though.
+git_root=$(git rev-parse --show-toplevel)
+cd "$git_root"
+
+echo "FIXME: Remove this cd if your page is directly under the git root. Otherwise, make sure it's correct." && exit 1
+cd FIXME
+
+rm -rf pages
+
+time -- "$violet_exe" generate -d
+if [[ $? != 0 ]]; then
+    echo "Generation failed"
+    exit 1
+fi
+
+cd pages
+git init
+git checkout -b pages
+git remote add cb "$CB_REMOTE"
+# Example: multiple push remotes
+# git remote add gh "git@github.com:user/repo"
+
+git add -A
+git commit -m "Generate page"
+
+git push -fu cb pages
+# Example(cont.): multiple push remotes
+# git push -fu gh pages
+)";
+    }
+
+    std::filesystem::permissions(
+        publishScript,
+        // Should be equivalent to chmod +x
+        std::filesystem::perms::owner_exec
+            | std::filesystem::perms::group_exec
+            | std::filesystem::perms::others_exec,
+        std::filesystem::perm_options::add
+    );
+    return true;
+}
+
+
 void dumpHelp() {
     std::cout << R"(
 Next steps:
 
 * Edit violet.json to make it project-specific. It currently contains placeholder values.
+* Update scripts/publish.sh per the comments in the file. It also contains placeholder values.
 * Not sure where to start? There's a guide for getting started you might like:
   https://lunarwatcher.codeberg.page/violet/getting-started.html
 * Looking for templating/theming docs? See
@@ -93,6 +177,11 @@ int violet::initMain(const violet::InitOpts& opts) {
 
     if (!setupConfigFile(targetFolder, opts)) {
         minilog::error("Config file init failed!");
+        return 1;
+    }
+
+    if (!setupPublishScript(targetFolder)) {
+        minilog::error("Failed to initialize publish script!");
         return 1;
     }
 
