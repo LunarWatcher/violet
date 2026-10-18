@@ -20,6 +20,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.12.0] (2026-10-18)
+
 ### Added
 
 * CLI (init): Added `publish.sh` as part of the generated template site
@@ -179,6 +181,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
 [unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...master
+[v0.12.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...v0.11.0
