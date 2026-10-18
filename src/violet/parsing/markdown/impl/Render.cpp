@@ -146,9 +146,6 @@ static void stringifyTreeImpl(
     } else {
         for (size_t i = 0; i < tree->children.size(); ++i) {
             auto& node = tree->children.at(i);
-            // if (i > 0 && tree->type == Markdown::NodeType::Paragraph) {
-            //     ss << " ";
-            // }
 
             stringifyTreeImpl(node, ss, context);
         }
@@ -217,7 +214,10 @@ std::string Markdown::stringifyTree(
         tree->type == NodeType::DocumentRoot &&
         !context.usedFootnotes.empty()
     ) {
-        ss << "<div id=\"violet-footnotes\">";
+        auto id = context.idify("violet-footnotes");
+        context.footnoteHeader = id;
+
+        ss << "<div id=\"" << id << "\">";
         ss << "<h2>Footnotes</h2>";
         ss << "<ol>";
         for (size_t i = 0; i < context.usedFootnotes.size(); ++i) {
@@ -311,6 +311,17 @@ std::string Markdown::serializeHeaders(
         }
     }
     for (size_t i = 0; i < lastLevel; ++i) {
+        // Inject footnote header
+        if (i == lastLevel - 1 && ctx.footnoteHeader.has_value()) {
+            URLNode virtualURLNode;
+            virtualURLNode.urlType = URLNode::Type::Standard;
+            virtualURLNode.urlOrRef = std::format("#{}", *ctx.footnoteHeader);
+            virtualURLNode.isVirtual = true;
+            ContentNode content("Footnotes");
+            virtualURLNode.addChild(&content);
+            ss << "</li><li>";
+            stringifyTreeImpl(&virtualURLNode, ss, ctx);
+        }
         ss << "</li></ol>";
     }
     ss << "</div>";

@@ -2,6 +2,7 @@
 
 #include "violet/parsing/markdown/CommonDefs.hpp"
 #include "violet/parsing/markdown/ContextProvidingNodes.hpp"
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -15,6 +16,8 @@ struct DocumentContext {
     std::unordered_map<std::string, size_t> footnoteUsageCounts;
     std::unordered_map<std::string, FootnoteDefNode*> footnotes;
     std::unordered_set<std::string> titleIds;
+
+    std::optional<std::string> footnoteHeader;
 
     LinkTranslator linkTranslator;
 
