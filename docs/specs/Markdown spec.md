@@ -410,7 +410,7 @@ Note that unlike other implementations, all the parser does is provide a callout
 
 ## Links
 
-All three standard link formats are implemented:
+All three standard link formats are implemented, as well as angle bracket links[^angle-bracket-strictness]:
 
 ```markdown
 # Named links
@@ -423,6 +423,9 @@ All three standard link formats are implemented:
 
 ## Reference link definition
 [link-ref]: https://example.com/ref
+
+## Angle bracket links (new in 0.12.0)
+<https://example.com/angle-brackets>
 ```
 
 Rendered (excl. headers):
@@ -432,22 +435,31 @@ Rendered (excl. headers):
 > [link text][link-ref]
 >
 > [link-ref]
+>
+> <https://example.com/angle-brackets>
 
-[link-ref]: https://example.com/ref
+[link-ref]: https://example.com/
+
+[^angle-bracket-strictness]: Angle bracket links are less strict than most of the other markdown features, largely because brackets can and do appear in many other contexts that are too complex to parse. `<` can notably signal HTML, or be used as a standard expression. `<` is not auto-escaped in any context still, and requires manual escaping to show on the page as `<`, and this avoids breaking HTML.
+
+  The consequence of this is that `<https://some url\n` (where `\n` is a newline) is rendered as a literal `<https://some url`, which may be interpreted as an invalid HTML tag by the browser. This may or may not break the rest of the paragraph. Use this format with care.
 
 ### Literal links
 
 Links literally included in the text are not currently rendered. Doing so may or may not be implemented in the future. This is because implementing inline links would require markup to override the automatic link detection, which itself can result in extra requirements for URL encoding certain links to retain expected behaviour, which is annoying to implement.
 
-Instead, use teh standard link format:
+Instead, use the standard link format, or angle bracket links:
 
 ```markdown
 [https://example.com](https://example.com)
+<https://example.com>
 ```
 
 Rendered:
 
 > [https://example.com](https://example.com)
+>
+> <https://example.com>
 
 ## Horizontal rules
 

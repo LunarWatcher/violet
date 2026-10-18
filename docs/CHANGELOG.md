@@ -23,6 +23,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Added
 
 * CLI (init): Added `publish.sh` as part of the generated template site
+* Markdown: Added angle bracket link support (`<https://example.com>`)
 
 ### Fixed
 
