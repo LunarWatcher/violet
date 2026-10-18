@@ -172,4 +172,30 @@ TEST_CASE("ToC feature tests") {
             "</div>"
         );
     }
+
+    SECTION("Regression: nested URLs should not take precedence when rendering") {
+        ss << "# [Hello](https://example.com)";
+        auto res = std::move(
+            violet::Markdown::parseWithContentPostprocessing(ss)
+        );
+
+        // This may be redundant, but doesn't hurt
+        REQUIRE(
+            res.parsedContents
+            ==
+            // The ID isn't _great_, but that'll have to be handled later
+            R"(<h1 id="hellohttpsexamplecom"><a href="https://example.com">Hello</a></h1>)"
+        );
+        REQUIRE(
+            res.tableOfContents
+            ==
+            R"(<div id="violet-toc">)"
+            "<ol>"
+                "<li>"
+                    R"(<a href="#hellohttpsexamplecom">Hello</a>)"
+                "</li>"
+            "</ol>"
+            R"(</div>)"
+        );
+    }
 }
