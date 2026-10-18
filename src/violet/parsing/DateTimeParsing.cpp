@@ -9,7 +9,7 @@ int64_t violet::parseISO8601(const std::string& raw) {
 
     // ok chrono. std::string works, const char* works, but std::string_view is an error
     const char* format;
-    if (raw.contains("Z")) {
+    if (raw.contains('Z')) {
         format = "%FT%T%Z";
     } else {
         format = "%FT%T%z";
