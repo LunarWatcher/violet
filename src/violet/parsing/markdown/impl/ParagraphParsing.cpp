@@ -13,6 +13,7 @@ void Markdown::parseParagraphContent(
     DocumentContext& context
 ) {
     char ch;
+    thread_local std::array<char, 8> angleBracketLinkBuff;
 
     std::stringstream content;
 
@@ -60,6 +61,63 @@ void Markdown::parseParagraphContent(
                 content << '\\';
                 break;
             }
+        } else if (ch == '<') {
+            LockStreamPos lock(in);
+            auto count = in.readsome(angleBracketLinkBuff.data(), angleBracketLinkBuff.size());
+            if (count < 0) {
+                content << ch;
+                continue;
+            }
+            std::string_view data{angleBracketLinkBuff.data(), (size_t) count};
+            
+            if (
+                (count >= 7 && data.starts_with("http://"))
+                || (count == 8 && data.starts_with("https://"))
+            ) {
+                std::stringstream ss, body;
+                // This sucks, but makes it much easier to revert
+                // TODO: Do we want to hide the protocol from the content?
+                if (data.starts_with("http://")) {
+                    ss << "http://";
+                    body << "http://";
+                } else if (data.starts_with("https://")) {
+                    ss << "https://";
+                    body << "https://";
+                }
+                bool terminated = false;
+                while (in >> std::noskipws >> ch) {
+                    if (ch == '>') {
+                        terminated = true;
+                        break;
+                    } else if (ch == '\r' || ch == '\n') {
+                        break;
+                    }
+
+                    urlEncode(ch, ss, false, false);
+                    htmlEscape(ch, body);
+                }
+                if (!terminated) {
+                    // No ending >, so not a valid URL
+                    lock.revert();
+                    content << '<';
+                } else {
+                    lock.commit();
+                    commitContentNode(content, out);
+                    auto node = new URLNode;
+                    node->urlOrRef = ss.str();
+                    node->urlType = LinkableNode::Type::Standard;
+
+                    auto content = new ContentNode(body.str());
+                    node->addChild(content);
+
+                    out->addChild(node);
+                }
+            } else {
+                // Not an inline URL
+                lock.revert();
+                content << '<';
+            }
+
         } else if (ch == '*') {
             auto isBold = in.peek() == '*';
             if (isBold) {

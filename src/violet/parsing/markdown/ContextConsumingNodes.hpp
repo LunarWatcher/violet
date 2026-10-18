@@ -20,7 +20,7 @@ struct LinkableNode : public DOMTree {
 
     Type urlType = Type::Uninitialized;
 
-    LinkableNode(NodeType type) : DOMTree(type) {}
+    explicit LinkableNode(NodeType type) : DOMTree(type) {}
 
     virtual ~LinkableNode() = default;
 
