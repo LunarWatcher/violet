@@ -24,7 +24,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Fixed
 
-* Fixed a segfault caused by undefined behaviour when iterating pages for pagination
+* Fixed a segfault caused by undefined behaviour when iterating pages for pagination ([#24 p. 2](https://codeberg.org/LunarWatcher/violet/issues/24))
 
 ## [v0.13.0] (2026-10-19)
 
