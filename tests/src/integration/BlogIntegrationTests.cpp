@@ -2,7 +2,6 @@
 #include "fixtures/TestSiteGenerator.hpp"
 #include "utils/FileReader.hpp"
 #include "utils/StringUtils.hpp"
-#include "violet/generate/buildmeta/BuildMeta.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 #include <nlohmann/json.hpp>

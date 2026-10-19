@@ -20,6 +20,13 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.13.0] (2026-10-19)
+
+### Fixed
+
+* BREAKING: Don't aggressively exclude `README.md` and `index.md` from pagination functions ([#24 p. 1](https://codeberg.org/LunarWatcher/violet/issues/24))
+  * This may require adding `"hidden": true` To READMEs with associated feeds if the page itself directly includes `{{ listing }}` variables that aren't just part of the page's associated templates. A page that includes `{{ listing.total_pages }}` must be hidden after this change.
+
 ## [v0.12.0] (2026-10-18)
 
 ### Added
@@ -189,6 +196,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
 [unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...master
+[v0.13.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.12.0...v0.13.0
 [v0.12.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.0...v0.11.1

@@ -62,8 +62,6 @@ Paginator::Paginator(
                     entryPath.extension() != ".md"
                     && entryPath.extension() != ".html"
                 )
-                || entryPath.filename() == "README.md"
-                || entryPath.filename() == "index.md"
             ) {
                 return;
             }
@@ -71,6 +69,11 @@ Paginator::Paginator(
                 entryPath,
                 fileMan.getRootFolder()
             );
+            // Don't include the owning file. This is necessary to allow non-hidden `index.md`s elsewhere to work
+            // properly.
+            if (filePath == std::filesystem::relative(owningFilePath, fileMan.getRootFolder())) {
+                return;
+            }
             auto& metadata = metaCache.loadMetadata(
                 filePath
             );

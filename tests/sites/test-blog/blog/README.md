@@ -3,7 +3,8 @@
     "layout": "page_list",
     "listing": {
         "page_size": 2
-    }
+    },
+    "hidden": true
 }
 ---
 # Blog
