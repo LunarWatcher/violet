@@ -261,8 +261,8 @@ nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
         return {};
     }
     nlohmann::json out;
-
-    for (const auto* fm : *pag.page(pageNumber)) {
+    auto page = pag.page(pageNumber);
+    for (const auto* fm : *page) {
         out.push_back(*fm);
     }
 
