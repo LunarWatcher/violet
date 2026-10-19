@@ -134,7 +134,7 @@ Markdown::NodeType Markdown::resolveMajorMode(
                 }
             }
         }
-        char ch;
+
         while (in.peek() == ' ') {
             std::ignore = in.get();
         }
@@ -169,7 +169,7 @@ void Markdown::commitContentNode(
     if (content.tellp() > 0) {
         out->addChild(
             new Markdown::ContentNode(
-                std::move(content.str())
+                content.str()
             )
         );
         content = {};
@@ -410,7 +410,7 @@ void Markdown::parseHeader(
     // TODO: This is not an elegant way to do this
     char ch;
     size_t level = 0;
-    bool computingLevel = true;
+
     while (in >> std::noskipws >> ch) {
         if (ch == '#') {
             ++level;

@@ -19,7 +19,7 @@ extern std::string stringifyTree(
 extern std::string serializeHeaders(
     DOMTree& root,
     DocumentContext& ctx,
-    int minToCLevel
+    unsigned short minToCLevel
 );
 
 extern std::string parse(
@@ -32,7 +32,7 @@ extern std::string parse(
 extern ContentDeclaration parseWithContentPostprocessing(
     std::stringstream& in,
     const LinkTranslator& linkTranslator = defaultTranslator,
-    int minToCLevel = 1
+    unsigned short minToCLevel = 1
 );
 
 }

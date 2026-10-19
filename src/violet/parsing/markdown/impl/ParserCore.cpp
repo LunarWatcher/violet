@@ -28,7 +28,7 @@ static void delegateParse(
             throw std::runtime_error("Failed to resolve next mode");
         }
 
-        if (lastOffset == in.tellg()) {
+        if (lastOffset == (size_t) in.tellg()) {
             throw std::runtime_error(
                 "Critical: avoided infinite iteration at byte position " + std::to_string(lastOffset)
             );
@@ -52,7 +52,7 @@ std::string Markdown::parse(
 Markdown::ContentDeclaration Markdown::parseWithContentPostprocessing(
     std::stringstream& in,
     const LinkTranslator& linkTranslator,
-    int minToCLevel
+    unsigned short minToCLevel
 ) {
     DOMTree rootTree(NodeType::DocumentRoot);
     DocumentContext context(linkTranslator);
@@ -60,15 +60,11 @@ Markdown::ContentDeclaration Markdown::parseWithContentPostprocessing(
     delegateParse(in, &rootTree, context);
 
     return ContentDeclaration {
-        .parsedContents = std::move(
-            stringifyTree(&rootTree, context)
-        ),
-        .tableOfContents = std::move(
-            serializeHeaders(
-                rootTree,
-                context,
-                minToCLevel
-            )
+        .parsedContents = stringifyTree(&rootTree, context),
+        .tableOfContents = serializeHeaders(
+            rootTree,
+            context,
+            minToCLevel
         ),
     };
 }

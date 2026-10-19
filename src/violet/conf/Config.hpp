@@ -12,13 +12,13 @@
 namespace violet {
 
 struct Config {
-    std::string name;
-    std::optional<std::string> description;
+    std::string name = "";
+    std::optional<std::string> description = std::nullopt;
 
-    std::string prefix;
-    std::vector<std::string> exclude;
-    std::optional<std::string> theme;
-    nlohmann::json data;
+    std::string prefix = "";
+    std::vector<std::string> exclude = {};
+    std::optional<std::string> theme = "_default";
+    nlohmann::json data = {};
 
     int tocStartLevel = 2;
 
@@ -27,7 +27,7 @@ struct Config {
     /**
      * Contains a copy of the raw JSON object that created the rest of this struct; used for forwarding to inja.
      */
-    nlohmann::json raw;
+    nlohmann::json raw = {};
 
     void imbueRoot(const std::filesystem::path& root) {
         raw[violet::constants::InternalPathRef] = root.string();

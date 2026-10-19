@@ -260,9 +260,9 @@ std::string Markdown::stringifyTree(
 std::string Markdown::serializeHeaders(
     DOMTree& root,
     DocumentContext& ctx,
-    int minToCLevel
+    unsigned short minToCLevel
 ) {
-    size_t baseLevel = 90;
+    unsigned short baseLevel = 90;
 
     std::stringstream ss;
     // This is not optimal, but here we filter to find the actual root level. If the file only contains ## and down (up?
@@ -278,7 +278,7 @@ std::string Markdown::serializeHeaders(
             if (level < minToCLevel) {
                 continue;
             }
-            baseLevel = std::min(baseLevel, level - 1);
+            baseLevel = std::min<unsigned short>(baseLevel, level - 1);
         }
     }
 
@@ -288,7 +288,7 @@ std::string Markdown::serializeHeaders(
         return "";
     }
 
-    auto lastLevel = 0;
+    unsigned short lastLevel = 0;
 
     ss << "<div id=\"violet-toc\">";
 
@@ -300,15 +300,15 @@ std::string Markdown::serializeHeaders(
             if (headerNode->level < minToCLevel) {
                 continue;
             }
-            auto correctedLevel = headerNode->level - baseLevel;
+            unsigned short correctedLevel = headerNode->level - baseLevel;
             if (correctedLevel > lastLevel) {
-                for (size_t i = 0; i < correctedLevel - lastLevel; ++i) {
+                for (unsigned short i = 0; i < correctedLevel - lastLevel; ++i) {
                     ss << "<ol><li>";
                 }
             } else if (correctedLevel == lastLevel) {
                 ss << "</li><li>";
             } else {
-                for (size_t i = 0; i < lastLevel - correctedLevel; ++i) {
+                for (unsigned short i = 0; i < lastLevel - correctedLevel; ++i) {
                     ss << "</li></ol>";
                 }
                 ss << "</li><li>";
@@ -327,7 +327,7 @@ std::string Markdown::serializeHeaders(
             lastLevel = correctedLevel;
         }
     }
-    for (size_t i = 0; i < lastLevel; ++i) {
+    for (unsigned short i = 0; i < lastLevel; ++i) {
         // Inject footnote header
         if (i == lastLevel - 1 && ctx.footnoteHeader.has_value()) {
             URLNode virtualURLNode;

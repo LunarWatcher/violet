@@ -10,7 +10,6 @@ void Markdown::parseTemplate(
     DOMTree* out,
     DocumentContext&
 ) {
-    thread_local std::array<char, 2> buff;
     prepareStream(in, out, true);
     std::stringstream ss;
     ss << "\n";
@@ -48,7 +47,7 @@ void Markdown::parseTemplate(
     );
 
     node->addChild(
-        new ContentNode(std::move(ss.str()))
+        new ContentNode(ss.str())
     );
 }
 

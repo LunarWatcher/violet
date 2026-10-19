@@ -1,0 +1,54 @@
+#!/usr/bin/bash
+
+echo "Doing clean build"
+
+git_root=$(git rev-parse --show-toplevel)
+cd "$git_root"
+
+build() {
+    # rm CMakeCache.txt
+
+    if ! cmake .. -DCMAKE_BUILD_TYPE=Debug -DVIOLET_SANITISE=ON -DVIOLET_WARNINGS_ARE_ERRORS=OFF -DVIOLET_CLANG_TIDY=ON; then
+        echo "Failed to run CMake setup!"
+        exit 1
+    fi
+
+    if ! cmake --build . -j $(nproc); then
+        echo "Failed to run build!"
+        exit 1
+    fi
+
+    if ! cmake --build . -j $(nproc) -t test; then
+        echo "Tests failed!"
+        exit 1
+    fi
+}
+
+mkdir -p build-precommit
+cd build-precommit
+
+# TODO: Is this if necessary when the func calls exit?
+if ! build; then
+    exit 1
+fi
+
+if [ "$CXX" != "clang" ]; then
+    if command -v clang; then
+        echo
+        echo "Doing extra checks with clang"
+        echo
+
+        cd "$git_root"
+        mkdir -p build-precommit-clang
+        cd build-precommit-clang
+
+        export CXX=clang++
+        export CC=clang
+        if ! build; then
+            exit 1
+        fi
+    else
+        echo "Clang is not installed, so can't do extra checks with clang."
+        echo "These checks are optional"
+    fi
+fi

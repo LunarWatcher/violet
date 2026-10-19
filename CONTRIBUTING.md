@@ -27,6 +27,9 @@ Add whatever changes you made to `docs/CHANGELOG.md`. There's no exact science t
 ## Development setup
 
 ```bash
+# Set up the pre-commit hook. This only changes the repo-local settings
+./scripts/dev-setup.sh
+
 # Run CMake
 mkdir build
 cd build
@@ -55,6 +58,14 @@ In practice, this means:
 Writing tests isn't always feasible, but it should be attempted whereever possible. However, if any tests break, they must be fixed. Removal should only be done if the corresponding functionality is removed, and not as a way to bypass the test failures to maybe perhaps fix later.
 
 If you're not sure how to write the specific tests you want, or you aren't sure what needs testing, you're encouraged to ask.
+
+### Pre-commit checks
+
+This part is documentation for what the pre-commit script does. It doesn't matter if you let git run it for you (the recommended setup), or run it manually. 
+
+All it does is run the same build and tests that you may have already done, but making sure that `-DVIOLET_SANITISE=ON` and `-DVIOLET_CLANG_TIDY=ON` in a separate build dir with the cache wiped before running.
+
+It does this twice, once for your default compiler, and once for clang, because clang runs different checks. Basically just hedging that one of two compilers should be able to pick up problems.
 
 ## Naming conventions
 

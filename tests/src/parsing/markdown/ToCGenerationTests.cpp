@@ -9,9 +9,7 @@ TEST_CASE("ToC feature tests") {
 # Header 2
 # Header 3)";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(ss)
-        );
+            auto res = violet::Markdown::parseWithContentPostprocessing(ss);
 
         REQUIRE(
             res.parsedContents
@@ -39,9 +37,7 @@ TEST_CASE("ToC feature tests") {
 ## Header 2
 ### Header 3)";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(ss)
-        );
+        auto res = violet::Markdown::parseWithContentPostprocessing(ss);
 
         REQUIRE(
             res.parsedContents
@@ -74,9 +70,7 @@ TEST_CASE("ToC feature tests") {
 ### Header 2
 #### Header 3)";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(ss)
-        );
+        auto res =  violet::Markdown::parseWithContentPostprocessing(ss);
 
         REQUIRE(
             res.parsedContents
@@ -109,9 +103,7 @@ TEST_CASE("ToC feature tests") {
 ### Header 2
 )";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(ss)
-        );
+        auto res = violet::Markdown::parseWithContentPostprocessing(ss);
 
         REQUIRE(
             res.parsedContents
@@ -143,9 +135,8 @@ TEST_CASE("ToC feature tests") {
 ## Header 5
 # Header 6)";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(ss)
-        );
+        auto res = violet::Markdown::parseWithContentPostprocessing(ss);
+
         REQUIRE(
             res.tableOfContents
             ==
@@ -176,9 +167,7 @@ TEST_CASE("ToC feature tests") {
 
     SECTION("Regression: nested URLs should not take precedence when rendering") {
         ss << "# [Hello](https://example.com)";
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(ss)
-        );
+        auto res = violet::Markdown::parseWithContentPostprocessing(ss);
 
         // This may be redundant, but doesn't hurt
         REQUIRE(
@@ -208,12 +197,10 @@ TEST_CASE("ToC feature tests") {
 ## Header 5
 # Header 6)";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(
-                ss,
-                violet::Markdown::defaultTranslator,
-                2
-            )
+        auto res = violet::Markdown::parseWithContentPostprocessing(
+            ss,
+            violet::Markdown::defaultTranslator,
+            2
         );
         REQUIRE(
             res.tableOfContents
@@ -240,12 +227,10 @@ TEST_CASE("ToC feature tests") {
 ### Header 2
 )";
 
-        auto res = std::move(
-            violet::Markdown::parseWithContentPostprocessing(
-                ss,
-                violet::Markdown::defaultTranslator,
-                2
-            )
+        auto res = violet::Markdown::parseWithContentPostprocessing(
+            ss,
+            violet::Markdown::defaultTranslator,
+            2
         );
 
         REQUIRE(

@@ -50,7 +50,7 @@ std::filesystem::path SiteGenerator::resolvePagination(
             target.parent_path()
         );
     }
-    return std::move(target);
+    return target;
 }
 
 void SiteGenerator::renderAndWrite(
@@ -384,7 +384,6 @@ bool SiteGenerator::generate() {
                 success &= processFile(rootDir, relPath);
                 return;
             }
-        cont:
             fileManager.copyRaw(rootDir, relPath, relPath);
             this->buildMeta.registerInputFile();
         }

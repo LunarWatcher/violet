@@ -26,6 +26,7 @@ bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::In
     violet::Config conf {
         .name = "Placeholder name",
         .description = "Placeholder description",
+        .prefix = "/",
         .exclude = {
             "LICENSE",
             "scripts",

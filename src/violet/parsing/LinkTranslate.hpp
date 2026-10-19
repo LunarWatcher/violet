@@ -47,7 +47,6 @@ inline std::string projectBasedTranslator(
     const std::filesystem::path& relSourceFilePath,
     const std::string& in
 ) {
-    thread_local std::array<char, 2> buff;
     if (
         in.starts_with("//")
         || in.starts_with("http://")

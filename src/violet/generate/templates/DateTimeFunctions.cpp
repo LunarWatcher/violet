@@ -10,7 +10,7 @@ DateTimeFunctions::DateTimeFunctions(InjaManager& man) : man(man) {
     man.env.add_callback("formatDate", [this](inja::Arguments& args) {
         return formatDate(args);
     });
-    man.env.add_callback("now", 0, [this](inja::Arguments&) {
+    man.env.add_callback("now", 0, [](inja::Arguments&) {
         return (int64_t) std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()
         ).count();

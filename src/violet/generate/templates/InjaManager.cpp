@@ -20,10 +20,10 @@ InjaManager::InjaManager(
     cfg(cfg),
     fileManager(fileManager),
     metaCache(metaCache),
+    dateTimeFuncs(*this),
     fileFuncs(*this),
     langFuncs(*this),
-    escapingFuncs(*this),
-    dateTimeFuncs(*this)
+    escapingFuncs(*this)
 {
     env.set_include_callback([this](
             const std::filesystem::path& path,

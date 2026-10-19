@@ -28,9 +28,9 @@ Paginator::Paginator(
     const std::filesystem::path& prefix,
     SortMethod sortMethod
 )
-    : basePath(owningFilePath),
-      fileMan(fileMan),
-      pageSize(pageSize)
+    : pageSize(pageSize),
+      basePath(owningFilePath),
+      fileMan(fileMan)
 {
     // No longer the case, only applies to the other signature (where it's hard-enforced with an unchecked optional
     // access :3)

@@ -17,26 +17,26 @@ struct ListingFrontmatter {
 };
 
 struct Frontmatter {
-    std::optional<std::string> title;
-    std::string type;
-    std::optional<std::string> layout;
+    std::optional<std::string> title = std::nullopt;
+    std::string type = "_default";
+    std::optional<std::string> layout = std::nullopt;
 
-    std::optional<int64_t> date;
-    std::optional<int64_t> last_modified;
+    std::optional<int64_t> date = std::nullopt;
+    std::optional<int64_t> last_modified = std::nullopt;
 
-    std::optional<ListingFrontmatter> listing;
-    std::optional<std::string> summary;
+    std::optional<ListingFrontmatter> listing = std::nullopt;
+    std::optional<std::string> summary = std::nullopt;
 
     bool hidden = false;
 
-    std::unordered_map<std::string, std::unordered_set<std::string>> taxonomies;
+    std::unordered_map<std::string, std::unordered_set<std::string>> taxonomies = {};
 
-    nlohmann::json data;
+    nlohmann::json data = {};
 
-    std::string tableOfContents;
+    std::string tableOfContents = "";
 
-    std::string internalUrl;
-    std::string internalPath;
+    std::string internalUrl = "";
+    std::string internalPath = "";
 
     ProcessedFileType internalFileType = ProcessedFileType::Uninitialized;
     bool isAsset = false;

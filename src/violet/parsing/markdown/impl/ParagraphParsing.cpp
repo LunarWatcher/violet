@@ -234,8 +234,8 @@ void Markdown::parseParagraphContent(
                         auto node = new ImageNode;
                         out->addChild(node);
                         node->urlType = type;
-                        node->urlOrRef = std::move(url.str());
-                        node->alt = std::move(content.str());
+                        node->urlOrRef = url.str();
+                        node->alt = content.str();
                     } else {
                         throw SyntaxError(
                             "Invalid image: a ref or URL is undefined",
