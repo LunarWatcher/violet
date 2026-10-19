@@ -55,7 +55,7 @@ Paginator::Paginator(
     path /= prefix;
     fileMan.recursivelyIterateFiles(
         path,
-        [&](auto& entry) {
+        [&](auto& entry) -> bool {
             const auto& entryPath = entry.path();
             if (!entry.is_regular_file()
                 || (
@@ -63,7 +63,7 @@ Paginator::Paginator(
                     && entryPath.extension() != ".html"
                 )
             ) {
-                return;
+                return true;
             }
             auto filePath = std::filesystem::relative(
                 entryPath,
@@ -72,7 +72,7 @@ Paginator::Paginator(
             // Don't include the owning file. This is necessary to allow non-hidden `index.md`s elsewhere to work
             // properly.
             if (filePath == std::filesystem::relative(owningFilePath, fileMan.getRootFolder())) {
-                return;
+                return true;
             }
             auto& metadata = metaCache.loadMetadata(
                 filePath
@@ -82,9 +82,10 @@ Paginator::Paginator(
                 metadata.frontmatter.isAsset
                 || metadata.frontmatter.hidden
             ) {
-                return;
+                return true;
             }
             fm.push_back(&metadata.frontmatter);
+            return true;
         }
     );
 

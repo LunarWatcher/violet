@@ -5,8 +5,11 @@
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/data/Constants.hpp"
 #include "violet/data/RenderResult.hpp"
+#include "violet/exceptions/SyntaxError.hpp"
+#include "violet/exceptions/TemplateError.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
 #include "violet/parsing/Markdown.hpp"
+#include "violet/util/ErrorHandling.hpp"
 
 namespace violet {
 
@@ -43,7 +46,7 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
     nlohmann::json pages;
     man.fileManager.recursivelyIterateFiles(
         root,
-        [&](auto& entry) {
+        [&](auto& entry) -> bool {
             const auto& entryPath = entry.path();
             if (!entry.is_regular_file()
                 || (
@@ -51,7 +54,7 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
                     && entryPath.extension() != ".html"
                 )
             ) {
-                return;
+                return true;
             }
             // TODO: this does not handle HTML files without frontmatter. This could probably be resolved by an optional
             // return from loadMetadata
@@ -67,7 +70,7 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
                 metadata.frontmatter.isAsset
                 || metadata.frontmatter.hidden
             ) {
-                return;
+                return true;
             }
 
             const auto& taxonomies = metadata.frontmatter.taxonomies;
@@ -77,6 +80,7 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
                     pages.push_back(metadata.frontmatter);
                 }
             }
+            return true;
         }
     );
     return pages;
@@ -106,7 +110,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
     nlohmann::json pages;
     man.fileManager.recursivelyIterateFiles(
         path,
-        [&](auto& entry) {
+        [&](auto& entry) -> bool {
             const auto& entryPath = entry.path();
             if (!entry.is_regular_file()
                 || (
@@ -114,7 +118,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
                     && entryPath.extension() != ".html"
                 )
             ) {
-                return;
+                return true;
             }
             // TODO: this does not handle HTML files without frontmatter. This could probably be resolved by an optional
             // return from loadMetadata
@@ -128,6 +132,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
             if (!metadata.frontmatter.isAsset && !metadata.frontmatter.hidden) {
                 pages.push_back(metadata.frontmatter);
             }
+            return true;
         }
     );
     return pages;
@@ -157,7 +162,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
     nlohmann::json pages;
     man.fileManager.recursivelyIterateFiles(
         path,
-        [&](auto& entry) {
+        [&](auto& entry) -> bool {
             const auto& entryPath = entry.path();
             if (!entry.is_regular_file()
                 || (
@@ -165,7 +170,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
                     && entryPath.extension() != ".html"
                 )
             ) {
-                return;
+                return true;
             }
             auto filePath = std::filesystem::relative(
                 entryPath,
@@ -179,7 +184,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
                 metadata.frontmatter.isAsset
                 || metadata.frontmatter.hidden
             ) {
-                return;
+                return true;
             }
 
             nlohmann::json* next = &pages;
@@ -196,6 +201,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
             } else {
                 (*next)["items"].push_back(metadata.frontmatter);
             }
+            return true;
         }
     );
     return pages;
@@ -338,18 +344,32 @@ nlohmann::json FileFunctions::render(inja::Arguments& args) {
 
     switch (safeFm.internalFileType) {
     case ProcessedFileType::Markdown: {
-        auto page = violet::Markdown::parseWithContentPostprocessing(
-            fileContent,
-            std::bind(
-                projectBasedTranslator,
-                this->man.cfg.prefix,
-                this->man.opts.root,
+        try {
+            auto page = violet::Markdown::parseWithContentPostprocessing(
+                fileContent,
+                std::bind(
+                    projectBasedTranslator,
+                    this->man.cfg.prefix,
+                    this->man.opts.root,
+                    fm.internalPath,
+                    std::placeholders::_1
+                )
+            );
+            rawContent = page.parsedContents;
+            safeFm.tableOfContents = page.tableOfContents;
+        } catch (const SyntaxError& synError) {
+            renderSyntaxError(
                 fm.internalPath,
-                std::placeholders::_1
-            )
-        );
-        rawContent = page.parsedContents;
-        safeFm.tableOfContents = page.tableOfContents;
+                synError,
+                fileContent
+            );
+            throw TemplateError(
+                std::format(
+                    "Template API error: A nested markdown rendering error occurred while rendering {}",
+                    fm.internalPath
+                )
+            );
+        }
     } break;
     case ProcessedFileType::Html:
     case ProcessedFileType::Xml:

@@ -2,8 +2,10 @@
 
 #include "ProcessedFileType.hpp"
 #include "minilog/minilog.hpp"
+#include "violet/exceptions/SyntaxError.hpp"
 #include "violet/paginator/Paginator.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
+#include "violet/util/ErrorHandling.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -197,33 +199,38 @@ bool SiteGenerator::processFile(
         );
     } break;
     case ProcessedFileType::Markdown: {
-        minilog::debug("Loaded file is markdown. Parsing...");
-        auto parsedPage = Markdown::parseWithContentPostprocessing(
-            content,
-            std::bind(
-                projectBasedTranslator,
-                this->cfg.prefix,
-                rootDir,
-                relPath,
-                std::placeholders::_1
-            ),
-            this->cfg.tocStartLevel
-        );
+        try {
+            minilog::debug("Loaded file is markdown. Parsing...");
+            auto parsedPage = Markdown::parseWithContentPostprocessing(
+                content,
+                std::bind(
+                    projectBasedTranslator,
+                    this->cfg.prefix,
+                    rootDir,
+                    relPath,
+                    std::placeholders::_1
+                ),
+                this->cfg.tocStartLevel
+            );
 
-        minilog::debug("Markdown parsing complete");
+            minilog::debug("Markdown parsing complete");
 
-        // TODO: this isn't elegant, but it seems to be the easiest option for now. The alternative is injecting a
-        // fourth data object that's only present for markdown pages, but that just sucks.
-        // Also not sure how I want to indicate that a ToC exists, but I don't think that level of markdown mixing is
-        // ever going to be a problem.
-        Frontmatter fm = parsedFrontmatter;
-        fm.tableOfContents = std::move(parsedPage.tableOfContents);
+            // TODO: this isn't elegant, but it seems to be the easiest option for now. The alternative is injecting a
+            // fourth data object that's only present for markdown pages, but that just sucks.
+            // Also not sure how I want to indicate that a ToC exists, but I don't think that level of markdown mixing is
+            // ever going to be a problem.
+            Frontmatter fm = parsedFrontmatter;
+            fm.tableOfContents = std::move(parsedPage.tableOfContents);
 
-        handleTemplatesAndSave(
-            std::move(parsedPage.parsedContents),
-            fm.internalUrl,
-            fm
-        );
+            handleTemplatesAndSave(
+                std::move(parsedPage.parsedContents),
+                fm.internalUrl,
+                fm
+            );
+        } catch (const SyntaxError& synError) {
+            renderSyntaxError(relPath, synError, content);
+            return false;
+        }
     } break;
     case violet::ProcessedFileType::Xml: {
         minilog::debug("Loaded file is HTML with frontmatter.");
@@ -325,14 +332,14 @@ bool SiteGenerator::generate() {
 
     bool success = true;
     fileManager.recursivelyIterateFiles(
-        rootDir, [&](auto& f) {
+        rootDir, [&](auto& f) -> bool {
             auto& p = f.path();
             auto relPath = std::filesystem::relative(
                 p,
                 rootDir
             );
             if (!f.is_regular_file()) {
-                return;
+                return success;
             }
             auto ext = p.extension();
 
@@ -345,11 +352,11 @@ bool SiteGenerator::generate() {
                     )
                 ) {
                     // index.md takes precedence, so skip README
-                    return;
+                    return success;
                 }
 
                 success &= processFile(rootDir, relPath);
-                return;
+                return success;
             } else if (ext == ".html") {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
@@ -358,7 +365,7 @@ bool SiteGenerator::generate() {
                 );
                 if (result.has_value()) {
                     success &= *result;
-                    return;
+                    return success;
                 }
             } else if (ext == ".atom" || ext == ".xml" || ext == ".rss") {
                 auto result = processFileIfFrontmatterIsPresent(
@@ -368,7 +375,7 @@ bool SiteGenerator::generate() {
                 );
                 if (result.has_value()) {
                     success &= *result;
-                    return;
+                    return success;
                 }
             } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
                 auto result = processFileIfFrontmatterIsPresent(
@@ -378,14 +385,16 @@ bool SiteGenerator::generate() {
                 );
                 if (result.has_value()) {
                     success &= *result;
-                    return;
+                    return success;
                 }
             } else if (ext == ".in") {
                 success &= processFile(rootDir, relPath);
-                return;
+                return success;
             }
             fileManager.copyRaw(rootDir, relPath, relPath);
             this->buildMeta.registerInputFile();
+
+            return success;
         }
     );
 

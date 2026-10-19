@@ -38,6 +38,8 @@ add_library(violetsrc STATIC
     violet/parsing/markdown/impl/ParagraphParsing.cpp
     violet/parsing/markdown/impl/ParserCore.cpp
     violet/parsing/markdown/impl/Render.cpp
+
+    violet/util/ErrorHandling.cpp
 )
 
 target_include_directories(violetsrc PUBLIC .)

@@ -20,6 +20,26 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* Added proper error messages for markdown errors ([#9](https://codeberg.org/LunarWatcher/violet/issues/9) (partial)). Example from this doc site's [Editor setup](/Editor setup.md) with an invalid URL:
+  ```
+  21:26:42.016 | error    | SiteGenerator.cpp:231    | Markdown error in Editor setup.md
+  21:26:42.016 | error    | SiteGenerator.cpp:232    | Error: Unclosed url
+  Near byte:
+  527
+  Location:
+    Note that for setting up editors not in this list, the usually only step necessary is to associate `.inja` with a syntax renderer for jinja templates. inja templates are similar enough in implementation to jinja templates that it'll mostly be correct.
+  
+    [link](
+    ~~~~~~^
+  
+    ## Emacs
+  
+    `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.inja` extension to web-mode with the `jinja` engine allows templates to be rendered:
+  ```
+  * Note that the position highlight does not actually show a start position, only an end position. The `~` are just to make the `^` more obvious. Start positions may be handled in a future release
+
 ## [v0.13.1] (2026-10-19)
 
 ### Fixed

@@ -32,23 +32,24 @@ if ! build; then
     exit 1
 fi
 
-if [ "$CXX" != "clang" ]; then
-    if command -v clang; then
-        echo
-        echo "Doing extra checks with clang"
-        echo
+# TODO: This is better set up as a dev automation (sounds like an umbra devenv command)
+# if [ "$CXX" != "clang" ]; then
+#     if command -v clang; then
+#         echo
+#         echo "Doing extra checks with clang"
+#         echo
 
-        cd "$git_root"
-        mkdir -p build-precommit-clang
-        cd build-precommit-clang
+#         cd "$git_root"
+#         mkdir -p build-precommit-clang
+#         cd build-precommit-clang
 
-        export CXX=clang++
-        export CC=clang
-        if ! build; then
-            exit 1
-        fi
-    else
-        echo "Clang is not installed, so can't do extra checks with clang."
-        echo "These checks are optional"
-    fi
-fi
+#         export CXX=clang++
+#         export CC=clang
+#         if ! build; then
+#             exit 1
+#         fi
+#     else
+#         echo "Clang is not installed, so can't do extra checks with clang."
+#         echo "These checks are optional"
+#     fi
+# fi

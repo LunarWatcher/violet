@@ -60,7 +60,7 @@ public:
 
     void recursivelyIterateFiles(
         const std::filesystem::path& root,
-        const std::function<void(const std::filesystem::directory_entry& entry)>& processor
+        const std::function<bool(const std::filesystem::directory_entry& entry)>& processor
     );
 
     void assertReady() {

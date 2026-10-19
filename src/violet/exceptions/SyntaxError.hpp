@@ -9,13 +9,13 @@ namespace violet {
 class SyntaxError : public std::exception {
 private:
     std::string msg;
-    size_t offset;
 public:
+    const size_t offset;
     SyntaxError(
         std::string&& msg,
         size_t offset
     ) : msg(std::format(
-            "ERROR: {}\nNear idx:\n{}",
+            "{}\nNear byte:\n{}",
             msg,
             offset
         )),

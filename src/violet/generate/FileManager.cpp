@@ -132,7 +132,7 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
 
 void FileManager::recursivelyIterateFiles(
     const std::filesystem::path& root,
-    const std::function<void(const std::filesystem::directory_entry& entry)>& processor
+    const std::function<bool(const std::filesystem::directory_entry& entry)>& processor
 ) {
     auto it = std::filesystem::recursive_directory_iterator(root);
     auto end = std::filesystem::recursive_directory_iterator();
@@ -205,7 +205,9 @@ void FileManager::recursivelyIterateFiles(
         } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
 
         minilog::debug("Forwarding {} to file tree iterator", f.path().string());
-        processor(f);
+        if (!processor(f)) {
+            break;
+        }
     } while (++it != end);
 }
 
