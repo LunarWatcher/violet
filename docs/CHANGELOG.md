@@ -22,6 +22,19 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [v0.14.0] (2026-10-20)
 
+### Site and theme migration guide
+
+`.inja` is superceded by `.iris`. The following automation script can be used for most standard use-cases:
+
+```bash
+# Replace the .inja extension inside templates
+rg inja --files-with-matches | xargs -d '\n' sed -i 's/\.inja/.iris/g'
+# Mass-rename inja files
+for file in **/*.inja; do mv "$file" "${file%.inja}.iris"; done
+```
+
+No functional changes have been made in iris relative to inja, so no other migration should be necessary. Aside this change, backwards compatibility for violet consumers will be maintained. (C++ API compatibility in iris will likely break at some point, but this will not be observable by end-users of violet)
+
 ### Added
 
 * Added proper error messages for markdown errors ([#9](https://codeberg.org/LunarWatcher/violet/issues/9) (partial)). Example from this doc site's [Editor setup](/Editor setup.md) with an invalid URL:
