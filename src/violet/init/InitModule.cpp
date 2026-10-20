@@ -104,7 +104,7 @@ cd FIXME
 
 rm -rf pages
 
-time -- "$violet_exe" generate -d
+time -- "violet" generate -d
 if [[ $? != 0 ]]; then
     echo "Generation failed"
     exit 1
@@ -137,6 +137,28 @@ git push -fu cb pages
     return true;
 }
 
+bool setupGitignore(const std::filesystem::path& outputPath) {
+    std::filesystem::path gitignorePath = outputPath / ".gitignore";
+
+    if (std::filesystem::exists(gitignorePath)) {
+        minilog::warn(
+            "Gitignore already exists. If you're including violet in an existing repo, make sure to add "
+            "pages/ to your gitignore"
+        );
+        return true;
+    }
+
+    std::ofstream f(gitignorePath);
+    if (!f) {
+        return false;
+    }
+
+    f << R"(# Ignore violet's default output dir
+/pages/
+)";
+
+    return true;
+}
 
 void dumpHelp() {
     std::cout << R"(
@@ -183,6 +205,11 @@ int violet::initMain(const violet::InitOpts& opts) {
 
     if (!setupPublishScript(targetFolder)) {
         minilog::error("Failed to initialize publish script!");
+        return 1;
+    }
+
+    if (!setupGitignore(targetFolder)) {
+        minilog::error("Gitignore init failed due to an unexpected error");
         return 1;
     }
 

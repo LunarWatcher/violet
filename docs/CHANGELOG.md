@@ -39,6 +39,11 @@ This page contains the changelog for violet. Please note that you'll encounter t
     `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.inja` extension to web-mode with the `jinja` engine allows templates to be rendered:
   ```
   * Note that the position highlight does not actually show a start position, only an end position. The `~` are just to make the `^` more obvious. Start positions may be handled in a future release
+* CLI (init): Auto-generate a `.gitignore`
+  
+### Fixed
+
+* CLI (init): generated `publish.sh` accidentally included `$violet_exe`, which should just be `violet`. This was a copypasta oversight from copying violet's own `publish.sh`
 
 ## [v0.13.1] (2026-10-19)
 
