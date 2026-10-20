@@ -178,13 +178,13 @@ The page number to load. Default value: 1
 
 > [!warning]
 >
-> Due to apparent limitations in inja, there's currently no way to specify a path relative to an include or another non-page object. Please be mindful of this while using this function
+> Due to apparent limitations in iris, there's currently no way to specify a path relative to an include or another non-page object. Please be mindful of this while using this function
 
-This function is used to load JSON files into variables. Can be useful if you need to contain large amounts of structured data and don't want to do so in inja.
+This function is used to load JSON files into variables. Can be useful if you need to contain large amounts of structured data and don't want to do so in iris.
 
 Example use:
 
-```inja
+```jinja
 {% set linkCategories = loadJson(page, "/_templates/outlinks/data.json") %}
 ```
 

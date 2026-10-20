@@ -1,6 +1,6 @@
 #include "FileFunctions.hpp"
 
-#include "InjaManager.hpp"
+#include "IrisManager.hpp"
 #include "violet/algorithm/SortMethod.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/data/Constants.hpp"
@@ -13,17 +13,17 @@
 
 namespace violet {
 
-FileFunctions::FileFunctions(InjaManager& man) : man(man) {
-    man.env.add_callback("listPages", 2, [this](inja::Arguments& args) -> nlohmann::json {
+FileFunctions::FileFunctions(IrisManager& man) : man(man) {
+    man.env.add_callback("listPages", 2, [this](iris::Arguments& args) -> nlohmann::json {
         return listPages(args);
     });
-    man.env.add_callback("listPagesPaginated",  [this](inja::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args) -> nlohmann::json {
         return listPagesPaginated(args);
     });
-    man.env.add_callback("treePages", 2, [this](inja::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("treePages", 2, [this](iris::Arguments& args) -> nlohmann::json {
         return treePages(args);
     });
-    man.env.add_callback("paginatedUrl", 2, [this](inja::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) -> nlohmann::json {
         return paginatedUrl(args);
     });
     man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
@@ -36,9 +36,9 @@ FileFunctions::FileFunctions(InjaManager& man) : man(man) {
         return render(args);
     });
 }
-nlohmann::json listPagesPaginated(inja::Arguments& args);
+nlohmann::json listPagesPaginated(iris::Arguments& args);
 
-nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
+nlohmann::json FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
     auto& root = man.fileManager.getRootFolder();
     auto taxonomy = args.at(0)->get<std::string>();
     auto value = args.at(1)->get<std::string>();
@@ -86,7 +86,7 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(inja::Arguments& args) {
     return pages;
 }
 
-nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
+nlohmann::json FileFunctions::listPages(iris::Arguments& args) {
     auto& frontmatter = *args.at(0);
     auto scope = args.at(1)->get<std::string>();
 
@@ -138,7 +138,7 @@ nlohmann::json FileFunctions::listPages(inja::Arguments& args) {
     return pages;
 }
 
-nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
+nlohmann::json FileFunctions::treePages(iris::Arguments& args) {
     auto& frontmatter = *args.at(0);
     auto scope = args.at(1)->get<std::string>();
 
@@ -207,7 +207,7 @@ nlohmann::json FileFunctions::treePages(inja::Arguments& args) {
     return pages;
 }
 
-nlohmann::json FileFunctions::paginatedUrl(inja::Arguments& args) {
+nlohmann::json FileFunctions::paginatedUrl(iris::Arguments& args) {
     auto baseUrl = args.at(0)->get<std::string>();
     auto page = args.at(1)->get<int64_t>();
     // This restricts us to half the max uint64_t value, but no one will ever care
@@ -225,7 +225,7 @@ nlohmann::json FileFunctions::paginatedUrl(inja::Arguments& args) {
     return ss.str();
 }
 
-nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
+nlohmann::json FileFunctions::listPagesPaginated(iris::Arguments& args) {
     const auto& frontmatter = *args.at(0);
     const auto scope = args.at(1)->get<std::string>();
     // TODO: this is technically 
@@ -275,7 +275,7 @@ nlohmann::json FileFunctions::listPagesPaginated(inja::Arguments& args) {
     return out;
 }
 
-nlohmann::json FileFunctions::loadJson(inja::Arguments& args) {
+nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
     const auto& frontmatter = *args.at(0);
     auto fn = args.at(1)->get<std::string>();
 
@@ -322,7 +322,7 @@ nlohmann::json FileFunctions::loadJson(inja::Arguments& args) {
     return data;
 }
 
-nlohmann::json FileFunctions::render(inja::Arguments& args) {
+nlohmann::json FileFunctions::render(iris::Arguments& args) {
     auto fm = args.at(0)->get<Frontmatter>();
 
     // TODO: desperately need better out of bounds path checking

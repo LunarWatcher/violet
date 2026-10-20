@@ -57,6 +57,14 @@ CLI::App* violet::generateCommand(CLI::App& app, violet::GenerateOpts& generateO
     )
         ->default_val(std::filesystem::current_path());
 
+    cmdGenerate->add_flag(
+        "--legacy-extensions",
+        generateOpts.allowLegacyInjaExtensions,
+        "Lets projects that still use the .inja extensions work (in theory). Using this flag is discouraged; "
+        "please switch `.inja` to `.iris`. This flag and the support for `.inja` extensions will be removed in v1."
+    )
+        ->default_val(false);
+
     return cmdGenerate;
 }
 

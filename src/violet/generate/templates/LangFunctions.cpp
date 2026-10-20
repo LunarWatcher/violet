@@ -1,19 +1,19 @@
 #include "LangFunctions.hpp"
-#include "inja/function_storage.hpp"
-#include "violet/generate/templates/InjaManager.hpp"
+#include "iris/function_storage.hpp"
+#include "violet/generate/templates/IrisManager.hpp"
 
 namespace violet {
 
-LangFunctions::LangFunctions(InjaManager& man) : man(man) {
-    man.env.add_callback("recurseInclude", 2, [this](inja::Arguments& args) {
+LangFunctions::LangFunctions(IrisManager& man) : man(man) {
+    man.env.add_callback("recurseInclude", 2, [this](iris::Arguments& args) {
         return recurseInclude(args);
     });
-    man.env.add_callback("createPaginatedList", 2, [this](inja::Arguments& args) {
+    man.env.add_callback("createPaginatedList", 2, [this](iris::Arguments& args) {
         return createPaginatedList(args);
     });
 }
 
-nlohmann::json LangFunctions::recurseInclude(inja::Arguments& args) {
+nlohmann::json LangFunctions::recurseInclude(iris::Arguments& args) {
     auto templateName = args.at(0)->get<std::string>();
     auto& context = *args.at(1);
     std::stringstream ss;
@@ -25,7 +25,7 @@ nlohmann::json LangFunctions::recurseInclude(inja::Arguments& args) {
     );
 }
 
-nlohmann::json LangFunctions::createPaginatedList(inja::Arguments& args) {
+nlohmann::json LangFunctions::createPaginatedList(iris::Arguments& args) {
     uint64_t currPage = *args.at(0);
     uint64_t totalPages = *args.at(1);
 

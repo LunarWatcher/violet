@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fixtures/InjaArgsGenerator.hpp"
+#include "fixtures/IrisArgsGenerator.hpp"
 #include "fixtures/TestSiteGenerator.hpp"
 #include <filesystem>
 
@@ -37,17 +37,17 @@ inline void testFileIterationExcludesOutputDir(
                 }
                 f << "content" << std::endl;
             }
-            tests::InjaArgs args(nlohmann::json::array({
+            tests::IrisArgs args(nlohmann::json::array({
                 violet::Frontmatter {
                     .title = "Placeholder",
                     .internalPath = refFile.string()
                 },
                 "."
             }));
-            auto injaArgs = args.asArgs();
+            auto irisArgs = args.asArgs();
 
             SECTION("listPages should exclude build dir") {
-                auto pages = gen->getInjaManager().fileFuncs.listPages(injaArgs);
+                auto pages = gen->getIrisManager().fileFuncs.listPages(irisArgs);
 
                 for (const auto& page : pages) {
                     auto fm = page.get<violet::Frontmatter>();
@@ -63,7 +63,7 @@ inline void testFileIterationExcludesOutputDir(
                 }
             }
             SECTION("treePages should exclude build dir") {
-                auto pages = gen->getInjaManager().fileFuncs.treePages(injaArgs);
+                auto pages = gen->getIrisManager().fileFuncs.treePages(irisArgs);
 
                 auto subfolders = pages.at("subfolders");
                 REQUIRE_FALSE(
@@ -81,7 +81,7 @@ inline void testFileIterationExcludesOutputDir(
                 }
                 f << "content" << std::endl;
             }
-            tests::InjaArgs args(nlohmann::json::array({
+            tests::IrisArgs args(nlohmann::json::array({
                 violet::Frontmatter {
                     .title = "Placeholder",
                     .internalPath = refFile.string()
@@ -90,13 +90,13 @@ inline void testFileIterationExcludesOutputDir(
             }));
 
             INFO("Scope is " << outputDir.filename().string());
-            auto injaArgs = args.asArgs();
+            auto irisArgs = args.asArgs();
             SECTION("listPages") {
-                auto pages = gen->getInjaManager().fileFuncs.listPages(injaArgs);
+                auto pages = gen->getIrisManager().fileFuncs.listPages(irisArgs);
                 REQUIRE(pages.empty());
             }
             SECTION("treePages") {
-                auto pages = gen->getInjaManager().fileFuncs.treePages(injaArgs);
+                auto pages = gen->getIrisManager().fileFuncs.treePages(irisArgs);
                 REQUIRE(pages.empty());
             }
         }

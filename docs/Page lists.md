@@ -19,7 +19,7 @@ The page lists can contain content of their own. Where the content is placed, or
 No pages are forced into being page lists, as it's perfectly normal to have folders with content without the index page therefore automagically being an index page.
 
 > [!note]
-> This sources `_default/page_list.inja` as the template.
+> This sources `_default/page_list.iris` as the template.
 
 ### Paginated page lists
 

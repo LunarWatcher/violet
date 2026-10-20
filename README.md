@@ -9,7 +9,7 @@ All the good SSGs have turned to AI slop, and migrating between SSGs is a pain i
 ## Features
 
 * Most of what you'd expect from a static site generator
-  * Templates (through the jinja-inspired library [inja](https://github.com/pantor/inja/))
+  * Templates (through the jinja-inspired library [iris](https://codeberg.org/LunarWatcher/iris))
   * Markdown to HTML converter, based on a custom markdown parser with a few minor differences from major implementations, largely down to strictness. Markdown is a markup language, and in this implementation, invalid markup is an error.
     * Frontmatter in violet is JSON-based
   * Paginated page lists allow for long lists to be spread across pages

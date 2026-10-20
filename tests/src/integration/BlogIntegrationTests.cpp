@@ -43,7 +43,7 @@ TEST_CASE("Blog integration tests") {
             REQUIRE(metadata.build.buildMillis < 10000);
         }
     }
-    SECTION("The Atom feed should exist and be generated from feed.inja") {
+    SECTION("The Atom feed should exist and be generated from feed.iris") {
         std::ifstream f(testGen.buildPath() / "blog/feed.atom");
         INFO("Trying to open blog/feed.atom");
         REQUIRE(bool(f));

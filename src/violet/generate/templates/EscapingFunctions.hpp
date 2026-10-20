@@ -2,19 +2,19 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include <inja/inja.hpp>
+#include <iris/iris.hpp>
 
 namespace violet {
 
-class InjaManager;
+class IrisManager;
 class EscapingFunctions {
 private:
-    InjaManager& man;
+    IrisManager& man;
 
-    nlohmann::json htmlEscape(inja::Arguments& args);
-    nlohmann::json urlEncode(inja::Arguments& args);
+    nlohmann::json htmlEscape(iris::Arguments& args);
+    nlohmann::json urlEncode(iris::Arguments& args);
 public:
-    EscapingFunctions(InjaManager& man);
+    EscapingFunctions(IrisManager& man);
 };
 
 }

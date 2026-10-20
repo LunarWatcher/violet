@@ -66,8 +66,8 @@ You'll then need to add `"theme": "my-silly-theme"` to your `violet.json`.
 
 One of the convenient parts about templates is that you can incrementally build your page in steps as needed. This depends purely on the granularity of control you want, and how much code you share between different types of templates. For now, let's set up a basic page:
 
-`_templates/_default/base.inja`
-```inja
+`_templates/_default/base.iris`
+```jinja
 <!DOCTYPE html>
 <html>
     <head>
@@ -94,9 +94,9 @@ The main feature you need to notice right now is the `block`. A block lets us de
 
 Let's start by rendering a `single_page`. The `single_page` is the default layout. Any page that doesn't specify a layout is implied to have `"layout": "single_page"`. 
 
-`_templates/_default/single_page.inja`
-```inja
-{% extends "base.inja" %}
+`_templates/_default/single_page.iris`
+```jinja
+{% extends "base.iris" %}
 {% block content %}
     <h1>{{ page.title }}</h1>
     {# this statement includes the HTML content of the site, i.e. whatever you put in the markdown file formatted as HTML #}
@@ -105,7 +105,7 @@ Let's start by rendering a `single_page`. The `single_page` is the default layou
 {% endblock %}
 ```
 
-Here we see another `block`, but this redefinition places the contents of the block inside the location in the previous block. In other words, the block in `single_page.inja` gets placed inside the `<main>` tag from `base.inja`. 
+Here we see another `block`, but this redefinition places the contents of the block inside the location in the previous block. In other words, the block in `single_page.iris` gets placed inside the `<main>` tag from `base.iris`. 
 
 You can now try generating the site with `violet generate -l`, and opening a file (`xdg-open pages/index.html`). If you've done this previously, you may now notice that the page is rather blank:
 
@@ -128,16 +128,16 @@ Hello world!
 
 ## Expanding the base template
 
-As it stands right now, the page is a bit barren. We can do better! Let's go back to `base.inja` and add some includes:
+As it stands right now, the page is a bit barren. We can do better! Let's go back to `base.iris` and add some includes:
 
-```inja
+```jinja
 <!DOCTYPE html>
 <html>
     <head>
-        {% include "partials/head.inja" %}
+        {% include "partials/head.iris" %}
     </head>
     <body>
-        {% include "partials/header.inja" %}
+        {% include "partials/header.iris" %}
         <main>
             {% block content %}
             {% endblock %}
@@ -154,20 +154,20 @@ As it stands right now, the page is a bit barren. We can do better! Let's go bac
 >
 > If you chose to build a theme, you won't see this, as the default theme is fully replaced by your theme. 
 
-For this to be useful in your theme, you'll need to create these two files. Let's start by creating both, and focusing on `head.inja` for now:
+For this to be useful in your theme, you'll need to create these two files. Let's start by creating both, and focusing on `head.iris` for now:
 
-1. Create `_partials/head.inja`
-2. Create `_partials/header.inja`
+1. Create `_partials/head.iris`
+2. Create `_partials/header.iris`
 3. Run `violet generate -l` and reload the page. You should not get an error, and the page should look identical to the previous step.
 
-Now, open `_partials/head.inja` in an editor. The goal is to do two things:
+Now, open `_partials/head.iris` in an editor. The goal is to do two things:
 
 1. Set a page title
 2. Load a CSS file
 
 The CSS file does not exist yet, but that'll just be a 404 in the browser, so we can ignore this for now. We are also skipping all the standard good-practice metadata for brevity.
 
-```inja
+```jinja
 {# We just set the title to the page title. This will always be defined #}
 <title>{{ page.title }}</title>
 
@@ -196,7 +196,7 @@ h1:before {
 
 ### Bonus exercise
 
-You now have a blank `header.inja`: try adding a basic header to it. You can also expand it in the same way to add a `footer.inja`, or whatever else you want.
+You now have a blank `header.iris`: try adding a basic header to it. You can also expand it in the same way to add a `footer.iris`, or whatever else you want.
 
 If you want more data from the page, see [the frontmatter schema](/schemas/Frontmatter.md).
 
@@ -208,7 +208,7 @@ Paginated page lists are a subset of `page_list`s with some extra config options
 
 Let's create a file and set the `page_size` to 2. The reason we do this is to make it easier to provoke pagination to make it more obvious what's going on. Create `blog/README.md` and populate it with:
 
-```inja
+```jinja
 ---
 {
     "layout": "page_list",
@@ -261,10 +261,10 @@ Content
 
 You can fill these with whatever you want. By default, paginated page lists sort by `date` first and filename second, but in this case, we redundantly make sure both are sorted. 
 
-Similarly to `single_page.inja`, you'll now create `_templates/_default/page_list.inja`, and we'll start like last time:
+Similarly to `single_page.iris`, you'll now create `_templates/_default/page_list.iris`, and we'll start like last time:
 
-```inja
-{% extends "base.inja" %}
+```jinja
+{% extends "base.iris" %}
 {% block content %}
     <h1>{{ page.title }}</h1>
     {% include "content" %}
@@ -308,9 +308,9 @@ If you look at the logs when you generate, you're told where the pages go. Here'
 
 Writing the full pagination controls is left as an exercise to the reader. The pagination controls on my website are no less than 47 lines at the time of writing - but it could be much shorter if I had written it in javascript instead.
 
-Consequently, actually writing the full controls is left as an exercise to the reader. However, for now, we'll settle for some very basic controls. In `page_list.inja`, add:
+Consequently, actually writing the full controls is left as an exercise to the reader. However, for now, we'll settle for some very basic controls. In `page_list.iris`, add:
 
-```inja
+```jinja
 <ul>
     {% for i in createPaginatedList(listing.page, listing.total_pages) %}
         <li title="Go to page {{ i }}">

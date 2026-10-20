@@ -21,6 +21,11 @@ struct GenerateOpts {
 
     bool overridePrefixForLocalUse = false;
 
+    /**
+     * Temporary, only for use until v1 or some other point when we can drop the .iris extension outright.  
+     */
+    bool allowLegacyInjaExtensions = false;
+
     std::filesystem::path root = std::filesystem::current_path();
     std::optional<std::string> overridePrefix = std::nullopt;
 };

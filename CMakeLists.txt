@@ -41,11 +41,8 @@ if (NOT WIN32 AND VIOLET_SANITISE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined -fsanitize=address -fsanitize-trap=all")
 endif()
 
-set(INJA_USE_EMBEDDED_JSON OFF CACHE STRING "" FORCE)
-set(BUILD_TESTING OFF CACHE STRING "" FORCE)
-set(INJA_BUILD_TESTS OFF CACHE STRING "" FORCE)
-set(INJA_EXPORT OFF CACHE STRING "" FORCE)
-set(INJA_INSTALL OFF CACHE STRING "" FORCE)
+set(IRIS_USE_EMBEDDED_JSON OFF CACHE STRING "" FORCE)
+set(IRIS_BUILD_TESTS OFF CACHE STRING "" FORCE)
 
 include(FetchContent)
 FetchContent_Declare(stc
@@ -66,16 +63,16 @@ FetchContent_Declare(json
     GIT_REPOSITORY https://github.com/LunarWatcher/json
     GIT_TAG v3.12.0-slopfree
 )
-FetchContent_Declare(inja
-    GIT_REPOSITORY https://github.com/pantor/inja
-    GIT_TAG v3.5.0
+FetchContent_Declare(iris
+    GIT_REPOSITORY https://codeberg.org/LunarWatcher/iris
+    GIT_TAG v0.1.0
 )
 FetchContent_MakeAvailable(
     stc
     minilog
     cli12
     json
-    inja
+    iris
 )
 
 # Note: VIOLET_VERSION is not directly exported to all targets. Use `violet::GitVersion()` to get the version

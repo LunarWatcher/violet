@@ -25,7 +25,7 @@ struct Config {
     bool metadata = false;
 
     /**
-     * Contains a copy of the raw JSON object that created the rest of this struct; used for forwarding to inja.
+     * Contains a copy of the raw JSON object that created the rest of this struct; used for forwarding to iris.
      */
     nlohmann::json raw = {};
 

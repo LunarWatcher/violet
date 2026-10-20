@@ -1,23 +1,23 @@
 #include  "DateTimeFunctions.hpp"
 #include "violet/generate/templates/DateTimeFunctions.hpp"
-#include "violet/generate/templates/InjaManager.hpp"
+#include "violet/generate/templates/IrisManager.hpp"
 #include <format>
 #include <chrono>
 
 namespace violet {
 
-DateTimeFunctions::DateTimeFunctions(InjaManager& man) : man(man) {
-    man.env.add_callback("formatDate", [this](inja::Arguments& args) {
+DateTimeFunctions::DateTimeFunctions(IrisManager& man) : man(man) {
+    man.env.add_callback("formatDate", [this](iris::Arguments& args) {
         return formatDate(args);
     });
-    man.env.add_callback("now", 0, [](inja::Arguments&) {
+    man.env.add_callback("now", 0, [](iris::Arguments&) {
         return (int64_t) std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()
         ).count();
     });
 }
 
-nlohmann::json DateTimeFunctions::formatDate(inja::Arguments& args) {
+nlohmann::json DateTimeFunctions::formatDate(iris::Arguments& args) {
     auto timestamp = args.at(0)->get<int64_t>();
     auto fmt = args.at(1)->get<std::string>();
     // TODO: site.timezone

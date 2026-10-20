@@ -18,7 +18,7 @@
                 {% set context.currTree = nextTree %}
                 {% set context.page = page %}
                 {% set context.site = site %}
-                {{ recurseInclude("partials/tree_builder.inja", context) }}
+                {{ recurseInclude("partials/tree_builder.iris", context) }}
             </ul>
         </li>
     {% endfor %}

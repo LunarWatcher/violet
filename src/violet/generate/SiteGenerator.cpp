@@ -28,7 +28,7 @@ SiteGenerator::SiteGenerator(
     metadataCache(
         this->fileManager
     ),
-    injaManager(
+    irisManager(
         this->opts,
         this->cfg,
         this->fileManager,
@@ -70,7 +70,7 @@ void SiteGenerator::renderAndWrite(
         return;
     }
     try {
-        auto renderedContent = injaManager.renderPage(
+        auto renderedContent = irisManager.renderPage(
             fileContent,
             relPath,
             frontmatter,
@@ -84,7 +84,7 @@ void SiteGenerator::renderAndWrite(
             renderedContent.data(),
             renderedContent.size()
         );
-    } catch (const inja::RenderError& renderError) {
+    } catch (const iris::RenderError& renderError) {
         minilog::error(
             "Failed to render {}: {}",
             relPath.string(),

@@ -20,9 +20,9 @@ For the most part, the logic is the same as for HTML and markdown files, which i
 
 ## Resources
 
-* Atom feed reference: [https://validator.w3.org/feed/docs/atom.html](https://validator.w3.org/feed/docs/atom.html)
+* Atom feed reference: <https://validator.w3.org/feed/docs/atom.html>
   * WARNING: The sample feed lies. It uses `url:uuid`, which is invalid, but a later link buried on this page ([this one](https://web.archive.org/web/20110915110202/http://diveintomark.org/archives/2004/05/28/howto-atom-id#nourn)) describes why url links shouldn't be used. This is a huge oversight by the w3c. TL;DR: use links, not UUIDs. Violet cannot generate stable UUIDs anyway, so links are much more stable.
-* Atom validator: [https://validator.w3.org/feed/check.cgi](https://validator.w3.org/feed/check.cgi)
+* Atom validator: <https://validator.w3.org/feed/check.cgi>
 
 ## Examples
 
@@ -43,7 +43,7 @@ If you want to link to your feeds in your `<head>`, you'd do it like you'd load 
 This example shows an atom feed with no base template, so everything is contained within a single file. See the comments for more info about the violet-specific functions; the atom bits are the bare minimum to get past validation
 
 `<site root dir>/blog/feed.atom`:
-```inja
+```jinja
 ---
 ---
 <!-- ^ All the feeds require a frontmatter to render. It does not need to contain anything if you don't do advanced templating -->
@@ -109,8 +109,8 @@ This example shows an atom feed with no base template, so everything is containe
 
 ### Atom feed using template
 
-This example is the same in principle as the standalone example. Its comments apply here as well, and have not been duplicated. However, it relies far more heavily on `{{ page.data }}`, and rather than copying it into its final destination, we put it in `_templates/_default/feed.inja`:
-```inja
+This example is the same in principle as the standalone example. Its comments apply here as well, and have not been duplicated. However, it relies far more heavily on `{{ page.data }}`, and rather than copying it into its final destination, we put it in `_templates/_default/feed.iris`:
+```jinja
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>{{ site.name }} - {{ page.data.name }}</title>
@@ -180,7 +180,7 @@ I did not implement an RSS feed, so I'm unable to provide an example :( If you m
 At this time, the only way to create a combined feed is to repeat the same process as for a single feed multiple times. Atom feeds [fortunately do not require a specific order](https://datatracker.ietf.org/doc/html/rfc4287#section-4.1.1), so this is technically legal, but not optimal. Doing it with multiple manual entries does mean that the feed _will_ always contain at least N elements from each feed, though, so it's not all bad.
 
 Here's an abridged example based on the Atom feed example, using the file `/combined.atom`:
-```inja
+```jinja
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>{{ site.name }} - {{ page.data.name }}</title>

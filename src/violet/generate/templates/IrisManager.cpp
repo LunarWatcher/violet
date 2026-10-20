@@ -1,16 +1,16 @@
-#include "InjaManager.hpp"
-#include "inja/environment.hpp"
+#include "IrisManager.hpp"
+#include "iris/environment.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/data/VioletGlobal.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
 #include "violet/paginator/Paginator.hpp"
 
 #include <filesystem>
-#include <inja/inja.hpp>
+#include <iris/iris.hpp>
 
 namespace violet {
 
-InjaManager::InjaManager(
+IrisManager::IrisManager(
     GenerateOpts& opts,
     Config& cfg,
     FileManager& fileManager,
@@ -28,7 +28,7 @@ InjaManager::InjaManager(
     env.set_include_callback([this](
             const std::filesystem::path& path,
             const std::string& templateName
-    ) -> inja::Template {
+    ) -> iris::Template {
         auto partialPath = this->fileManager.resolvePartial(templateName);
         if (partialPath) {
             return env.parse_file(
@@ -45,7 +45,7 @@ InjaManager::InjaManager(
     });
 }
 
-nlohmann::json InjaManager::buildCommonContext(const Frontmatter& pageFm) {
+nlohmann::json IrisManager::buildCommonContext(const Frontmatter& pageFm) {
     
     return {
         {"page", pageFm},
@@ -54,7 +54,7 @@ nlohmann::json InjaManager::buildCommonContext(const Frontmatter& pageFm) {
     };
 }
 
-std::string InjaManager::renderPage(
+std::string IrisManager::renderPage(
     const std::string& fileContent,
     const std::filesystem::path&, // TODO: what was the idea with this arg?
     const Frontmatter& fm,
@@ -99,7 +99,7 @@ std::string InjaManager::renderPage(
                 );
             }
         }
-        inja::Template content = env.parse(fileContent);
+        iris::Template content = env.parse(fileContent);
         env.include_template("content", content);
         return env.render_file(
             *templateLocation,

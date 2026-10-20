@@ -1,16 +1,16 @@
 set(ASSETS
     _default/violet.theme.json
 
-    _default/_partials/footer.inja
-    _default/_partials/head.inja
-    _default/_partials/header.inja
-    _default/_partials/paginator.inja
-    _default/_partials/tree_builder.inja
+    _default/_partials/footer.iris
+    _default/_partials/head.iris
+    _default/_partials/header.iris
+    _default/_partials/paginator.iris
+    _default/_partials/tree_builder.iris
 
-    _default/_templates/_default/base.inja
-    _default/_templates/_default/feed.inja
-    _default/_templates/_default/page_list.inja
-    _default/_templates/_default/single_page.inja
+    _default/_templates/_default/base.iris
+    _default/_templates/_default/feed.iris
+    _default/_templates/_default/page_list.iris
+    _default/_templates/_default/single_page.iris
 
     _default/assets/_default_page.js
     _default/assets/_default_style.css

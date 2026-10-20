@@ -1,6 +1,6 @@
 #pragma once
 
-#include "inja/environment.hpp"
+#include "iris/environment.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/generate/FileManager.hpp"
 #include "violet/conf/Config.hpp"
@@ -14,14 +14,14 @@
 
 namespace violet {
 
-class InjaManager {
+class IrisManager {
 public:
     GenerateOpts& opts;
     Config& cfg;
     FileManager& fileManager;
     MetadataCache& metaCache;
 
-    inja::Environment env;
+    iris::Environment env;
 
 public:
     DateTimeFunctions dateTimeFuncs;
@@ -29,15 +29,15 @@ public:
     LangFunctions langFuncs;
     EscapingFunctions escapingFuncs;
 
-    InjaManager(
+    IrisManager(
         GenerateOpts& opts,
         Config& cfg,
         FileManager& fileManager,
         MetadataCache& metaCache
     );
 
-    InjaManager(InjaManager&) = delete;
-    InjaManager(InjaManager&&) = delete;
+    IrisManager(IrisManager&) = delete;
+    IrisManager(IrisManager&&) = delete;
 
     nlohmann::json buildCommonContext(const Frontmatter& pageFm);
 

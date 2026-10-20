@@ -14,7 +14,7 @@
 * Designed to take advantage of markdown features rather than reinventing them with SSG-specific templates for no reason. This improves the writing experience, since the URLs can be standard markdown, and work both in the local editor and after generation.
 * Generally designed to have trivially understandable behaviour
 * Most of what you'd expect from a static site generator
-  * Templates (through the jinja-inspired library [inja](https://github.com/pantor/inja/))
+  * Templates (through the jinja-inspired library [iris](https://codeberg.org/LunarWatcher/iris))
   * Markdown to HTML converter, based on a custom markdown parser with a few minor differences from major implementations, largely down to strictness. Markdown is a markup language, and in this implementation, invalid markup is an error.
     * Frontmatter in violet is JSON-based
   * Paginated page lists allow for long lists to be spread across pages
@@ -43,7 +43,7 @@ This section contains general information about the documentation itself. Failur
 
 ### Violet uses json, but the documentation uses jsonc
 
-Json is not the best format for configuration, largely because of the lack of comments, but this limitation isn't really as bad for these kinds of applications. The technical reason for why json is used anyway is that there are very few alternative *parser implementations* in C++. There is a YAML library, but it has some severe problems, and that was before it too fell to AI slop. There are far more JSON implementations, however, and through [inja](https://github.com/pantor/inja/), we're already using a JSON library (slop-free fork of nlohmann/json[^json]). Therefore, JSON *is* the more convenient option.
+Json is not the best format for configuration, largely because of the lack of comments, but this limitation isn't really as bad for these kinds of applications. The technical reason for why json is used anyway is that there are very few alternative *parser implementations* in C++. There is a YAML library, but it has some severe problems, and that was before it too fell to AI slop. There are far more JSON implementations, however, and through [iris](https://codeberg.org/LunarWatcher/iris), we're already using a JSON library (slop-free fork of nlohmann/json[^json]). Therefore, JSON *is* the more convenient option.
 
 Comments are nice, sure, but they can always be substituted by a decent commit history and decent documentation in the tool. However, the one exception to this is in said decent documentation, where the JSON may need to be directly commented.
 
@@ -62,4 +62,4 @@ If you use Violet in an open-source website, consider adding the topic to your r
 
 See [Getting started](/Getting started.md)
 
-[^json]: Initially used nlohmann/json directly, but of fucking course, nlohmann/json now has AI slop machines contributing. Violet now uses a fork pinned to a mostly slop-free version, with plans to switch to vendored yyjson in a C++26 reflection wrapper once reflection is done and available on arch. Might need to fully fork inja at that point to allow this plan to go through, but until such a time, version pinning to keep the slop machines out is the best I can do.
+[^json]: Initially used nlohmann/json directly, but of fucking course, nlohmann/json now has AI slop machines contributing. Violet now uses a fork pinned to a mostly slop-free version, with plans to switch to vendored yyjson in a C++26 reflection wrapper once reflection is done and available on arch.

@@ -3,10 +3,10 @@
     {% if existsIn(site.data, "language") %}lang="{{site.data.language}}"{% endif %}
 >
     <head>
-        {% include "partials/head.inja" %}
+        {% include "partials/head.iris" %}
     </head>
     <body>
-        {% include "partials/header.inja" %}
+        {% include "partials/header.iris" %}
         <div class="flag start-flag"></div>
 
         <aside id="_default-index">
@@ -22,7 +22,7 @@
                 {% set context.currTree = subtree %}
                 {% set context.page = page %}
                 {% set context.site = site %}
-                {{ recurseInclude("partials/tree_builder.inja", context) }}
+                {{ recurseInclude("partials/tree_builder.iris", context) }}
             </ul>
         </aside>
         <main>
@@ -31,6 +31,6 @@
         </main>
 
         <div class="flag end-flag"></div>
-        {% include "partials/footer.inja" %}
+        {% include "partials/footer.iris" %}
     </body>
 </html>

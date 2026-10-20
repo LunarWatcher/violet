@@ -64,17 +64,17 @@ Since templates form the basis of any page, they're treated differently from the
 project-root/
     |- _templates
         |- _default
-            |- single_page.inja
-            |- page_list.inja
+            |- single_page.iris
+            |- page_list.iris
         |- custom
-            |- base.inja
+            |- base.iris
 ```
 
 
-The template path can be described as `_templates/{type}/{layout}.inja`. In the example above:
+The template path can be described as `_templates/{type}/{layout}.iris`. In the example above:
 
 * `single_page`, `page_list` are built-in layout types
-* `base.inja` is a custom layout types
+* `base.iris` is a custom layout types
 * `custom` and `_default` are both types, with `_default` being a builtin type with a special meaning.
 
 
@@ -87,11 +87,11 @@ The currently recognized special folders are:
 
 ### Special layout names
 
-The names of the inja files have special meanings. The currently used files are:
+The names of the iris files have special meanings. The currently used files are:
 
 * `single_page`: Used for individual pages; this is also the default for most filetypes.
 * `page_list`: Used for list pages, i.e. pages that list out other pages in the current directory. This is also the only type that can create a paginated list.
-* `none`: Special layout name that maens no layout file is loaded. Consequently, `none.inja` is never a real file, and will not be loaded by violet. You can still name a file `none.inja` and include it in another layout, as it's not a reserved name, but `"layout": "none"` does not result in it being loaded
+* `none`: Special layout name that maens no layout file is loaded. Consequently, `none.iris` is never a real file, and will not be loaded by violet. You can still name a file `none.iris` and include it in another layout, as it's not a reserved name, but `"layout": "none"` does not result in it being loaded
 
 ### Lookup orders and theme mechanics
 
@@ -101,10 +101,10 @@ Similarly, if you don't use a theme (`"theme": null`), you must provide the temp
 
 With a theme, this is the lookup order for page templates:
 
-* `{project}/_templates/{type}/{layout}.inja`
-* `{theme}/_templates/{type}/{layout}.inja`
-* `{project}/_templates/_default/{layout}.inja`
-* `{theme}/_templates/_default/{layout}.inja`
+* `{project}/_templates/{type}/{layout}.iris`
+* `{theme}/_templates/{type}/{layout}.iris`
+* `{project}/_templates/_default/{layout}.iris`
+* `{theme}/_templates/_default/{layout}.iris`
 
 Without a theme, it's just the two `{project}` lookup locations that are checked.
 
@@ -112,7 +112,7 @@ Violet does not require that any particular files exist - only that _some_ file 
 
 ## Partials
 
-Partials are just a folder of `.inja` files that can be included by other files. The folder name is `_partials`, and like templates, are an immediate descendant of the project root or theme root.
+Partials are just a folder of `.iris` files that can be included by other files. The folder name is `_partials`, and like templates, are an immediate descendant of the project root or theme root.
 
 ### Lookup order
 
@@ -121,5 +121,5 @@ Similarly to templates, partials are checked with a lookup order that prioritize
 * `{project}/_partials/{user-provided path}`
 * `{theme}/_partials/{user-provided path}`
 
-The `{user-provided path}` is just whatever was provided to the `{% include "partials/path.inja" %}` statement. Note that `.inja` may be omitted from the include statement, in which case it'll be appended.
+The `{user-provided path}` is just whatever was provided to the `{% include "partials/path.iris" %}` statement. Note that `.iris` may be omitted from the include statement, in which case it'll be appended.
 

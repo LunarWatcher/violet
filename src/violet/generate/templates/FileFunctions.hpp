@@ -1,28 +1,28 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include <inja/inja.hpp>
+#include <iris/iris.hpp>
 
 namespace violet {
 
-class InjaManager;
+class IrisManager;
 class FileFunctions {
 private:
-    InjaManager& man;
+    IrisManager& man;
 public:
-    FileFunctions(InjaManager& man);
+    FileFunctions(IrisManager& man);
 
-    nlohmann::json listPages(inja::Arguments& args);
-    nlohmann::json treePages(inja::Arguments& args);
+    nlohmann::json listPages(iris::Arguments& args);
+    nlohmann::json treePages(iris::Arguments& args);
 
-    nlohmann::json listPagesByTaxonomy(inja::Arguments& args);
+    nlohmann::json listPagesByTaxonomy(iris::Arguments& args);
 
-    nlohmann::json listPagesPaginated(inja::Arguments& args);
+    nlohmann::json listPagesPaginated(iris::Arguments& args);
 
-    nlohmann::json paginatedUrl(inja::Arguments& args);
+    nlohmann::json paginatedUrl(iris::Arguments& args);
 
-    nlohmann::json loadJson(inja::Arguments& args);
-    nlohmann::json render(inja::Arguments& args);
+    nlohmann::json loadJson(iris::Arguments& args);
+    nlohmann::json render(iris::Arguments& args);
 };
 
 }

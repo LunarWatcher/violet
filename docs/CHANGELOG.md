@@ -11,7 +11,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `CLI:` and `CLI (subcommand):` - Changes to the command line flags and commands.
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Markdown:` - changes made to the markdown engine
-* `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the inja templates
+* `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the iris templates
 * `Theme(theme name):` - changes made to specific builtin themes
 
 
@@ -19,6 +19,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 
 ## [unreleased]
+
+## [v0.14.0] (2026-10-20)
 
 ### Added
 
@@ -29,18 +31,24 @@ This page contains the changelog for violet. Please note that you'll encounter t
   Near byte:
   527
   Location:
-    Note that for setting up editors not in this list, the usually only step necessary is to associate `.inja` with a syntax renderer for jinja templates. inja templates are similar enough in implementation to jinja templates that it'll mostly be correct.
+    Note that for setting up editors not in this list, the usually only step necessary is to associate `.iris` with a syntax renderer for jinja templates. inja templates are similar enough in implementation to jinja templates that it'll mostly be correct.
   
     [link](
     ~~~~~~^
   
     ## Emacs
   
-    `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.inja` extension to web-mode with the `jinja` engine allows templates to be rendered:
+    `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.iris` extension to web-mode with the `jinja` engine allows templates to be rendered:
   ```
   * Note that the position highlight does not actually show a start position, only an end position. The `~` are just to make the `^` more obvious. Start positions may be handled in a future release
 * CLI (init): Auto-generate a `.gitignore`
   
+### Changed
+
+* BREAKING (ish): Migrated from inja to [iris](https://codeberg.org/LunarWatcher/iris) (an inja fork with the same anti-AI guarantees as violet - no functional changes have been made in the fork yet, so it should not be noticeable)
+  * Violet now also supports the additional `.iris` file extension. `.iris` will be kept until v1; migrating before then is recommended.
+  * `.inja` legacy support is disabled by default. Run `violet generate --legacy-extensions` to let existing projects compile
+
 ### Fixed
 
 * CLI (init): generated `publish.sh` accidentally included `$violet_exe`, which should just be `violet`. This was a copypasta oversight from copying violet's own `publish.sh`
@@ -151,7 +159,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
   * To process a `.txt` file for example, it would need to be called `filename.txt.in`
 * Markdown: `~~strike~~` ([#15](https://codeberg.org/LunarWatcher/violet/issues/15))
 * `"layout": "none"` can be used to fully disable layouts.
-  * This also means `none.inja` is now an illegal template filename that will never be used.
+  * This also means `none.iris` is now an illegal template filename that will never be used.
 
 ### Changed
 
@@ -226,7 +234,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.1...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.14.0...master
+[v0.14.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.1...v0.14.0
 [v0.13.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.0...v0.13.1
 [v0.13.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.12.0...v0.13.0
 [v0.12.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...v0.12.0

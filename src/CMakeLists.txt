@@ -18,7 +18,7 @@ add_library(violetsrc STATIC
     violet/generate/buildmeta/BuildMeta.cpp
     violet/generate/buildmeta/BuildMetaJson.cpp
 
-    violet/generate/templates/InjaManager.cpp
+    violet/generate/templates/IrisManager.cpp
     violet/generate/templates/DateTimeFunctions.cpp
     violet/generate/templates/FileFunctions.cpp
     violet/generate/templates/EscapingFunctions.cpp
@@ -46,7 +46,7 @@ target_include_directories(violetsrc PUBLIC .)
 target_link_libraries(violetsrc PUBLIC
     CLI12::CLI12
     nlohmann_json::nlohmann_json
-    pantor::inja
+    iris::iris
     stc
     minilog
     violetgitdata

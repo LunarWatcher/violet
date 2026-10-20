@@ -5,7 +5,7 @@
 ---
 # Templating
 
-Violet uses [inja](https://github.com/pantor/inja/) as its underlying template engine. An introduction to inja will not be provided here.
+Violet uses [iris](https://codeberg.org/LunarWatcher/iris) as its underlying template engine. An introduction to iris will not be provided here.
 
 Violet provides two ways to provide templates for pages:
 
@@ -19,11 +19,11 @@ These two can live together: project-local templates take precedence over the ac
 Violet has a couple special includes you can use.
 
 * Page content (usually raw HTML): `{% include "content" %}`
-* Partials: `{% include "partials/partial_name.inja" %}`
+* Partials: `{% include "partials/partial_name.iris" %}`
 
 ## Extra functions
 
-Violet provides many extra functions on top of the inja builtins. See [Extra functions](/templating/functions/README.md) and its subpages.
+Violet provides many extra functions on top of the iris builtins. See [Extra functions](/templating/functions/README.md) and its subpages.
 
 ## Objects
 
@@ -43,7 +43,7 @@ As currently implemented, there are a fair few things you need to keep track of 
 
 ### `{{ site.prefix }}` must be present on all absolute internal URLs in templates and non-markdown files
 
-This does not apply to links in markdown, it exclusively applies to links in the inja templates.
+This does not apply to links in markdown, it exclusively applies to links in the iris templates.
 
 When writing an absolute link, you must specify `{{ site.prefix }}`. Even if your deployment lies on `/`, `-l` for local development overwrites the site prefix to be the full path to the build directory, so all your local things work.
 

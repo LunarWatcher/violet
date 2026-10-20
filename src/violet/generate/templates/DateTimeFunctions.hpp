@@ -1,18 +1,18 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include <inja/inja.hpp>
+#include <iris/iris.hpp>
 
 namespace violet {
 
-class InjaManager;
+class IrisManager;
 class DateTimeFunctions {
 private:
-    InjaManager& man;
+    IrisManager& man;
 
-    nlohmann::json formatDate(inja::Arguments& args);
+    nlohmann::json formatDate(iris::Arguments& args);
 public:
-    DateTimeFunctions(InjaManager& man);
+    DateTimeFunctions(IrisManager& man);
 };
 
 }

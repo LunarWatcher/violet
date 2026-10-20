@@ -1,4 +1,4 @@
-{% extends "base.inja" %}
+{% extends "base.iris" %}
 {% block content %}
     {% include "content" %}
 
@@ -9,6 +9,6 @@
             </article>
         {% endfor %}
 
-        {% include "partials/paginator.inja" %}
+        {% include "partials/paginator.iris" %}
     {% endif %}
 {% endblock %}

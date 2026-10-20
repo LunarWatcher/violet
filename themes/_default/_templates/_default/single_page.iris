@@ -1,4 +1,4 @@
-{% extends "base.inja" %}
+{% extends "base.iris" %}
 {% block content %}
     {% include "content" %}
 {% endblock %}

@@ -34,27 +34,39 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(
 ) {
     assertReady();
 
-    std::vector<std::filesystem::path> paths;
-    paths.reserve(4);
-
-    auto file = layout + ".inja";
-    // std::cout << file << std::endl;
-
-    paths.push_back(root / "_templates" / type);
-    if (cfg.theme) {
-        paths.push_back(themeDir / "_templates" / type);
+    // Temporary; used to cehck both .iris and .iris extensions. This is temporary until we can do the breaking change
+    // of dropping .iris files
+    std::vector<std::string> extensions{".iris"};
+    if (opts.allowLegacyInjaExtensions) {
+        extensions.push_back(".inja");
     }
+    for (auto& ext : extensions) {
+        auto file = layout + ext;
 
-    paths.push_back(root / "_templates" / "_default");
-    if (cfg.theme) {
-        paths.push_back(themeDir / "_templates" / "_default");
+        std::vector<std::filesystem::path> paths;
+        paths.reserve(4);
+        // std::cout << file << std::endl;
+
+        paths.push_back(root / "_templates" / type);
+        if (cfg.theme) {
+            paths.push_back(themeDir / "_templates" / type);
+        }
+
+        paths.push_back(root / "_templates" / "_default");
+        if (cfg.theme) {
+            paths.push_back(themeDir / "_templates" / "_default");
+        }
+        auto result = stc::FileUtil::findFile(
+            paths,
+            file
+        );
+        if (result) {
+            return result;
+        }
     }
-
-    return stc::FileUtil::findFile(
-        paths,
-        file
-    );
+    return std::nullopt;
 }
+
 void FileManager::copyThemeFiles() {
     assertReady();
     if (!cfg.theme) {
@@ -105,8 +117,15 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
     }
 
     auto fn = path.filename().string();
-    if (!fn.ends_with(".inja")) {
-        fn += ".inja";
+    if (!fn.ends_with(".inja") && !fn.ends_with(".iris")) {
+        auto result = resolvePartial(path.string() + ".iris");
+        if (result || !opts.allowLegacyInjaExtensions) {
+            return result;
+        }
+        minilog::warn("No .iris files found. Trying lookup with the deprecated .inja extension");
+        return resolvePartial(path.string() + ".iris");
+    } else if (fn.ends_with(".inja")) {
+        minilog::warn("the .inja extension is deprecated. Please switch to .iris");
     }
 
     if (auto p = this->root / "_partials" / fn;

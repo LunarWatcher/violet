@@ -1,19 +1,19 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include <inja/inja.hpp>
+#include <iris/iris.hpp>
 
 namespace violet {
 
-class InjaManager;
+class IrisManager;
 class LangFunctions {
 private:
-    InjaManager& man;
+    IrisManager& man;
 
-    nlohmann::json recurseInclude(inja::Arguments& args);
-    nlohmann::json createPaginatedList(inja::Arguments& args);
+    nlohmann::json recurseInclude(iris::Arguments& args);
+    nlohmann::json createPaginatedList(iris::Arguments& args);
 public:
-    LangFunctions(InjaManager& man);
+    LangFunctions(IrisManager& man);
 };
 
 }

@@ -5,7 +5,7 @@
 #include "violet/generate/FileManager.hpp"
 #include "violet/generate/buildmeta/BuildMeta.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
-#include "violet/generate/templates/InjaManager.hpp"
+#include "violet/generate/templates/IrisManager.hpp"
 
 #include <expected>
 #include <filesystem>
@@ -21,7 +21,7 @@ private:
 
     FileManager fileManager;
     MetadataCache metadataCache;
-    InjaManager injaManager;
+    IrisManager irisManager;
 
     meta::BuildMeta buildMeta;
 
@@ -93,7 +93,7 @@ public:
     );
 
     FileManager& getFileManager() { return fileManager; }
-    InjaManager& getInjaManager() { return injaManager; }
+    IrisManager& getIrisManager() { return irisManager; }
 };
 
 }

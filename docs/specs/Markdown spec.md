@@ -8,9 +8,9 @@ This document describes the currently implemented features of markdown, any exte
 
 ## Short version
 
-The spec is a combination of the proper markdown RFC, for obvious reasons, GitHub-flavoured extensions, and out of necessity, extensions for inja, the templating library.
+The spec is a combination of the proper markdown RFC, for obvious reasons, GitHub-flavoured extensions, and out of necessity, extensions for iris, the templating library.
 
-It's deeply unclear to me what to best describe as the actual source of the markdown features, since many implementations have borrowed from each other, while other implementations have done the same thing in wildly different ways. Aside the inja extensions, the markdown is meant to feel like common sense coming from most of the major platforms that feature markdown.
+It's deeply unclear to me what to best describe as the actual source of the markdown features, since many implementations have borrowed from each other, while other implementations have done the same thing in wildly different ways. Aside the iris extensions, the markdown is meant to feel like common sense coming from most of the major platforms that feature markdown.
 
 
 ## Core concepts
