@@ -20,6 +20,11 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* Added support for ISO dates, and ISO datetimes without timezones
+  * In examples, `2026-10-23` and `2026-10-23T00:00:00` are both supported.
+
 ## [v0.14.0] (2026-10-20)
 
 ### Site and theme migration guide

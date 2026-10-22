@@ -23,6 +23,8 @@ add_executable(tests
 
     src/parsing/ext/SafeCastEnumTests.cpp
 
+    src/parsing/frontmatter/DateParsingTests.cpp
+
     src/parsing/markdown/AngleBracketLinkTests.cpp
     src/parsing/markdown/ChecklistTests.cpp
     src/parsing/markdown/EscapingTests.cpp
