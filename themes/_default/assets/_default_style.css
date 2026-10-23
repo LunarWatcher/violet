@@ -216,6 +216,10 @@ thead {
     font-weight: bold;
 }
 
+th.align-left {
+    text-align: left;
+}
+
 /* Callouts */
 
 .callout-note > .callout-title {

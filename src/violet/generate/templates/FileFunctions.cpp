@@ -10,6 +10,7 @@
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
 #include "violet/parsing/Markdown.hpp"
 #include "violet/util/ErrorHandling.hpp"
+#include <filesystem>
 
 namespace violet {
 
@@ -29,7 +30,7 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
         return listPagesByTaxonomy(args);
     });
-    man.env.add_callback("loadJson", 2, [this](auto& args) {
+    man.env.add_callback("loadJson", [this](auto& args) {
         return loadJson(args);
     });
     man.env.add_callback("render", 1, [this](auto& args) {
@@ -276,8 +277,30 @@ nlohmann::json FileFunctions::listPagesPaginated(iris::Arguments& args) {
 }
 
 nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
-    const auto& frontmatter = *args.at(0);
-    auto fn = args.at(1)->get<std::string>();
+    nlohmann::json frontmatter = nullptr;
+    std::string fn;
+
+    if (args.size() < 1 || args.size() > 2) {
+        throw TemplateError(
+            std::format(
+                "loadJson takes either one or two arguments, but got {}",
+                args.size()
+            )
+        );
+    }
+    if (!args.at(0)->is_string()) {
+        minilog::warn(
+            "loadJson(frontmatter, fn) is deprecated. The new signature is loadJson(fn[, frontmatter]), where the "
+            "frontmatter is optional if `fn` is an absolute path"
+        );
+        frontmatter = *args.at(0);
+        fn = args.at(1)->get<std::string>();
+    } else {
+        fn = args.at(0)->get<std::string>();
+        if (args.size() == 2) {
+            frontmatter = *args.at(1);
+        }
+    }
 
     std::filesystem::path p;
     if (fn.starts_with('/')) {
@@ -286,9 +309,20 @@ nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
         }
         p = this->man.opts.root / fn.substr(1);
     } else {
+        if (frontmatter == nullptr) {
+            throw TemplateError(
+                "loadJson was called with a non-absolute path, but no frontmatter was provided. To use a relative "
+                "path, you must provide the page or site global so the function can tell what the filename is relative "
+                "to."
+            );
+        }
         p = std::filesystem::path {
             frontmatter.at(violet::constants::InternalPathRef).get<std::string>()
-        } / fn;
+        };
+        if (!std::filesystem::is_directory(p)) {
+            p = p.parent_path();
+        }
+        p /= fn;
     }
 
     // This feels bad, but it should work.

@@ -1,0 +1,4 @@
+[
+  { "name": "Purple theme", "oneliner": "Purple theme for documentation sites", "author": "Olivia", "url": "https://codeberg.org/LunarWatcher/violet", "example_url": "https://lunarwatcher.codeberg.page/violet", "license": "License" },
+  { "name": "Minimalist", "oneliner": "Flexible, minimal theme", "author": "Olivia", "url": "https://codeberg.org/LunarWatcher/violet", "example_url": null, "license": "License" }
+]

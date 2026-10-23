@@ -172,23 +172,29 @@ The size of each page. Default value: 50
 
 The page number to load. Default value: 1
 
-## `loadJson(object, filename_or_path)`
+## `loadJson(filename_or_path[, object])`
 
 *Added in 0.7.0*
 
-> [!warning]
->
-> Due to apparent limitations in iris, there's currently no way to specify a path relative to an include or another non-page object. Please be mindful of this while using this function
-
-This function is used to load JSON files into variables. Can be useful if you need to contain large amounts of structured data and don't want to do so in iris.
+This function is used to load JSON files into variables. Can be useful if you need to contain large amounts of structured data and don't want to do so in iris templates directly.
 
 Example use:
 
 ```jinja
-{% set linkCategories = loadJson(page, "/_templates/outlinks/data.json") %}
+With an absolute path (only works relative to the site being generated):
+{% set linkCategories = loadJson("/_templates/outlinks/data.json") %}
+This is identical to the previous example, but the `page` argument is entirely
+ ignored, as it's only used when constructing relative paths
+{% set linkCategories = loadJson("/_templates/outlinks/data.json", page) %}
+... or with a relative path (recommended):
+{% set linkCategories = loadJson("data.json", page) %}
 ```
 
 If you keep JSON files alongside content, and don't want them to be included in the finished render, use the [exclude property in `violet.json`](/Config.md).
+
+> [!note]
+>
+> Due to limitations in iris, relative paths are relative to the `page` or `site` object, as there currently is no way to get the current file being rendered. Consequently, there is no way to specify path that's relative to a template name; use an absolute path instead in these cases.
 
 ### Arguments
 

@@ -22,6 +22,17 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Added
 
 * `site.timezone` is now the default timezone when `formatDate` is called without a timezone argument
+* Meta: There is now a [list for third-party themes](https://lunarwatcher.codeberg.page/violet/themes/third-party-themes.html). It is currently empty, but it does exist :P
+
+### Changed
+
+* BREAKING: `loadJson`'s signature has changed from `loadJson(object, "filename.json")` to `loadJson("filename.json"[, object])`.
+  * Existing use of `loadJson` will continue to work, but will produce a warning in the logs. The old signature will be removed in v1
+* `loadJson` no longer requires a frontmatter when using absolute file paths
+
+### Fixed
+
+* Fixed a bug where `loadJson` failed to load paths relative to the provided `object`.
 
 ## [v0.15.0] (2026-10-23)
 

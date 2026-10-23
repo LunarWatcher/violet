@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <ctime>
 #include "FrontmatterFixture.hpp"
 #include "utils/Assertions.hpp"
 
