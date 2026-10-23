@@ -19,9 +19,9 @@ The frontmatter schema is altered slightly, notably due to dates being parsed be
     "type": "the page type",
     // String. Always present. if no layout is in use, this holds the value "none"
     "layout": "the page layout",
-    // int or null. Seconds since the UNIX epoch
+    // int or omitted. Seconds since the UNIX epoch
     "date": 1234,
-    // int or null. Seconds since the UNIX epoch
+    // int or omitted. Seconds since the UNIX epoch
     "last_modified": 4567,
     // boolean. Always present.
     "hidden": false,
@@ -35,7 +35,7 @@ The frontmatter schema is altered slightly, notably due to dates being parsed be
     "table_of_contents": "string or empty",
     // The absolute URL to this page
     "url": "/path/to/the/doc.html",
-    // String or null. User-provided.
+    // String or omitted. User-provided.
     "summary": "User-provided summary",
     "data": {
         // data object identical to what was provided in the frontmatter
