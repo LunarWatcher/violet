@@ -42,7 +42,7 @@ int64_t violet::parseISO8601(const std::string& raw) {
         throw std::runtime_error(
             std::format(
                 "Failed to parse date \"{}\" with format {}",
-                timestamp, format
+                raw, format
             )
         );
     }
