@@ -149,12 +149,8 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
         dest["last_modified"] = src.last_modified;
     }
 
-    if (src.listing) {
-        dest["listing"] = src.listing;
-    }
-
     dest["taxonomies"] = src.taxonomies;
-
+    dest["hidden"] = src.hidden;
     dest["data"] = src.data;
     dest["url"] = src.internalUrl;
     dest["table_of_contents"] = src.tableOfContents;
@@ -163,12 +159,6 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
     }
     dest[violet::constants::InternalPathRef] = src.internalPath;
     dest[violet::constants::InternalFileTypeRef] = static_cast<int>(src.internalFileType);
-}
-
-// TODO: isn't this internal data that we don't want to re-expose again?
-void violet::to_json(nlohmann::json& dest, const ListingFrontmatter& src) {
-    dest["recursive"] = src.recursive;
-    dest["page_size"] = src.pageSize;
 }
 
 void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {

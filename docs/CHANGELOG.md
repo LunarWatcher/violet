@@ -25,6 +25,13 @@ This page contains the changelog for violet. Please note that you'll encounter t
   * In examples, `2026-10-23` and `2026-10-23T00:00:00` are both supported.
 * Templates: added `formatDate()` for parsing non-builtin dates (i.e. datetimes that aren't in `page.date` or `page.last_modified`)
 
+### Removed
+
+* BREAKING (on paper): Removed `page.listing`. It must still be used in frontmatter to define page lists (per [Page lists](/Page lists.md)), but the exact config object is no longer available through the `page` global.
+  * This is only breaking on paper since, to my knowledge, it has no practical use. All useful data should be exposed through the `listing` global, which is present when a paginated page list is rendered.
+  * Again, to be clear, this does not affect the config for page lists, just that `page.listing` isn't accessible when the template is rendered.
+  * As a tangent, the docs have been very unclear on the frontmatter schema vs. the `page` schema. There is now a [separate doc page for the `page` global](/schemas/page.md) with a summary of the exact data differences.
+
 ## [v0.14.0] (2026-10-20)
 
 ### Site and theme migration guide
