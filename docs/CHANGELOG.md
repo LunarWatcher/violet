@@ -19,6 +19,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* `site.timezone` is now the default timezone when `formatDate` is called without a timezone argument
+
 ## [v0.15.0] (2026-10-23)
 
 ### Added

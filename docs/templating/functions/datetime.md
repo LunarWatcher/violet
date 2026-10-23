@@ -13,7 +13,7 @@ Parameters:
 
 * `time` is a 64 bit int, though you'll usually want to refer to a date field in the context object that has already been parsed, such as `page.date`. These are stored as parsed int64s, so rendering a date directly is equivalent to rendering the UNIX time.
 * `format_string` is a [chrono formatter-compatible string](https://en.cppreference.com/w/cpp/chrono/zoned_time/formatter.html) that defines how to render the time.
-* `timezone` is an optional parameter defining what timezone the date should be rendered in. It not supplied, the date is rendered in UTC. The timezone is a string, and must exist in the timezone database: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#UTC_offset
+* `timezone` is an optional parameter defining what timezone the date should be rendered in. It not supplied, `site.timezone` is used. The timezone is a string, and must exist in the system's timezone database: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#UTC_offset
 
 ### Example (ISO-8601 date)
 
