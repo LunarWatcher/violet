@@ -1,6 +1,7 @@
 #pragma once
 
 #include "violet/conf/Frontmatter.hpp"
+#include "violet/exceptions/FileParsingException.hpp"
 #include "violet/generate/FileManager.hpp"
 #include <string>
 #include <unordered_map>
@@ -55,14 +56,19 @@ public:
             f.seekg(metadata->frontmatterByteOffset);
         } else {
             nlohmann::json frontmatter = parseFrontmatter(f);
-            Frontmatter fm = frontmatter;
-            fm.withFilePath(relPath);
+            try {
+                Frontmatter fm = frontmatter;
+                fm.withFilePath(relPath);
 
-            metadata = std::make_shared<Metadata>(
-                std::move(fm),
-                f.tellg()
-            );
-            this->fileToMetadataCache[relPath.string()] = metadata;
+                metadata = std::make_shared<Metadata>(
+                    std::move(fm),
+                    f.tellg()
+                );
+                this->fileToMetadataCache[relPath.string()] = metadata;
+            } catch (FileParsingException& e) {
+                e.file = relPath;
+                throw e;
+            }
 
         }
 
@@ -94,7 +100,8 @@ public:
                 }
                 // end of frontmatter reached
                 nlohmann::json out;
-                minilog::debug("Frontmatter content:\n{}", json.str());
+                // Not particularly useful at a debug level, maybe at an extra verbose level, but not at debug
+                // minilog::debug("Frontmatter content:\n{}", json.str());
                 json >> out;
                 return out;
             }

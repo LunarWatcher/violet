@@ -2,6 +2,7 @@
 
 #include "ProcessedFileType.hpp"
 #include "minilog/minilog.hpp"
+#include "violet/exceptions/FileParsingException.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/paginator/Paginator.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
@@ -166,94 +167,100 @@ bool SiteGenerator::processFile(
     const std::filesystem::path& relPath
 ) {
     minilog::debug("Now reading {}", relPath.string());
-    auto data = this->metadataCache.openFile(
-        relPath
-    );
 
-    auto& parsedFrontmatter = data.metadata.frontmatter;
-    auto& in = data.file;
-
-    std::stringstream content;
-    content << in.rdbuf();
-
-    this->buildMeta.registerInputPage();
-    switch (parsedFrontmatter.internalFileType) {
-    case ProcessedFileType::Asset: {
-        minilog::debug("Loaded file is an asset with frontmatter. Doing minimal template parsing");
-        std::string fileContent = content.str();
-
-        handleTemplatesAndSave(
-            std::move(fileContent),
-            relPath,
-            parsedFrontmatter
+    try {
+        auto data = this->metadataCache.openFile(
+            relPath
         );
-    } break;
-    case ProcessedFileType::Html: {
-        minilog::debug("Loaded file is HTML with frontmatter.");
-        std::string fileContent = content.str();
 
-        handleTemplatesAndSave(
-            std::move(fileContent),
-            relPath,
-            parsedFrontmatter
-        );
-    } break;
-    case ProcessedFileType::Markdown: {
-        try {
-            minilog::debug("Loaded file is markdown. Parsing...");
-            auto parsedPage = Markdown::parseWithContentPostprocessing(
-                content,
-                std::bind(
-                    projectBasedTranslator,
-                    this->cfg.prefix,
-                    rootDir,
-                    relPath,
-                    std::placeholders::_1
-                ),
-                this->cfg.tocStartLevel
-            );
+        auto& parsedFrontmatter = data.metadata.frontmatter;
+        auto& in = data.file;
 
-            minilog::debug("Markdown parsing complete");
+        std::stringstream content;
+        content << in.rdbuf();
 
-            // TODO: this isn't elegant, but it seems to be the easiest option for now. The alternative is injecting a
-            // fourth data object that's only present for markdown pages, but that just sucks.
-            // Also not sure how I want to indicate that a ToC exists, but I don't think that level of markdown mixing is
-            // ever going to be a problem.
-            Frontmatter fm = parsedFrontmatter;
-            fm.tableOfContents = std::move(parsedPage.tableOfContents);
+        this->buildMeta.registerInputPage();
+        switch (parsedFrontmatter.internalFileType) {
+        case ProcessedFileType::Asset: {
+            minilog::debug("Loaded file is an asset with frontmatter. Doing minimal template parsing");
+            std::string fileContent = content.str();
 
             handleTemplatesAndSave(
-                std::move(parsedPage.parsedContents),
-                fm.internalUrl,
-                fm
+                std::move(fileContent),
+                relPath,
+                parsedFrontmatter
             );
-        } catch (const SyntaxError& synError) {
-            renderSyntaxError(relPath, synError, content);
-            return false;
+        } break;
+        case ProcessedFileType::Html: {
+            minilog::debug("Loaded file is HTML with frontmatter.");
+            std::string fileContent = content.str();
+
+            handleTemplatesAndSave(
+                std::move(fileContent),
+                relPath,
+                parsedFrontmatter
+            );
+        } break;
+        case ProcessedFileType::Markdown: {
+            try {
+                minilog::debug("Loaded file is markdown. Parsing...");
+                auto parsedPage = Markdown::parseWithContentPostprocessing(
+                    content,
+                    std::bind(
+                        projectBasedTranslator,
+                        this->cfg.prefix,
+                        rootDir,
+                        relPath,
+                        std::placeholders::_1
+                    ),
+                    this->cfg.tocStartLevel
+                );
+
+                minilog::debug("Markdown parsing complete");
+
+                // TODO: this isn't elegant, but it seems to be the easiest option for now. The alternative is injecting a
+                // fourth data object that's only present for markdown pages, but that just sucks.
+                // Also not sure how I want to indicate that a ToC exists, but I don't think that level of markdown mixing is
+                // ever going to be a problem.
+                Frontmatter fm = parsedFrontmatter;
+                fm.tableOfContents = std::move(parsedPage.tableOfContents);
+
+                handleTemplatesAndSave(
+                    std::move(parsedPage.parsedContents),
+                    fm.internalUrl,
+                    fm
+                );
+            } catch (const SyntaxError& synError) {
+                renderSyntaxError(relPath, synError, content);
+                return false;
+            }
+        } break;
+        case violet::ProcessedFileType::Xml: {
+            minilog::debug("Loaded file is HTML with frontmatter.");
+            std::string fileContent = content.str();
+
+            handleTemplatesAndSave(
+                std::move(fileContent),
+                relPath,
+                parsedFrontmatter
+            );
+        } break;
+        case ProcessedFileType::InFile: {
+            minilog::debug("Loaded file is a .in file.");
+            std::string fileContent = content.str();
+
+            handleTemplatesAndSave(
+                std::move(fileContent),
+                parsedFrontmatter.internalUrl,
+                parsedFrontmatter
+            );
+        } break;
+        case ProcessedFileType::Uninitialized:
+            throw std::runtime_error("Developer error: internalFileType was not initialized!");
         }
-    } break;
-    case violet::ProcessedFileType::Xml: {
-        minilog::debug("Loaded file is HTML with frontmatter.");
-        std::string fileContent = content.str();
-
-        handleTemplatesAndSave(
-            std::move(fileContent),
-            relPath,
-            parsedFrontmatter
-        );
-    } break;
-    case ProcessedFileType::InFile: {
-        minilog::debug("Loaded file is a .in file.");
-        std::string fileContent = content.str();
-
-        handleTemplatesAndSave(
-            std::move(fileContent),
-            parsedFrontmatter.internalUrl,
-            parsedFrontmatter
-        );
-    } break;
-    case ProcessedFileType::Uninitialized:
-        throw std::runtime_error("Developer error: internalFileType was not initialized!");
+    } catch (const FileParsingException& e) {
+        renderFileParsingException(e);
+        return false;
     }
 
     return true;

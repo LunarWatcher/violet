@@ -71,6 +71,15 @@ void violet::renderSyntaxError(
         textPtr += line.size() + 2;
     }
 
+}
 
+void violet::renderFileParsingException(
+    const FileParsingException& fpError
+) {
+    minilog::error(
+        "Failed to parse file {} with message: {}",
+        fpError.file.has_value() ? fpError.file.value().string() : "[Unknown file: this is a bug, please open an issue]",
+        fpError.what()
+    );
 }
 

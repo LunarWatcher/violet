@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <sstream>
+#include "violet/exceptions/FileParsingException.hpp"
 
 int64_t violet::parseISO8601(const std::string& raw) {
     std::stringstream ss;
@@ -27,7 +28,7 @@ int64_t violet::parseISO8601(const std::string& raw) {
     } else if (raw.size() == 25) {
         format = "%FT%T%z";
     } else {
-        throw std::runtime_error(
+        throw FileParsingException(
             std::format(
                 "Illegal datetime format. Got \"{}\", expected one of the date/datetime ISO-8601 formats. "
                 "See https://en.wikipedia.org/wiki/ISO_8601",
@@ -39,7 +40,7 @@ int64_t violet::parseISO8601(const std::string& raw) {
     std::chrono::system_clock::time_point timestamp;
 
     if (!(ss >> std::chrono::parse(format, timestamp))) {
-        throw std::runtime_error(
+        throw FileParsingException(
             std::format(
                 "Failed to parse date \"{}\" with format {}",
                 raw, format
