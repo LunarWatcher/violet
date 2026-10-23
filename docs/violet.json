@@ -4,6 +4,7 @@
   "prefix": "/violet",
   "theme": "_default",
   "toc-start-level": 2,
+  "timezone": "Europe/Oslo",
   "data": {
     "language": "en-GB",
     "repo": {

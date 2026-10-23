@@ -32,6 +32,27 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         dest.metadata = it->get<bool>();
     }
 
+    if (auto it = src.find("timezone"); it != src.end() && !it->is_null()) {
+        dest.timezone = it->get<std::string>();
+
+        // This throws an std::runtime_error if the timezone is invalid
+        std::chrono::zoned_time testTimezone(
+            dest.timezone,
+            std::chrono::system_clock::now()
+        );
+        // The timezone database has links in it, so get_time_zone()->name() returns the name AFTER following the
+        // links. This is why the log message is so verbose - Europe/Oslo resolves to Europe/Berlin because it's the
+        // same timezone. This will be the case with many (all?) CET timezones. Even the UTC timezone is a link (to
+        // Etc/UTC).
+        // Also, why is Etc/UTC and Etc/GMT two different timezones? It should be the same timezone? Doesn't really
+        // matter though
+        minilog::debug(
+            "Resolved timezone to {} (note: this may differ from your provided timezone, but this is decided by "
+            "your system's timezone database)",
+            testTimezone.get_time_zone()->name()
+        );
+    }
+
     if (auto it = src.find("toc-start-level"); it != src.end() && !it->is_null()) {
         dest.tocStartLevel = it->get<int>();
         if (dest.tocStartLevel < 1 || dest.tocStartLevel > 6) {
@@ -183,6 +204,7 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
     dest["prefix"] = src.prefix;
     dest["exclude"] = src.exclude;
     dest["toc-start-level"] = src.tocStartLevel;
+    dest["timezone"] = src.timezone;
 
     if (src.theme) {
         dest["theme"] = *src.theme;

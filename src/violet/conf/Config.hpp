@@ -20,6 +20,8 @@ struct Config {
     std::optional<std::string> theme = "_default";
     nlohmann::json data = {};
 
+    std::string timezone = "Etc/GMT";
+
     int tocStartLevel = 2;
 
     bool metadata = false;

@@ -24,6 +24,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Added support for ISO dates, and ISO datetimes without timezones
   * In examples, `2026-10-23` and `2026-10-23T00:00:00` are both supported.
 * Templates: added `formatDate()` for parsing non-builtin dates (i.e. datetimes that aren't in `page.date` or `page.last_modified`)
+* Added `site.timezone` to the config schema. This is optional and defaults to `"Etc/GMT"` if not provided. For valid names, see [the list of tz database timezones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ### Removed
 

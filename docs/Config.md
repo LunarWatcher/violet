@@ -22,6 +22,9 @@ This may be, but doesn't have to be the content root for a git repository. As an
     // A path prefix for the site. This must not be a full domain. 
     // For example, if you want your site rendered at https://username.codeberg.page/repo, the site prefix would be /repo
     "prefix": null | str,
+    // The site's timezone. Defaults to "Etc/GMT". This must be a valid timezone string,
+    // or all timezone parsing will fail.
+    "timezone": str,
     // Whether or not to include metadata with the build, meaning information about the build itself.
     // If true, `{build output}/_violet-meta.json` is added to the build. See its schema spec for more information.
     "metadata": false,
