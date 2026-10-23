@@ -19,6 +19,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.15.0] (2026-10-23)
+
 ### Added
 
 * Added support for ISO dates, and ISO datetimes without timezones
@@ -260,7 +262,18 @@ No functional changes have been made in iris relative to inja, so no other migra
 
 Initial tracked commit. Commits prior to this were considered too unstable to bother.
 
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.14.0...master
+<!-- TODO: This fucking _sucks_ to maintain, but I largely do it because it's
+baggage from when I tried following the Keep A Changelog-standard. I don't anymore
+because it's not a great format, and I _definitely_ don't now anymore, because,
+of fucking course, it's AI slop:
+https://github.com/olivierlacan/keep-a-changelog/blob/main/AGENTS.md
+https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3bb02af17e03e41a0
+
+Friends apparently let friends read an AI slop changelog instead of bothering
+writing one of the single most important human-facing documents. Hypocrites
+-->
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...master
+[v0.15.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.14.0...v0.15.0
 [v0.14.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.1...v0.14.0
 [v0.13.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.0...v0.13.1
 [v0.13.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.12.0...v0.13.0
