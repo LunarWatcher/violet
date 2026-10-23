@@ -39,6 +39,13 @@ TEST_CASE_METHOD(tests::FrontmatterFixture, "ISO-8601 datetimes in frontmatter s
             ==
             1770242400ll
         );
+        REQUIRE(
+            REQUIRE_VALUE(
+                parse(R"({ "date": "2026-02-05T00:00:00+0200" })").date
+            )
+            ==
+            1770242400ll
+        );
     }
 }
 

@@ -14,7 +14,6 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the iris templates
 * `Theme(theme name):` - changes made to specific builtin themes
 
-
 {{ page.table_of_contents }}
 
 
@@ -24,6 +23,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 * Added support for ISO dates, and ISO datetimes without timezones
   * In examples, `2026-10-23` and `2026-10-23T00:00:00` are both supported.
+* Templates: added `formatDate()` for parsing non-builtin dates (i.e. datetimes that aren't in `page.date` or `page.last_modified`)
 
 ## [v0.14.0] (2026-10-20)
 

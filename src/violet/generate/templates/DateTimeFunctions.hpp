@@ -11,6 +11,7 @@ private:
     IrisManager& man;
 
     nlohmann::json formatDate(iris::Arguments& args);
+    nlohmann::json parseDate(iris::Arguments& args);
 public:
     DateTimeFunctions(IrisManager& man);
 };

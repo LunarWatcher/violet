@@ -5,6 +5,11 @@
 
 namespace violet {
 
+extern int64_t parseDate(
+    const std::string& input,
+    const std::string& format
+);
+
 /**
  * Parses two variants of ISO 8601 datetimes, specifically datetimes with offsets and datetime with UTC. Separators are
  * mandatory in this parser because who the fuck writes UTC datetimes without separators?
