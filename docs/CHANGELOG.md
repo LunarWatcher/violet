@@ -16,8 +16,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 {{ page.table_of_contents }}
 
-
 ## [unreleased]
+
+## [v0.16.0] (2026-10-25)
 
 ### Added
 
@@ -290,7 +291,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.0...master
+[v0.16.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...v0.16.0
 [v0.15.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.14.0...v0.15.0
 [v0.14.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.1...v0.14.0
 [v0.13.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.0...v0.13.1

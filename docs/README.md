@@ -14,7 +14,7 @@
 * Designed to take advantage of markdown features rather than reinventing them with SSG-specific templates for no reason. This improves the writing experience, since the URLs can be standard markdown, and work both in the local editor and after generation.
 * Generally designed to have trivially understandable behaviour
 * Most of what you'd expect from a static site generator
-  * Templates (through the jinja-inspired library [iris](https://codeberg.org/LunarWatcher/iris))
+  * Templates (through the jinja-inspired library [iris](https://codeberg.org/LunarWatcher/iris)[^iris])
   * Markdown to HTML converter, based on a custom markdown parser with a few minor differences from major implementations, largely down to strictness. Markdown is a markup language, and in this implementation, invalid markup is an error.
     * Frontmatter in violet is JSON-based
   * Paginated page lists allow for long lists to be spread across pages
@@ -63,3 +63,4 @@ If you use Violet in an open-source website, consider adding the topic to your r
 See [Getting started](/Getting started.md)
 
 [^json]: Initially used nlohmann/json directly, but of fucking course, nlohmann/json now has AI slop machines contributing. Violet now uses a fork pinned to a mostly slop-free version, with plans to switch to vendored yyjson in a C++26 reflection wrapper once reflection is done and available on arch.
+[^iris]: Iris was forked from inja, which has fallen to AI slop as well - but it also means that the entire templating language is developed alongside violet now.
