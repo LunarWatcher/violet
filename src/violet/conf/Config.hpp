@@ -19,7 +19,7 @@ struct Config {
     std::string prefix = "";
     std::vector<std::string> exclude = {};
     std::optional<std::string> theme = "_default";
-    iris::DataObject data = iris::Object {};
+    iris::Object data = {};
 
     std::string timezone = "Etc/GMT";
 
@@ -27,7 +27,7 @@ struct Config {
 
     bool metadata = false;
 
-    iris::DataObject raw = iris::Object();
+    iris::Object raw = {};
 
     void imbueRoot(const std::filesystem::path& root) {
         raw[violet::constants::InternalPathRef] = root.string();

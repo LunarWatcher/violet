@@ -9,9 +9,9 @@ namespace violet {
 
 struct ThemeConfig {
     std::vector<std::string> mount;
-    iris::DataObject data;
+    iris::Object data;
 
-    iris::DataObject raw;
+    iris::Object raw;
 };
 
 extern void from_json(const nlohmann::json& in, ThemeConfig& out);

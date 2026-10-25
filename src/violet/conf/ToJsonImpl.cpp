@@ -1,3 +1,4 @@
+#include "iris/data/DataObject.hpp"
 #include "violet/conf/Config.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/conf/ThemeConfig.hpp"
@@ -19,11 +20,15 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
     }
 
     if (auto it = src.find("data"); it != src.end() && !it->is_null()) {
-        dest.data = transitional::convertJson(*it);
-
-        if (!dest.data.is_object()) {
-            throw std::runtime_error("Config initialized with non-object `data`");
+        if (!it->is_object()) {
+            throw std::runtime_error(
+                std::format(
+                    "illegal data object: expected object, found {}",
+                    it->dump()
+                )
+            );
         }
+        dest.data = transitional::convertJson(*it).get<iris::Object>();
     }
     if (auto it = src.find("theme"); it != src.end()) {
         if (!it->is_null()) {
@@ -139,7 +144,7 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
                 )
             );
         }
-        dest.data = transitional::convertJson(*it);
+        dest.data = transitional::convertJson(*it).get<iris::Object>();
     }
     // TODO: not sure if we want this
     if (auto it = src.find(violet::constants::InternalPathRef); it != src.end()) {
@@ -201,7 +206,7 @@ void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {
             "data",
             nlohmann::json::object()
         )
-    );
+    ).get<iris::Object>();
     dest.mount = src.value("mount", std::vector<std::string>());
 
     dest.raw = iris::Object {
