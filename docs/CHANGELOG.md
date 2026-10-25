@@ -35,6 +35,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Fixed
 
 * Fixed a bug where `loadJson` failed to load paths relative to the provided `object`.
+* Fixed code blocks without a language in a list accidentally adding the indent as a literal part of the codeblock on the first line of the block
 
 ## [v0.15.0] (2026-10-23)
 

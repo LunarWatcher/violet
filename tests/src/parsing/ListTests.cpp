@@ -70,6 +70,27 @@ TEST_CASE("Unordered lists", "[markdown]") {
                 "</ul>"
             );
         }
+        SECTION("Bullet list with code without language using " + d) {
+            std::stringstream ss;
+            ss << op << " Test\n"
+               << "  ```\n"
+               << "  code content\n"
+               << "  ```\n"
+               << op << " Second point";
+            REQUIRE(
+                violet::Markdown::parse(ss)
+                ==
+                "<ul>"
+                    "<li>" + prefix +
+                    "<p>Test</p>"
+                        "<pre><code>code content</code></pre>"
+                    "</li>"
+                    "<li>" + prefix +
+                        "<p>Second point</p>"
+                    "</li>"
+                "</ul>"
+            );
+        }
         SECTION("Bullet list with code directly under bullet with " + d) {
             std::stringstream ss;
             ss << op << " ```cpp\n"
