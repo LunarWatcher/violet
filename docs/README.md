@@ -1,12 +1,12 @@
 ---
 {
-    "title": "Violet - another static site generator"
+    "title": "Violet - an AI slop machine-free SSG"
 }
 ---
 
-# Violet - another static site generator
+# Violet - an AI slop machine-free SSG
 
-[Violet](https://codeberg.org/LunarWatcher/violet) is a C++-based, minimal static site generator. This website contains the documentation for it - and also a proof-of-concept, as this entire site is generated with violet.
+[Violet](https://codeberg.org/LunarWatcher/violet) is a C++-based, minimal static site generator (SSG). This website contains the documentation for it - and also a proof-of-concept, as this entire site is generated with violet.
 
 ## Features
 
