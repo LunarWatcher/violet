@@ -29,10 +29,13 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * BREAKING: `loadJson`'s signature has changed from `loadJson(object, "filename.json")` to `loadJson("filename.json"[, object])`.
   * Existing use of `loadJson` will continue to work, but will produce a warning in the logs. The old signature will be removed in v1
 * `loadJson` no longer requires a frontmatter when using absolute file paths
+* Upgraded to iris v0.2.0
+  * This includes several major upgrades to the language, including object and array literals now being allowed to contain logic
 
 ### Fixed
 
 * Fixed a bug where `loadJson` failed to load paths relative to the provided `object`.
+* Fixed code blocks without a language in a list accidentally adding the indent as a literal part of the codeblock on the first line of the block
 
 ## [v0.15.0] (2026-10-23)
 

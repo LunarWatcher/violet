@@ -13,7 +13,7 @@ LangFunctions::LangFunctions(IrisManager& man) : man(man) {
     });
 }
 
-nlohmann::json LangFunctions::recurseInclude(iris::Arguments& args) {
+iris::DataObject LangFunctions::recurseInclude(iris::Arguments& args) {
     auto templateName = args.at(0)->get<std::string>();
     auto& context = *args.at(1);
     std::stringstream ss;
@@ -25,15 +25,18 @@ nlohmann::json LangFunctions::recurseInclude(iris::Arguments& args) {
     );
 }
 
-nlohmann::json LangFunctions::createPaginatedList(iris::Arguments& args) {
-    uint64_t currPage = *args.at(0);
-    uint64_t totalPages = *args.at(1);
+iris::DataObject LangFunctions::createPaginatedList(iris::Arguments& args) {
+    int64_t rCurrPage = args.at(0)->get<iris::Int>();
+    int64_t rTotalPages = args.at(1)->get<iris::Int>();
 
-    if (currPage == 0) {
+    if (rCurrPage <= 0) {
         throw std::runtime_error("currPage must be strictly greater than 0");
-    } else if (totalPages == 0) {
+    } else if (rTotalPages <= 0) {
         throw std::runtime_error("totalPages must be strictly greater than 0");
     }
+
+    uint64_t currPage = rCurrPage;
+    uint64_t totalPages = rTotalPages;
 
     // This is not an elegant way to construct the pages lists, but it's good enough
     std::vector<uint64_t> sourcePages = {
@@ -43,7 +46,7 @@ nlohmann::json LangFunctions::createPaginatedList(iris::Arguments& args) {
         (totalPages > 2 ? totalPages - 2 : 0), totalPages - 1, totalPages
     };
 
-    std::vector<uint64_t> pages;
+    std::vector<iris::DataObject> pages;
 
     for (auto page : sourcePages) {
         if (page == 0

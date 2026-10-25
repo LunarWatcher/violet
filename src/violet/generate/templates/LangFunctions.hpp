@@ -1,6 +1,5 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
 #include <iris/iris.hpp>
 
 namespace violet {
@@ -10,8 +9,8 @@ class LangFunctions {
 private:
     IrisManager& man;
 
-    nlohmann::json recurseInclude(iris::Arguments& args);
-    nlohmann::json createPaginatedList(iris::Arguments& args);
+    iris::DataObject recurseInclude(iris::Arguments& args);
+    iris::DataObject createPaginatedList(iris::Arguments& args);
 public:
     LangFunctions(IrisManager& man);
 };

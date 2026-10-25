@@ -1,6 +1,11 @@
 #include "RenderResult.hpp"
 
-void violet::to_json(nlohmann::json& out, const RenderResult& src) {
-    out["content"] = src.content;
-    
+namespace violet {
+
+RenderResult::operator iris::DataObject() {
+    return iris::Object {
+        {"content", content}
+    };
+}
+
 }

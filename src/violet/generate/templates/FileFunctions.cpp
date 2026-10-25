@@ -9,22 +9,23 @@
 #include "violet/exceptions/TemplateError.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
 #include "violet/parsing/Markdown.hpp"
+#include "violet/transitional/JsonToDataObject.hpp"
 #include "violet/util/ErrorHandling.hpp"
 #include <filesystem>
 
 namespace violet {
 
 FileFunctions::FileFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("listPages", 2, [this](iris::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("listPages", 2, [this](iris::Arguments& args) {
         return listPages(args);
     });
-    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args) {
         return listPagesPaginated(args);
     });
-    man.env.add_callback("treePages", 2, [this](iris::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("treePages", 2, [this](iris::Arguments& args) {
         return treePages(args);
     });
-    man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) -> nlohmann::json {
+    man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
         return paginatedUrl(args);
     });
     man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
@@ -37,14 +38,13 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
         return render(args);
     });
 }
-nlohmann::json listPagesPaginated(iris::Arguments& args);
 
-nlohmann::json FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
+iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
     auto& root = man.fileManager.getRootFolder();
-    auto taxonomy = args.at(0)->get<std::string>();
-    auto value = args.at(1)->get<std::string>();
+    auto taxonomy = args.at(0)->get<iris::String>();
+    auto value = args.at(1)->get<iris::String>();
 
-    nlohmann::json pages;
+    iris::Array pages;
     man.fileManager.recursivelyIterateFiles(
         root,
         [&](auto& entry) -> bool {
@@ -87,9 +87,9 @@ nlohmann::json FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
     return pages;
 }
 
-nlohmann::json FileFunctions::listPages(iris::Arguments& args) {
+iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     auto& frontmatter = *args.at(0);
-    auto scope = args.at(1)->get<std::string>();
+    auto scope = args.at(1)->get<iris::String>();
 
     if (scope.contains("..")) {
         throw std::runtime_error(
@@ -101,14 +101,14 @@ nlohmann::json FileFunctions::listPages(iris::Arguments& args) {
     // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
     // bad
     auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at(violet::constants::InternalPathRef)
+        frontmatter.at(violet::constants::InternalPathRef).get<iris::String>()
     };
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
     path /= scope;
 
-    nlohmann::json pages;
+    iris::DataObject pages = iris::Array {};
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {
@@ -139,9 +139,9 @@ nlohmann::json FileFunctions::listPages(iris::Arguments& args) {
     return pages;
 }
 
-nlohmann::json FileFunctions::treePages(iris::Arguments& args) {
+iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
     auto& frontmatter = *args.at(0);
-    auto scope = args.at(1)->get<std::string>();
+    auto scope = args.at(1)->get<iris::String>();
 
     if (scope.contains("..")) {
         throw std::runtime_error(
@@ -153,14 +153,14 @@ nlohmann::json FileFunctions::treePages(iris::Arguments& args) {
     // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
     // bad
     auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at(violet::constants::InternalPathRef)
+        frontmatter.at(violet::constants::InternalPathRef).get<std::string>()
     };
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
     path /= scope;
 
-    nlohmann::json pages;
+    iris::DataObject pages = iris::Object {};
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {
@@ -188,11 +188,17 @@ nlohmann::json FileFunctions::treePages(iris::Arguments& args) {
                 return true;
             }
 
-            nlohmann::json* next = &pages;
+            iris::DataObject* next = &pages;
 
             if (filePath.has_parent_path()) {
                 for (auto& segment : filePath.parent_path()) {
-                    nlohmann::json* curr = &((*next)["subfolders"][segment]);
+                    if (!next->contains("subfolders")) {
+                        (*next)["subfolders"] = iris::Object {};
+                    }
+                    if (!next->at("subfolders").contains(segment)) {
+                        next->at("subfolders")[segment] = iris::Object {};
+                    }
+                    iris::DataObject* curr = &((*next)["subfolders"][segment]);
                     next = curr;
                 }
             }
@@ -200,6 +206,9 @@ nlohmann::json FileFunctions::treePages(iris::Arguments& args) {
             if (filePath.filename() == "README.md" || filePath.filename() == "index.md") {
                 (*next)["index"] = metadata.frontmatter;
             } else {
+                if (!next->contains("items")) {
+                    (*next)["items"] = iris::Array {};
+                }
                 (*next)["items"].push_back(metadata.frontmatter);
             }
             return true;
@@ -208,9 +217,9 @@ nlohmann::json FileFunctions::treePages(iris::Arguments& args) {
     return pages;
 }
 
-nlohmann::json FileFunctions::paginatedUrl(iris::Arguments& args) {
-    auto baseUrl = args.at(0)->get<std::string>();
-    auto page = args.at(1)->get<int64_t>();
+iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
+    auto baseUrl = args.at(0)->get<iris::String>();
+    auto page = args.at(1)->get<iris::Int>();
     // This restricts us to half the max uint64_t value, but no one will ever care
     if (page <= 0) {
         throw std::runtime_error("Invalid page number");
@@ -226,12 +235,12 @@ nlohmann::json FileFunctions::paginatedUrl(iris::Arguments& args) {
     return ss.str();
 }
 
-nlohmann::json FileFunctions::listPagesPaginated(iris::Arguments& args) {
+iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
     const auto& frontmatter = *args.at(0);
-    const auto scope = args.at(1)->get<std::string>();
+    const auto scope = args.at(1)->get<iris::String>();
     // TODO: this is technically 
     const auto sortMethod = safeCastEnum<SortMethod>(
-        args.at(2)->get<int>()
+        args.at(2)->get<iris::Int>()
     );
 
     if (!sortMethod.has_value()) {
@@ -243,15 +252,15 @@ nlohmann::json FileFunctions::listPagesPaginated(iris::Arguments& args) {
     uint64_t pageSize = 50;
     uint64_t pageNumber = 1;
     if (args.size() > 3) {
-        pageSize = *args.at(3);
+        pageSize = args.at(3)->get<iris::Int>();
     }
     if (args.size() > 4) {
-        pageNumber = *args.at(4);
+        pageNumber = args.at(4)->get<iris::Int>();
     }
 
 
     Paginator pag {
-        frontmatter.at(violet::constants::InternalPathRef),
+        frontmatter.at(violet::constants::InternalPathRef).get<std::string>(),
         this->man.fileManager,
         this->man.metaCache,
         pageSize,
@@ -267,7 +276,7 @@ nlohmann::json FileFunctions::listPagesPaginated(iris::Arguments& args) {
         // Page out of range
         return {};
     }
-    nlohmann::json out;
+    iris::DataObject out = iris::Array{};
     auto page = pag.page(pageNumber);
     for (const auto* fm : *page) {
         out.push_back(*fm);
@@ -276,8 +285,8 @@ nlohmann::json FileFunctions::listPagesPaginated(iris::Arguments& args) {
     return out;
 }
 
-nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
-    nlohmann::json frontmatter = nullptr;
+iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
+    iris::DataObject frontmatter = nullptr;
     std::string fn;
 
     if (args.size() < 1 || args.size() > 2) {
@@ -294,9 +303,9 @@ nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
             "frontmatter is optional if `fn` is an absolute path"
         );
         frontmatter = *args.at(0);
-        fn = args.at(1)->get<std::string>();
+        fn = args.at(1)->get<iris::String>();
     } else {
-        fn = args.at(0)->get<std::string>();
+        fn = args.at(0)->get<iris::String>();
         if (args.size() == 2) {
             frontmatter = *args.at(1);
         }
@@ -317,7 +326,7 @@ nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
             );
         }
         p = std::filesystem::path {
-            frontmatter.at(violet::constants::InternalPathRef).get<std::string>()
+            frontmatter.at(violet::constants::InternalPathRef).get<iris::String>()
         };
         if (!std::filesystem::is_directory(p)) {
             p = p.parent_path();
@@ -353,11 +362,12 @@ nlohmann::json FileFunctions::loadJson(iris::Arguments& args) {
         minilog::error("Failed to parse json in {}", p.string());
         throw;
     }
-    return data;
+    return transitional::convertJson(data);
 }
 
-nlohmann::json FileFunctions::render(iris::Arguments& args) {
-    auto fm = args.at(0)->get<Frontmatter>();
+iris::DataObject FileFunctions::render(iris::Arguments& args) {
+    auto fmObj = args.at(0)->get<iris::Object>();
+    auto fm = Frontmatter::fromDataObject(fmObj);
 
     // TODO: desperately need better out of bounds path checking
     if (fm.internalPath.starts_with('/') || fm.internalPath.contains("..")) {

@@ -26,8 +26,8 @@ IrisManager::IrisManager(
     escapingFuncs(*this)
 {
     env.set_include_callback([this](
-            const std::filesystem::path& path,
-            const std::string& templateName
+        const std::filesystem::path& path,
+        const std::string& templateName
     ) -> iris::Template {
         auto partialPath = this->fileManager.resolvePartial(templateName);
         if (partialPath) {
@@ -45,9 +45,8 @@ IrisManager::IrisManager(
     });
 }
 
-nlohmann::json IrisManager::buildCommonContext(const Frontmatter& pageFm) {
-    
-    return {
+iris::DataObject IrisManager::buildCommonContext(const Frontmatter& pageFm) {
+    return iris::Object {
         {"page", pageFm},
         {"site", this->cfg.raw},
         {"violet", violet::violet_global}
@@ -63,19 +62,19 @@ std::string IrisManager::renderPage(
     auto context = buildCommonContext(fm);
 
     if (pagIt != nullptr) {
-        std::vector<nlohmann::json> pages;
+        std::vector<iris::DataObject> pages;
 
         // TODO: This isn't great :/ But it work shaped
         for (auto& page : **pagIt) {
             pages.push_back(*page);
         }
 
-        context["listing"] = nlohmann::json::object({
+        context["listing"] = iris::Object{
             { "page", pagIt->getPage() + 1 },
             { "total_pages", pagIt->getTotalPages() },
             { "pages", std::move(pages) },
             { "base_path", std::filesystem::path(pagIt->paginator.basePath).parent_path().string() },
-        });
+        };
     }
 
     if (fm.hasLayout()) {

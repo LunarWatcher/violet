@@ -23,7 +23,7 @@ struct E2EFixture {
         .exclude = {
             "LICENSE"
         },
-        .data = nlohmann::json::object(),
+        .data = iris::Object(),
         .metadata = true,
     };
 

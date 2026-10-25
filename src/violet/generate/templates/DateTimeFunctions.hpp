@@ -10,8 +10,8 @@ class DateTimeFunctions {
 private:
     IrisManager& man;
 
-    nlohmann::json formatDate(iris::Arguments& args);
-    nlohmann::json parseDate(iris::Arguments& args);
+    iris::DataObject formatDate(iris::Arguments& args);
+    iris::DataObject parseDate(iris::Arguments& args);
 public:
     DateTimeFunctions(IrisManager& man);
 };

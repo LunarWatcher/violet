@@ -22,11 +22,11 @@ DateTimeFunctions::DateTimeFunctions(IrisManager& man) : man(man) {
     });
 }
 
-nlohmann::json DateTimeFunctions::parseDate(iris::Arguments& args) {
-    auto date = args.at(0)->get<std::string>();
+iris::DataObject DateTimeFunctions::parseDate(iris::Arguments& args) {
+    auto date = args.at(0)->get<iris::String>();
 
     if (args.size() >= 2) {
-        auto fmt = args.at(1)->get<std::string>();
+        auto fmt = args.at(1)->get<iris::String>();
 
         return ::violet::parseDate(date, fmt);
     } else {
@@ -34,12 +34,12 @@ nlohmann::json DateTimeFunctions::parseDate(iris::Arguments& args) {
     }
 }
 
-nlohmann::json DateTimeFunctions::formatDate(iris::Arguments& args) {
-    auto timestamp = args.at(0)->get<int64_t>();
-    auto fmt = args.at(1)->get<std::string>();
+iris::DataObject DateTimeFunctions::formatDate(iris::Arguments& args) {
+    auto timestamp = args.at(0)->get<iris::Int>();
+    auto fmt = args.at(1)->get<iris::String>();
     std::string timezone = man.cfg.timezone;
     if (args.size() == 3) {
-        timezone = args.at(2)->get<std::string>();
+        timezone = args.at(2)->get<iris::String>();
     } else if (args.size() > 3) {
         // TODO: Create custom error (maybe? or do I just want to handle inja's exceptions better?)
         throw std::runtime_error("formatDate takes 2 or 3 arguments, but got 4");

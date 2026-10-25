@@ -37,20 +37,29 @@ inline void testFileIterationExcludesOutputDir(
                 }
                 f << "content" << std::endl;
             }
-            tests::IrisArgs args(nlohmann::json::array({
+            tests::IrisArgs args(iris::Array {
                 violet::Frontmatter {
                     .title = "Placeholder",
                     .internalPath = refFile.string()
                 },
                 "."
-            }));
+            });
             auto irisArgs = args.asArgs();
 
             SECTION("listPages should exclude build dir") {
-                auto pages = gen->getIrisManager().fileFuncs.listPages(irisArgs);
+                auto rawPages = gen->getIrisManager()
+                    .fileFuncs
+                    .listPages(irisArgs);
+                INFO(rawPages.serialize());
+                REQUIRE(rawPages.is_array());
+                auto pages = rawPages.get<iris::Array>();
 
                 for (const auto& page : pages) {
-                    auto fm = page.get<violet::Frontmatter>();
+                    INFO(page.serialize());
+                    std::cerr << page.serialize() << std::endl;
+                    auto fm = violet::Frontmatter::fromDataObject(
+                        page.get<iris::Object>()
+                    );
 
                     REQUIRE_FALSE(
                         fm.internalPath.contains(fn)
@@ -81,13 +90,13 @@ inline void testFileIterationExcludesOutputDir(
                 }
                 f << "content" << std::endl;
             }
-            tests::IrisArgs args(nlohmann::json::array({
+            tests::IrisArgs args(iris::Array {
                 violet::Frontmatter {
                     .title = "Placeholder",
                     .internalPath = refFile.string()
                 },
                 outputDir.filename().string()
-            }));
+            });
 
             INFO("Scope is " << outputDir.filename().string());
             auto irisArgs = args.asArgs();

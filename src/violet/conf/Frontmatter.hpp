@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iris/data/DataObject.hpp"
 #include "minilog/minilog.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
@@ -31,7 +32,7 @@ struct Frontmatter {
 
     std::unordered_map<std::string, std::unordered_set<std::string>> taxonomies = {};
 
-    nlohmann::json data = {};
+    iris::Object data = {};
 
     std::string tableOfContents = "";
 
@@ -112,7 +113,12 @@ struct Frontmatter {
             internalFileType == ProcessedFileType::Xml ? "feed" : "single_page"
         );
     }
+
+    operator iris::DataObject() const;
+
+    static Frontmatter fromDataObject(const iris::Object& src);
 };
+
 
 extern void from_json(const nlohmann::json& src, Frontmatter& dest);
 extern void from_json(const nlohmann::json& src, ListingFrontmatter& dest);
