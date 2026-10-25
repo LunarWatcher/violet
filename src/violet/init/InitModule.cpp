@@ -1,4 +1,5 @@
 #include "InitModule.hpp"
+#include "iris/data/DataObject.hpp"
 #include "minilog/minilog.hpp"
 #include "violet/conf/Config.hpp"
 #include "violet/data/InitOpts.hpp"
@@ -32,7 +33,7 @@ bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::In
             "scripts",
         },
         .theme = "_default",
-        .data = nlohmann::json::object(),
+        .data = iris::Object {},
         .metadata = false,
     };
 

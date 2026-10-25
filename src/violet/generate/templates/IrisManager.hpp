@@ -39,7 +39,7 @@ public:
     IrisManager(IrisManager&) = delete;
     IrisManager(IrisManager&&) = delete;
 
-    nlohmann::json buildCommonContext(const Frontmatter& pageFm);
+    iris::DataObject buildCommonContext(const Frontmatter& pageFm);
 
     std::string renderPage(
         const std::string& fileContent,

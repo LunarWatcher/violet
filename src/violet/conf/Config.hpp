@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iris/data/DataObject.hpp"
 #include "minilog/minilog.hpp"
 #include "violet/data/Constants.hpp"
 #include "violet/parsing/Escaping.hpp"
@@ -18,7 +19,7 @@ struct Config {
     std::string prefix = "";
     std::vector<std::string> exclude = {};
     std::optional<std::string> theme = "_default";
-    nlohmann::json data = {};
+    iris::DataObject data = iris::Object {};
 
     std::string timezone = "Etc/GMT";
 
@@ -26,10 +27,7 @@ struct Config {
 
     bool metadata = false;
 
-    /**
-     * Contains a copy of the raw JSON object that created the rest of this struct; used for forwarding to iris.
-     */
-    nlohmann::json raw = {};
+    iris::DataObject raw = iris::Object();
 
     void imbueRoot(const std::filesystem::path& root) {
         raw[violet::constants::InternalPathRef] = root.string();

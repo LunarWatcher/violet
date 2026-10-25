@@ -11,8 +11,8 @@ class EscapingFunctions {
 private:
     IrisManager& man;
 
-    nlohmann::json htmlEscape(iris::Arguments& args);
-    nlohmann::json urlEncode(iris::Arguments& args);
+    iris::DataObject htmlEscape(iris::Arguments& args);
+    iris::DataObject urlEncode(iris::Arguments& args);
 public:
     EscapingFunctions(IrisManager& man);
 };

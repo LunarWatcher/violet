@@ -4,6 +4,7 @@
 #include "violet/data/Constants.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
 #include "violet/parsing/DateTimeParsing.hpp"
+#include "violet/transitional/JsonToDataObject.hpp"
 
 void violet::from_json(const nlohmann::json& src, Config& dest) {
     src.at("name").get_to(dest.name);
@@ -18,7 +19,11 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
     }
 
     if (auto it = src.find("data"); it != src.end() && !it->is_null()) {
-        it->get_to(dest.data);
+        dest.data = transitional::convertJson(*it);
+
+        if (!dest.data.is_object()) {
+            throw std::runtime_error("Config initialized with non-object `data`");
+        }
     }
     if (auto it = src.find("theme"); it != src.end()) {
         if (!it->is_null()) {
@@ -65,10 +70,10 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
     }
 
     // We manually assemble `raw` to force custom fields into `data`.
-    dest.raw = {
-        {"name", dest.name},
-        {"data", dest.data},
-        {"exclude", dest.exclude}
+    dest.raw = iris::Object {
+        {"name", iris::DataObject(dest.name)},
+        {"data", iris::DataObject(dest.data)},
+        {"exclude", iris::DataObject(dest.exclude)}
     };
 
     if (dest.description) {
@@ -126,7 +131,7 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     }
 
     if (auto it = src.find("data"); it != src.end()) {
-        dest.data = *it;
+        dest.data = transitional::convertJson(*it);
     }
     // TODO: not sure if we want this
     if (auto it = src.find(violet::constants::InternalPathRef); it != src.end()) {
@@ -172,7 +177,7 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
 
     dest["taxonomies"] = src.taxonomies;
     dest["hidden"] = src.hidden;
-    dest["data"] = src.data;
+    dest["data"] = transitional::convertDataObject(src.data);
     dest["url"] = src.internalUrl;
     dest["table_of_contents"] = src.tableOfContents;
     if (src.summary) {
@@ -183,13 +188,15 @@ void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
 }
 
 void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {
-    dest.data = src.value(
-        "data",
-        nlohmann::json::object()
+    dest.data = transitional::convertJson(
+        src.value(
+            "data",
+            nlohmann::json::object()
+        )
     );
     dest.mount = src.value("mount", std::vector<std::string>());
 
-    dest.raw = {
+    dest.raw = iris::Object {
         {"data", dest.data},
         {"mount", dest.mount},
     };
@@ -210,5 +217,7 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
         dest["theme"] = *src.theme;
     }
 
-    dest["data"] = src.data;
+    dest["data"] = transitional::convertDataObject(
+        src.data
+    );
 }

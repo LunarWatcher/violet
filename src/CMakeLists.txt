@@ -9,6 +9,7 @@ add_library(violetsrc STATIC
     violet/CommandLine.cpp
 
     violet/conf/ToJsonImpl.cpp
+    violet/conf/Frontmatter.cpp
 
     violet/data/RenderResult.cpp
 

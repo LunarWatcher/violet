@@ -1,6 +1,5 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
 #include <iris/iris.hpp>
 
 namespace violet {
@@ -12,17 +11,17 @@ private:
 public:
     FileFunctions(IrisManager& man);
 
-    nlohmann::json listPages(iris::Arguments& args);
-    nlohmann::json treePages(iris::Arguments& args);
+    iris::DataObject listPages(iris::Arguments& args);
+    iris::DataObject treePages(iris::Arguments& args);
 
-    nlohmann::json listPagesByTaxonomy(iris::Arguments& args);
+    iris::DataObject listPagesByTaxonomy(iris::Arguments& args);
 
-    nlohmann::json listPagesPaginated(iris::Arguments& args);
+    iris::DataObject listPagesPaginated(iris::Arguments& args);
 
-    nlohmann::json paginatedUrl(iris::Arguments& args);
+    iris::DataObject paginatedUrl(iris::Arguments& args);
 
-    nlohmann::json loadJson(iris::Arguments& args);
-    nlohmann::json render(iris::Arguments& args);
+    iris::DataObject loadJson(iris::Arguments& args);
+    iris::DataObject render(iris::Arguments& args);
 };
 
 }
