@@ -108,7 +108,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     }
     path /= scope;
 
-    iris::Array pages;
+    iris::DataObject pages = iris::Array {};
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {
@@ -160,7 +160,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
     }
     path /= scope;
 
-    iris::DataObject pages;
+    iris::DataObject pages = iris::Object {};
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {
@@ -192,6 +192,12 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
 
             if (filePath.has_parent_path()) {
                 for (auto& segment : filePath.parent_path()) {
+                    if (!next->contains("subfolders")) {
+                        (*next)["subfolders"] = iris::Object {};
+                    }
+                    if (!next->at("subfolders").contains(segment)) {
+                        next->at("subfolders")[segment] = iris::Object {};
+                    }
                     iris::DataObject* curr = &((*next)["subfolders"][segment]);
                     next = curr;
                 }
@@ -200,6 +206,9 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
             if (filePath.filename() == "README.md" || filePath.filename() == "index.md") {
                 (*next)["index"] = metadata.frontmatter;
             } else {
+                if (!next->contains("items")) {
+                    (*next)["items"] = iris::Array {};
+                }
                 (*next)["items"].push_back(metadata.frontmatter);
             }
             return true;
@@ -267,7 +276,7 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
         // Page out of range
         return {};
     }
-    iris::DataObject out = iris::Object{};
+    iris::DataObject out = iris::Array{};
     auto page = pag.page(pageNumber);
     for (const auto* fm : *page) {
         out.push_back(*fm);

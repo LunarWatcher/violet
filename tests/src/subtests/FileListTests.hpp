@@ -47,10 +47,19 @@ inline void testFileIterationExcludesOutputDir(
             auto irisArgs = args.asArgs();
 
             SECTION("listPages should exclude build dir") {
-                auto pages = gen->getIrisManager().fileFuncs.listPages(irisArgs).get<iris::Array>();
+                auto rawPages = gen->getIrisManager()
+                    .fileFuncs
+                    .listPages(irisArgs);
+                INFO(rawPages.serialize());
+                REQUIRE(rawPages.is_array());
+                auto pages = rawPages.get<iris::Array>();
 
                 for (const auto& page : pages) {
-                    auto fm = violet::Frontmatter::fromDataObject(page.get<iris::Object>());
+                    INFO(page.serialize());
+                    std::cerr << page.serialize() << std::endl;
+                    auto fm = violet::Frontmatter::fromDataObject(
+                        page.get<iris::Object>()
+                    );
 
                     REQUIRE_FALSE(
                         fm.internalPath.contains(fn)

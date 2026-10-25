@@ -32,7 +32,7 @@ struct Frontmatter {
 
     std::unordered_map<std::string, std::unordered_set<std::string>> taxonomies = {};
 
-    iris::DataObject data = {};
+    iris::DataObject data = iris::Object {};
 
     std::string tableOfContents = "";
 

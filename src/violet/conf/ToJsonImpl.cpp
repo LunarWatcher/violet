@@ -131,6 +131,14 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
     }
 
     if (auto it = src.find("data"); it != src.end()) {
+        if (!it->is_object()) {
+            throw std::runtime_error(
+                std::format(
+                    "illegal data object: expected object, found {}",
+                    it->dump()
+                )
+            );
+        }
         dest.data = transitional::convertJson(*it);
     }
     // TODO: not sure if we want this

@@ -69,7 +69,6 @@ Frontmatter Frontmatter::fromDataObject(const iris::Object& src) {
         for (auto& l : v.get<iris::Array>()) { it.insert(l.get<iris::String>()); }
         f.taxonomies[k] = it;
     }
-    
 
     return f;
 }

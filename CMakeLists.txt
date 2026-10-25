@@ -64,7 +64,7 @@ FetchContent_Declare(json
 )
 FetchContent_Declare(iris
     GIT_REPOSITORY https://codeberg.org/LunarWatcher/iris
-    GIT_TAG v0.2.0-rc2
+    GIT_TAG v0.2.0-rc4
 )
 FetchContent_MakeAvailable(
     stc
