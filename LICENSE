@@ -20,3 +20,17 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+Violet uses the following libraries:
+
+* LunarWatcher/minilog (MIT license): https://codeberg.org/LunarWatcher/minilog/src/branch/master/LICENSE
+* LunarWatcher/stc (MIT license): https://codeberg.org/LunarWatcher/stc
+* LunarWatcher/cli12 (3-clause BSD): https://codeberg.org/LunarWatcher/CLI12/src/branch/main/LICENSE
+* LunarWatcher/iris (MIT license): https://codeberg.org/LunarWatcher/iris/src/branch/master/LICENSE
+* nlohmann/json (MIT license; version pinned to v3.12 in fork): https://github.com/LunarWatcher/json/blob/master/LICENSE.MIT
+
+Additionally, the following libraries are used in tests, and are therefore not distributed alongside the main binary:
+
+* catchorg/catch2 (Boost Software License 1.0): https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt

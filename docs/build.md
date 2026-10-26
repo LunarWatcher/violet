@@ -19,6 +19,12 @@ FetchContent is used to source all other dependencies at this time.
 ## Steps
 
 ```bash
+git clone https://codeberg.org/LunarWatcher/violet
+
+cd violet
+# Check out the latest tag (or skip this for a nightly build)
+git checkout $(git describe --tags --abbrev=0)
+
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local

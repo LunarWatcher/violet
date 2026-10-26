@@ -104,6 +104,27 @@ CLI::App* violet::versionCommand(CLI::App& app) {
     return cmdVersion;
 }
 
+void violet::initMeta(CLI::App& app) {
+    app.footer(R"(
+Violet is open-source software licensed under the MIT license.
+For the license text, see https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE
+The source code can be found on codeberg: https://codeberg.org/LunarWatcher/violet
+
+Violet uses the following libraries:
+
+ * LunarWatcher/minilog (MIT license): https://codeberg.org/LunarWatcher/minilog/src/branch/master/LICENSE
+ * LunarWatcher/stc (MIT license): https://codeberg.org/LunarWatcher/stc
+ * LunarWatcher/cli12 (3-clause BSD): https://codeberg.org/LunarWatcher/CLI12/src/branch/main/LICENSE
+ * LunarWatcher/iris (MIT license): https://codeberg.org/LunarWatcher/iris/src/branch/master/LICENSE
+ * nlohmann/json (MIT license; version pinned to v3.12 in fork): https://github.com/LunarWatcher/json/blob/master/LICENSE.MIT
+
+Additionally, the following libraries are used in tests, and are therefore not distributed alongside the main binary:
+
+ * catchorg/catch2 (Boost Software License 1.0): https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt
+)");
+
+}
+
 int violet::cliMain(int argc, char** argv) {
     CLI::App app {
         "C++-based static site generator",
@@ -120,6 +141,8 @@ int violet::cliMain(int argc, char** argv) {
     auto* cmdInit = initCommand(app, initOpts);
     auto* cmdServe = serveCommand(app);
     auto* cmdVersion = versionCommand(app);
+
+    initMeta(app);
 
     CLI12_PARSE(app, argc, argv);
 
