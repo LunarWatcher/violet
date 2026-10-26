@@ -1,25 +1,26 @@
 # violet was taken
 pkgname=violet-ssg
 pkgver=$VERSION
-pkgrel=1
+pkgrel=$RELEASE
+url=https://lunarwatcher.codeberg.page/violet/
 pkgdesc="AI slop-free static site generator"
-# We _should_ be supporting any, but violet is only tested on x86_64
-arch=('any')
+arch=('x86_64' 'i686' 'armv7h' 'aarch64')
+license=('MIT')
 depends=('glibc')
-makedepends=('gcc' 'cmake' 'make')
-source=("https://codeberg.org/LunarWatcher/violet/archive/$pkgver.tar.gz")
-sha256sums=("$CHECKSUM")
+makedepends=('gcc' 'cmake' 'make' 'git')
+source=("$pkgname::git+https://codeberg.org/LunarWatcher/violet.git#tag=$VERSION")
+sha256sums=('SKIP')
 build() {
-    cd "$srcdir/violet"
+    cd "$srcdir/$pkgname"
     mkdir -p build
     cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DVIOLET_BUILD_VERSION="$VERSION"
+    cmake .. -DCMAKE_BUILD_TYPE=Release
 }
 check() {
-    cd "$srcdir/violet/build"
+    cd "$srcdir/$pkgname/build"
     make test -j $(nproc)
 }
 package() {
-    cd "$srcdir/violet/build"
+    cd "$srcdir/$pkgname/build"
     DESTDIR="$pkgdir" make install -j $(nproc)
 }

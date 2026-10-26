@@ -10,6 +10,7 @@ compile_commands.json
 
 # pkgbuild
 *.tar.gz
+*.tar.zst
 # Generated from PKGBUILD with ./scripts/pkgbuild-gen.sh
 PKGBUILD-dist
 /pkg/
