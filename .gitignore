@@ -8,6 +8,12 @@ build-*/
 out/
 compile_commands.json
 
+# pkgbuild
+*.tar.gz
+# Generated from PKGBUILD with ./scripts/pkgbuild-gen.sh
+PKGBUILD-dist
+/pkg/
+
 # Borrowed from https://github.com/github/.gitignore {{{
 
 # Swap

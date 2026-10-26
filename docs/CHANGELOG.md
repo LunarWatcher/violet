@@ -18,6 +18,12 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.16.1] (2026-10-26)
+
+### Changed
+
+* Internals: add `VIOLET_BUILD_VERSION` so packaging systems don't need the full git repo to correctly version violet
+
 ## [v0.16.0] (2026-10-25)
 
 ### Added

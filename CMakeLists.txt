@@ -74,17 +74,24 @@ FetchContent_MakeAvailable(
     iris
 )
 
-# Note: VIOLET_VERSION is not directly exported to all targets. Use `violet::GitVersion()` to get the version
-find_program(GIT git)
-if (GIT)
-    execute_process(COMMAND ${GIT} describe --tags --always
-        OUTPUT_VARIABLE VIOLET_VERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    message(STATUS "Detected version: ${VIOLET_VERSION}")
+if (VIOLET_BUILD_VERSION)
+    set(VIOLET_VERSION "${VIOLET_BUILD_VERSION}")
+    message(STATUS "Using manually provided version ${VIOLET_VERSION}")
 else()
-    message(WARNING "Git not found. Defaulting to unknown version. This will not have an effect on the program beyond a missing version")
-    set(VIOLET_VERSION "Unknown: Git unavailable at compile time")
+    # Note: VIOLET_VERSION is not directly exported to all targets. Use `violet::GitVersion()` to get the version
+    find_program(GIT git)
+    if (GIT)
+        execute_process(COMMAND ${GIT} describe --tags --always
+            OUTPUT_VARIABLE VIOLET_VERSION
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        message(STATUS "Detected version: ${VIOLET_VERSION}")
+    else()
+        message(WARNING "Git not found. Defaulting to unknown version. This will not have an effect on the program beyond a missing version")
+        if (NOT VIOLET_VERSION)
+            set(VIOLET_VERSION "Unknown: Git unavailable at compile time")
+        endif()
+    endif()
 endif()
 
 add_subdirectory(src)
