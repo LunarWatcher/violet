@@ -27,7 +27,8 @@ All the good SSGs have turned to AI slop, and migrating between SSGs is a pain i
 
 ## Requirements
 
-* C++23
+* A C++23 compiler
+* CMake
 * Linux (or possibly Windows, but windows is currently untested)
 
 ### Additional requirements for serving

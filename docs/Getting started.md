@@ -9,45 +9,28 @@
 
 ## Installation
 
-### From source
-The recommended installation method at this time is from source. Before you can continue, it's assumed you already have the following available on your system:
 
-* git
-* CMake and make
-  * If you have a particularly strong preference for another CMake generator, you're welcome to use it. Make is recommended as the default because it works everywhere and it's  perfectly fine for most use-cases.
-* A C++23 compiler (likely GCC 15 or newer; mainly tested on GCC 16, so lower bound is not known), and a relatively updated stdlib. Violet is known to compile and work on:
-  * Arch (which I use, so this is continuously checked)
-  * Ubuntu rolling (Ubuntu stable has not been checked since 24.10 IIRC)
-  * Debian 13.7
+### From source
+
+See [the build guide](/build.md) for instructions on manually installing violet, as well as which dependencies you need.
+
+If you prefer not running the commands by hand, there's an install script you can use that does it all for you (minus dependency installation):
 
 ```bash
-git clone https://codeberg.org/LunarWatcher/violet
-# Strongly recommended, but optional: check out the latest tagged version.
-# Not doing this means you get the latest dev version, which may or may not be
-# broken
-git checkout v0.13.1
-
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/.local/
-make -j $(nproc)
-
-# Optional (but strongly recommended): make sure everything is good first
-# If this fails, please open an issue with the error logs, and your OS and version
-make -j $(nproc) test
-
-# Install
-make install
-
-# Assuming you have $HOME/.local/bin in your PATH, you should now be able to run violet
-# If you can't simply type violet and get some help info, you may need to add this to your shell config file:
-#    export PATH="$HOME/.local/bin:$PATH"
-# and then restart your shell.
+curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.sh | bash
 ```
+
+> [!note]
+>
+> It is bad practice to `curl | bash` without inspecting scripts first. You can (and should) run the `curl` without the `bash` to inspect the script before you run it.
+
+### From AUR
+
+TBA, upload pending
 
 ### From GitHub
 
-On GitHub releases, you can find [precompiled binaries for x86_64 Linux](https://github.com/LunarWatcher/violet/releases). These are primarily intended for use with GitHub Actions. In the future, binaries meant for local end-user use will be uploaded to Codeberg.
+On GitHub releases, you can find [precompiled binaries for x86_64 Linux](https://github.com/LunarWatcher/violet/releases). These are primarily intended for use with GitHub Actions, but should work on most systems that meets violet's requirements.
 
 ## Setting up a project
 
