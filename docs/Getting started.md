@@ -24,9 +24,11 @@ curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.
 >
 > It is bad practice to `curl | bash` without inspecting scripts first. You can (and should) run the `curl` without the `bash` to inspect the script before you run it.
 
-### From AUR
+### pkgbuild (Arch)
 
-TBA, upload pending
+At the time of writing, [AUR is in lockdown](https://lists.archlinux.org/archives/list/aur-general@lists.archlinux.org/thread/L7FYPMAMJOWCMXCCPHUFVQDJQT7TZX67/), and as I do not have an account, I cannot create the AUR listing. 
+
+The [PKGBUILD template file is available on codeberg](https://codeberg.org/LunarWatcher/violet/src/branch/master/PKGBUILD), and should work manually still.
 
 ### From GitHub
 
