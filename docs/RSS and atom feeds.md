@@ -91,12 +91,14 @@ This example shows an atom feed with no base template, so everything is containe
             {% else %}
                 <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
             {% endif %}
-            <!-- Violet currently has no way to provide <content> at this time, so summary is the closest we get.
-            This has so far been avoided to avoid unnecessarily loading entire files when metadata is all that matters.
-            This will be patched in the future, though is not currently prioritized. Feel free to make a PR :3 -->
             {% if existsIn(entry, "summary") %}
                 <summary><![CDATA[{{ entry.summary }}]]></summary>
             {% endif %}
+            <!-- New in violet 0.9.0: render() lets the content of other pages be included.
+            We htmlEscape() the contents to avoid CDATA or xhtml -->
+            <content type="html">
+                {{ htmlEscape(render(entry).content) }}
+            </content>
             <!-- My reference site only has one author. You can use {{ entry.data }} if you have a multi-author site. -->
             <author>
                 <name>Olivia</name>
