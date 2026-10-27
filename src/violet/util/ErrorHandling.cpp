@@ -67,8 +67,8 @@ void violet::renderSyntaxError(
             }
             std::cerr << ss.rdbuf() << '^' << std::endl;
         }
-        // +2: +1 for newline, +1 to actually have the ptr start at the line
-        textPtr += line.size() + 2;
+        // +1 to account for the newline that isn't part of this line
+        textPtr += line.size() + 1;
     }
 
 }

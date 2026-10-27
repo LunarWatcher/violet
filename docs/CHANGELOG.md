@@ -30,6 +30,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Allow markdown URLs to contain balanced parentheses
   * This allows URLs like `https://en.wikipedia.org/wiki/Violet_(color)` to be pasted directly (render: [url](https://en.wikipedia.org/wiki/Violet_(color))) ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
   * If the parentheses are unbalanced, violet throws a slightly more useful error message. This is because spaces are allowed inside the URLs to allow for markdown file links where the source files have spaces in the name.
+* Fixed a smol bug that caused rendered markdown syntax errors to show a slight offset in the arrow pointing to a (most of the time) relevant-ish character that's at least related to the problem
 
 ## [v0.16.1] (2026-10-26)
 
