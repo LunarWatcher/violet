@@ -12,7 +12,7 @@ TEST_CASE("projectBasedTranslator - no prefix, subpath") {
 
     std::string pathPrefix = "";
     std::filesystem::path projectRoot = "/tmp/violet-site";
-    std::filesystem::path relSourceFilePath = projectRoot / "subpath/file.md";
+    std::filesystem::path relSourceFilePath = "subpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
         pathPrefix, projectRoot, relSourceFilePath, std::placeholders::_1
@@ -86,7 +86,7 @@ TEST_CASE("projectBasedTranslator - prefix, subpath") {
 
     std::string pathPrefix = "/violet/";
     std::filesystem::path projectRoot = "/tmp/violet-site";
-    std::filesystem::path relSourceFilePath = projectRoot / "subpath/file.md";
+    std::filesystem::path relSourceFilePath = "subpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
         pathPrefix, projectRoot, relSourceFilePath, std::placeholders::_1
@@ -160,7 +160,7 @@ TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
 
     std::string pathPrefix = "/violet";
     std::filesystem::path projectRoot = "/tmp/violet-site";
-    std::filesystem::path relSourceFilePath = projectRoot / "subpath/file.md";
+    std::filesystem::path relSourceFilePath = "subpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
         pathPrefix, projectRoot, relSourceFilePath, std::placeholders::_1
@@ -189,6 +189,13 @@ TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
                 call("/../../../../../../../../etc/passwd")
                 ==
                 "/violet/etc/passwd"
+            );
+        }
+        SECTION("Actual use-cases") {
+            REQUIRE(
+                call("file.webp")
+                ==
+                "/violet/subpath/file.webp"
             );
         }
     }
@@ -226,6 +233,40 @@ TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
             call("/")
             ==
             "/violet/"
+        );
+    }
+}
+
+TEST_CASE("projectBasedTranslator should handle relative files in subpaths") {
+    std::string pathPrefix = "/violet";
+    std::filesystem::path projectRoot = "/tmp/violet-site";
+    std::filesystem::path relSourceFilePath = "subpath/subsubpath/subsubsubpath/file.md";
+    auto call = std::bind(
+        violet::projectBasedTranslator,
+        pathPrefix, projectRoot, relSourceFilePath, std::placeholders::_1
+    );
+
+    SECTION("Relative paths should be handled correctly") {
+        REQUIRE(
+            call("file.txt") == "/violet/subpath/subsubpath/subsubsubpath/file.txt"
+        );
+        REQUIRE(
+            call("../file.txt") == "/violet/subpath/subsubpath/file.txt"
+        );
+        REQUIRE(
+            call("../../file.txt") == "/violet/subpath/file.txt"
+        );
+        REQUIRE(
+            call("../../../file.txt") == "/violet/file.txt"
+        );
+        REQUIRE(
+            call("../../../../file.txt") == "/violet/file.txt"
+        );
+        REQUIRE(
+            call("path/file.txt") == "/violet/subpath/subsubpath/subsubsubpath/path/file.txt"
+        );
+        REQUIRE(
+            call("deeper/path/file.txt") == "/violet/subpath/subsubpath/subsubsubpath/deeper/path/file.txt"
         );
     }
 }

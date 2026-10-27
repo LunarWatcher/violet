@@ -32,6 +32,7 @@ add_library(violetsrc STATIC
 
     violet/parsing/DateTimeParsing.cpp
     violet/parsing/Escaping.cpp
+    violet/parsing/LinkTranslate.cpp
     violet/parsing/Markdown.cpp
 
     violet/parsing/markdown/DocumentContext.cpp

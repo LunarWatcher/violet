@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/parsing/Escaping.hpp"
 #include <string>
 #include <sstream>
 
@@ -16,6 +17,22 @@ struct MarkdownFixture {
         ss << "/>";
         return ss.str();
     }
+
+    std::string url(const std::string& content, const std::string& url) {
+        std::stringstream ss;
+        for (auto ch : content) {
+            violet::htmlEscape(ch, ss);
+        }
+
+        auto actualContent = ss.str();
+
+        return std::format(
+            R"(<a href="{}">{}</a>)",
+            url,
+            actualContent
+        );
+    }
+
 };
 
 }

@@ -3,6 +3,6 @@
 
 int main(int argc, const char* argv[]) {
     auto sess = Catch::Session();
-    minilog::setLevel(minilog::Level::Debug);
+    // minilog::setLevel(minilog::Level::Debug);
     return sess.run(argc, argv);
 }

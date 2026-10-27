@@ -223,7 +223,8 @@ void FileManager::recursivelyIterateFiles(
             }
         } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
 
-        minilog::debug("Forwarding {} to file tree iterator", f.path().string());
+        // This gets very verbose on bigger sites
+        // minilog::debug("Forwarding {} to file tree iterator", f.path().string());
         if (!processor(f)) {
             break;
         }

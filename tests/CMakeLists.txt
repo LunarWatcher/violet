@@ -38,6 +38,7 @@ add_executable(tests
     # Regression tests are prefixed with the number of an associated issue (on Codeberg)
     src/parsing/markdown/regression/17-ListShapedListContent.cpp
     src/parsing/markdown/regression/18-CodeBlockCharactersEaten.cpp
+    src/parsing/markdown/regression/35-RelativeURLs.cpp
 
     src/utils/FileReader.cpp
 )

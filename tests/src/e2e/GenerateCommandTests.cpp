@@ -11,7 +11,7 @@ TEST_CASE_METHOD(tests::E2EFixture, "When a prefix is set and --prefix", "[e2e]"
 
     SECTION("is not passed on the command line") {
         run({
-            "generate", "-d"
+            "generate"
         });
         requireOutput();
 
@@ -20,7 +20,7 @@ TEST_CASE_METHOD(tests::E2EFixture, "When a prefix is set and --prefix", "[e2e]"
     }
     SECTION("is passed on the command line") {
         run({
-            "generate", "-d", "--prefix", "/trans-rights-are-human-rights"
+            "generate", "--prefix", "/trans-rights-are-human-rights"
         });
         requireOutput();
 
