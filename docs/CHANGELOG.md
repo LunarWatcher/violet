@@ -21,7 +21,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ### Fixed
 
-* Fixed a bug where 
+* Fixed a bug where relative URLs were reversed ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
 * Fixed a bug where out of source use of `--root` caused relative URLs to be entirely stripped
   * Technical: this was caused by `std::filesystem::relative` not working well with relative paths. If it gets a relative path, it treats it as relative to the current working directory, which won't be the root directory if `--root` is passed. This causes `std::filesystem::relative` to return an empty string
 
