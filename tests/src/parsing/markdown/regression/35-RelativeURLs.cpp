@@ -9,8 +9,17 @@ TEST_CASE_METHOD(tests::E2EFixture, "Relative URLs should not be butchered", "[e
             .withFile(
                 "sub/path/webp-url.md",
                 std::format(
-                    "Hello world! This is a {}\nAnd this is a decoy newline",
-                    createDebugMarker("relativeUrl", "[webp url](file.webp)")
+                    "Hello world! This is a {}\nAnd this is a decoy newline: {}",
+                    createDebugMarker("relativeUrl", "[webp url](file.webp)"),
+                    createDebugMarker("absoluteUrl", "[absolute](/)")
+                )
+            )
+            .withFile(
+                "toplevel.md",
+                std::format(
+                    "Hello world! This is a {}\nAnd this is a decoy newline: {}",
+                    createDebugMarker("relativeUrl", "[webp url](file.webp)"),
+                    createDebugMarker("absoluteUrl", "[absolute](/)")
                 )
             );
     };
@@ -26,17 +35,23 @@ TEST_CASE_METHOD(tests::E2EFixture, "Relative URLs should not be butchered", "[e
         REQUIRE(
             debug.at("relativeUrl") == url("webp url", "/sub/path/file.webp")
         );
+        REQUIRE(
+            debug.at("absoluteUrl") == url("absolute", "/")
+        );
     }
     SECTION("Non-empty prefix") {
         conf.prefix = "/prefix";
         before();
         autoBuild();
-        requireOutputFileExists("sub/path/webp-url.html");
+        requireOutputFileExists("toplevel.html");
 
         auto debug = getDebug(outputPath);
 
         REQUIRE(
             debug.at("relativeUrl") == url("webp url", "/prefix/sub/path/file.webp")
+        );
+        REQUIRE(
+            debug.at("absoluteUrl") == url("absolute", "/prefix/")
         );
     }
 }

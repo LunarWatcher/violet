@@ -416,6 +416,9 @@ All three standard link formats are implemented, as well as angle bracket links[
 # Named links
 [link text](https://example.com/inline)
 
+## Escaped links (new in 0.17.0)
+[link text](<https://example.com/inline-escaped(>)
+
 # Reference links
 [link text][link-ref]
 
@@ -431,6 +434,8 @@ All three standard link formats are implemented, as well as angle bracket links[
 Rendered (excl. headers):
 
 > [link text](https://example.com/inline)
+>
+> [link text](<https://example.com/inline-escaped(>)
 >
 > [link text][link-ref]
 >
@@ -460,6 +465,47 @@ Rendered:
 > [https://example.com](https://example.com)
 >
 > <https://example.com>
+
+### Escaped links
+
+EScaped links are a specialization of the `[]()` format where the parentheses include `<>` in them:
+
+```markdown
+[text](<url>)
+```
+
+This format allows for more flexible use of URLs that would otherwise be interpreted as markdown. For example, if you have a URL containing balanced parentheses, this is fine in standard named links:
+
+```markdown
+[text](https://en.wikipedia.org/wiki/Violet_(color))
+```
+
+Rendered:
+> [text](https://en.wikipedia.org/wiki/Violet_(color))
+
+If, however, you have a URL that only contains one `(`, or for example contains a `)` without a corresponding `(`, this is an invalid named URL. These are, however, valid escaped links:
+
+```markdown
+[text](<https://example.com/((((>)
+```
+
+Rendered:
+> [text](<https://example.com/((((>)
+
+Without escaped links in cases where balance isn't maintained in the URL, you'll get an error to this effect:
+
+````
+22:35:52.002 | error    | ErrorHandling.cpp:13     | Error: Unclosed URL. Hint: if your URL contains unbalanced parentheses and it's meant to be unbalanced, use an escaped link (`[text](<https://en.wikipedia.org/wiki/Violet_(color>)`). Otherwise, make sure you actually closed this URL correctly.
+Location:
+  [text](<https://example.com/((((>)
+  ```
+  
+  sauce: [text](https://example.com/((((>)
+  ~~~~~~~~~~~~~~^
+  
+  Rendered:
+Site generation failed. See error log
+````
 
 ## Horizontal rules
 

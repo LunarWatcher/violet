@@ -291,7 +291,7 @@ void Markdown::parseParagraphContent(
                 // [text][ref]
                 std::ignore /* open bracket */ = in.get();
 
-                std::stringstream urlOrRef;
+                std::stringstream ref;
                 while (in >> std::noskipws >> ch) {
                     if (ch == ']') {
                         break;
@@ -301,26 +301,50 @@ void Markdown::parseParagraphContent(
                             in.tellg()
                         );
                     }
-                    urlOrRef << ch;
+                    ref << ch;
                 }
                 node->urlType  = URLNode::Type::Reference;
-                node->urlOrRef = urlOrRef.str();
+                node->urlOrRef = ref.str();
             } else if (in.peek() == '(') {
                 // [text](url)
                 std::ignore /* open paren */ = in.get();
-                int start = in.tellg();
+                size_t start = in.tellg();
+                // This starts at 1 so we know whether the initial open has been closed or not
                 size_t internalParens = 1;
+
+                bool literalMode = false; // TODO: better name
+                char close = ')';
+                if (in.peek() == '<') { // [](<>)-style URLs
+                    in.get();
+                    close = '>';
+                    literalMode = true;
+                }
+
+                if (!in) {
+                    throw SyntaxError(
+                        "Unexpected end of file while parsing URL",
+                        start
+                    );
+                }
 
                 std::stringstream urlOrRef;
                 while (in >> std::noskipws >> ch) {
-                    if (ch == ')') {
+                    if (ch == close) {
                         --internalParens;
+                        if (literalMode) {
+                            auto ch = in.get();
+                            if (ch != ')') {
+                                throw SyntaxError(
+                                    "Invalid escaped URL: failed to find ')' after '>'.",
+                                    in.tellg()
+                                );
+                            }
+                        }
                         if (internalParens == 0) {
                             break;
                         }
-                    } else if (ch == '(') {
+                    } else if (ch == '(' && !literalMode) {
                         ++internalParens;
-                        std::cout << "found open, internalParens is now " << internalParens << std::endl;
                     } else if (ch == '\n') {
                         if (internalParens == 0) {
                             throw SyntaxError(
@@ -337,7 +361,7 @@ void Markdown::parseParagraphContent(
                 if (internalParens != 0) {
                     throw SyntaxError(
                         "Unclosed URL. Hint: if your URL contains unbalanced parentheses and it's meant to "
-                        "be unbalanced, manually URL-escape them with %28 for ( and %29 for ). Otherwise, make "
+                        "be unbalanced, use an escaped link (`[text](<https://en.wikipedia.org/wiki/Violet_(color>)`). Otherwise, make "
                         "sure you actually closed this URL correctly.",
                         start
                     );

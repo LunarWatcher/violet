@@ -44,8 +44,7 @@ std::string violet::projectBasedTranslator(
     ss << in;
     std::vector<std::string> segments;
 
-    auto firstSlash = in.find('/');
-    if (firstSlash != 0) {
+    if (!in.starts_with('/') && relSourceFilePath.string().contains('/')) {
         auto preSegments = relSourceFilePath.parent_path();
 
         // prepopulate segments with the path components
@@ -58,7 +57,7 @@ std::string violet::projectBasedTranslator(
             preSegments = preSegments.parent_path();
         }
 
-        if (segments.empty() && firstSlash != std::string::npos) {
+        if (segments.empty()) {
             [[unlikely]]
             throw FatalError(
                 std::format(

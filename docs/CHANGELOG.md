@@ -18,6 +18,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* URLs now support the `[text](<url>)` format (escaped links). This format is more permissive with what URLs are allowed, since `<>` are reserved characters that are always URL-encoded in a valid URL. See the [markdown spec](specs/Markdown spec.md) for more info
 
 ### Fixed
 

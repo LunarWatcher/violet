@@ -32,7 +32,7 @@ TEST_CASE_METHOD(tests::MarkdownFixture, "Parentheses in links should be handled
     SECTION("Unbalanced") {
         std::string err =
             "Unclosed URL. Hint: if your URL contains unbalanced parentheses and it's meant to "
-            "be unbalanced, manually URL-escape them with %28 for ( and %29 for ). Otherwise, make "
+            "be unbalanced, use an escaped link (`[text](<https://en.wikipedia.org/wiki/Violet_(color>)`). Otherwise, make "
             "sure you actually closed this URL correctly.";
         REQUIRE_THROWS_WITH(
             render(
@@ -64,6 +64,22 @@ TEST_CASE_METHOD(tests::MarkdownFixture, "Parentheses in links should be handled
             )
         );
     }
+}
+
+TEST_CASE_METHOD(tests::MarkdownFixture, "Literal URLs") {
+    REQUIRE(
+        render("[link](<https://en.wikipedia.org/wiki/Violet_(color>)")
+        ==
+        paragraph(
+            url("link", "https://en.wikipedia.org/wiki/Violet_(color")
+        )
+    );
+    REQUIRE_THROWS(
+        render("[link](<https://en.wikipedia.org/wiki/Violet_(color>")
+    );
+    REQUIRE_THROWS(
+        render("[link](<https://en.wikipedia.org/wiki/Violet_(color))")
+    );
 }
 
 }
