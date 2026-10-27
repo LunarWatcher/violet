@@ -14,11 +14,7 @@ public:
     SyntaxError(
         std::string&& msg,
         size_t offset
-    ) : msg(std::format(
-            "{}\nNear byte:\n{}",
-            msg,
-            offset
-        )),
+    ) : msg(std::move(msg)),
         offset(offset) {}
 
     const char * what() const noexcept override {

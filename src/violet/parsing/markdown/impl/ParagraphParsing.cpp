@@ -287,14 +287,13 @@ void Markdown::parseParagraphContent(
             }
         } else if (out->type == NodeType::Anchor && ch == ']') {
             auto node = static_cast<URLNode*>(out);
-            if (in.peek() == '[' || in.peek() == '(') {
-                // [text][ref] or [text](url)
-                auto open = in.get();
-                auto close = open == '[' ? ']' : ')';
+            if (in.peek() == '[') {
+                // [text][ref]
+                std::ignore /* open bracket */ = in.get();
 
                 std::stringstream urlOrRef;
                 while (in >> std::noskipws >> ch) {
-                    if (ch == close) {
+                    if (ch == ']') {
                         break;
                     } else if (ch == '\n') {
                         throw SyntaxError(
@@ -304,8 +303,47 @@ void Markdown::parseParagraphContent(
                     }
                     urlOrRef << ch;
                 }
-                node->urlType  = open == '(' ? URLNode::Type::Standard                  : URLNode::Type::Reference;
-                node->urlOrRef = open == '(' ? context.linkTranslator(urlOrRef.str()) : urlOrRef.str();
+                node->urlType  = URLNode::Type::Reference;
+                node->urlOrRef = urlOrRef.str();
+            } else if (in.peek() == '(') {
+                // [text](url)
+                std::ignore /* open paren */ = in.get();
+                int start = in.tellg();
+                size_t internalParens = 1;
+
+                std::stringstream urlOrRef;
+                while (in >> std::noskipws >> ch) {
+                    if (ch == ')') {
+                        --internalParens;
+                        if (internalParens == 0) {
+                            break;
+                        }
+                    } else if (ch == '(') {
+                        ++internalParens;
+                        std::cout << "found open, internalParens is now " << internalParens << std::endl;
+                    } else if (ch == '\n') {
+                        if (internalParens == 0) {
+                            throw SyntaxError(
+                                "Unclosed URL",
+                                start
+                            );
+                        } else {
+                            // It's deceptively difficult to tell if the next character is EOF for whatever fucking reason
+                            break;
+                        }
+                    }
+                    urlOrRef << ch;
+                }
+                if (internalParens != 0) {
+                    throw SyntaxError(
+                        "Unclosed URL. Hint: if your URL contains unbalanced parentheses and it's meant to "
+                        "be unbalanced, manually URL-escape them with %28 for ( and %29 for ). Otherwise, make "
+                        "sure you actually closed this URL correctly.",
+                        start
+                    );
+                }
+                node->urlType  = URLNode::Type::Standard;
+                node->urlOrRef = context.linkTranslator(urlOrRef.str());
             } else {
                 node->urlType = URLNode::Type::Reference;
                 node->urlOrRef = content.str();

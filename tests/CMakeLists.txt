@@ -31,6 +31,7 @@ add_executable(tests
     src/parsing/markdown/HorizontalRuleTests.cpp
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp
+    src/parsing/markdown/LinkTests.cpp
     src/parsing/markdown/StrikeTests.cpp
     src/parsing/markdown/TemplateParsing.cpp
     src/parsing/markdown/ToCGenerationTests.cpp

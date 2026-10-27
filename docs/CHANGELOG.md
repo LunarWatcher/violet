@@ -24,6 +24,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Fixed a bug where relative URLs were reversed ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
 * Fixed a bug where out of source use of `--root` caused relative URLs to be entirely stripped
   * Technical: this was caused by `std::filesystem::relative` not working well with relative paths. If it gets a relative path, it treats it as relative to the current working directory, which won't be the root directory if `--root` is passed. This causes `std::filesystem::relative` to return an empty string
+* Allow markdown URLs to contain balanced parentheses
+  * This allows URLs like `https://en.wikipedia.org/wiki/Violet_(color)` to be pasted directly (render: [url](https://en.wikipedia.org/wiki/Violet_(color))) ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
+  * If the parentheses are unbalanced, violet throws a slightly more useful error message. This is because spaces are allowed inside the URLs to allow for markdown file links where the source files have spaces in the name.
 
 ## [v0.16.1] (2026-10-26)
 

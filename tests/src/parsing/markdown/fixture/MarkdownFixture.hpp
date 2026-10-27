@@ -1,6 +1,7 @@
 #pragma once
 
 #include "violet/parsing/Escaping.hpp"
+#include "violet/parsing/Markdown.hpp"
 #include <string>
 #include <sstream>
 
@@ -32,7 +33,15 @@ struct MarkdownFixture {
             actualContent
         );
     }
+    std::string paragraph(const std::string& content) {
+        return std::format("<p>{}</p>", content);
+    }
 
+    std::string render(const std::string& content) {
+        std::stringstream ss;
+        ss << content;
+        return violet::Markdown::parse(ss);
+    }
 };
 
 }
