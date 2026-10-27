@@ -31,7 +31,6 @@ std::string violet::projectBasedTranslator(
     // to. Specifically, std::filesystem::relative(p, ...) fails when `p` is relative, and is NOT relative to the
     // current working directory. If `--root` is passed, `projectRoot` creates `relSourceFilePaths` that do not exist
     // relative to the current working directory, thereby causing `std::filesystem::relative to return an empty string
-    const auto absSourceFilePath = projectRoot / relSourceFilePath;
     if (
         in.starts_with("//")
         || in.starts_with("http://")
@@ -48,11 +47,7 @@ std::string violet::projectBasedTranslator(
 
     auto firstSlash = in.find('/');
     if (firstSlash != 0) {
-        auto preSegments = std::filesystem::relative(
-            absSourceFilePath.parent_path(),
-            projectRoot
-        );
-        std::string preSegmentsInitial = preSegments.string();
+        auto preSegments = relSourceFilePath.parent_path();
 
         // prepopulate segments with the path components
         // This is based on the source file's path, so this is safe
@@ -68,17 +63,15 @@ std::string violet::projectBasedTranslator(
             [[unlikely]]
             throw FatalError(
                 std::format(
-                    "URL translation got suspicious results.\n"
+                    "URL translation got suspicious results: segments is empty, but source path has slashes.\n"
                     "URL attempted translated: \"{}\"\n"
                     "Project root: {}\n"
                     "Working directory: {}\n"
-                    "Relative file source path: {}\n"
-                    "Computed preSegments before loop: {}\n",
+                    "relSourceFilePath being parsed: {}\n",
                     in,
                     projectRoot.string(),
                     std::filesystem::current_path().string(),
-                    relSourceFilePath.string(),
-                    preSegmentsInitial
+                    relSourceFilePath.string()
                 )
             );
         }
