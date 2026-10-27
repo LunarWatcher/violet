@@ -31,7 +31,6 @@ private:
     );
 
     bool processFile(
-        const std::filesystem::path& rootDir,
         const std::filesystem::path& relPath
     );
 
@@ -68,7 +67,6 @@ private:
      */
     std::optional<bool> processFileIfFrontmatterIsPresent(
         const std::filesystem::path& file,
-        const std::filesystem::path& rootDir,
         const std::filesystem::path& relPath
     );
 public:

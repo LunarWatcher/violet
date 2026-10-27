@@ -7,7 +7,6 @@
 
 std::string violet::projectBasedTranslator(
     const std::string& pathPrefix,
-    const std::filesystem::path& projectRoot,
     const std::filesystem::path& relSourceFilePath,
     const std::string& in
 ) {
@@ -65,12 +64,8 @@ std::string violet::projectBasedTranslator(
                 std::format(
                     "URL translation got suspicious results: segments is empty, but source path has slashes.\n"
                     "URL attempted translated: \"{}\"\n"
-                    "Project root: {}\n"
-                    "Working directory: {}\n"
                     "relSourceFilePath being parsed: {}\n",
                     in,
-                    projectRoot.string(),
-                    std::filesystem::current_path().string(),
                     relSourceFilePath.string()
                 )
             );

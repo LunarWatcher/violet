@@ -394,7 +394,6 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                 std::bind(
                     projectBasedTranslator,
                     this->man.cfg.prefix,
-                    this->man.opts.root,
                     fm.internalPath,
                     std::placeholders::_1
                 )

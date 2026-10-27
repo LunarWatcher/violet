@@ -163,7 +163,6 @@ void SiteGenerator::handleTemplatesAndSave(
 }
 
 bool SiteGenerator::processFile(
-    const std::filesystem::path& rootDir,
     const std::filesystem::path& relPath
 ) {
     minilog::debug("Now reading {}", relPath.string());
@@ -209,7 +208,6 @@ bool SiteGenerator::processFile(
                     std::bind(
                         projectBasedTranslator,
                         this->cfg.prefix,
-                        rootDir,
                         relPath,
                         std::placeholders::_1
                     ),
@@ -268,7 +266,6 @@ bool SiteGenerator::processFile(
 
 std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
     const std::filesystem::path& file,
-    const std::filesystem::path& rootDir,
     const std::filesystem::path& relPath
 ) {
     // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 4
@@ -300,7 +297,6 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
 
     // At this point, we have something frontmatter-shaped.
     return processFile(
-        rootDir,
         relPath
     );
 }
@@ -362,12 +358,11 @@ bool SiteGenerator::generate() {
                     return success;
                 }
 
-                success &= processFile(rootDir, relPath);
+                success &= processFile(relPath);
                 return success;
             } else if (ext == ".html") {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
-                    rootDir,
                     relPath
                 );
                 if (result.has_value()) {
@@ -377,7 +372,6 @@ bool SiteGenerator::generate() {
             } else if (ext == ".atom" || ext == ".xml" || ext == ".rss") {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
-                    rootDir,
                     relPath
                 );
                 if (result.has_value()) {
@@ -387,7 +381,6 @@ bool SiteGenerator::generate() {
             } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
                 auto result = processFileIfFrontmatterIsPresent(
                     p,
-                    rootDir,
                     relPath
                 );
                 if (result.has_value()) {
@@ -395,7 +388,7 @@ bool SiteGenerator::generate() {
                     return success;
                 }
             } else if (ext == ".in") {
-                success &= processFile(rootDir, relPath);
+                success &= processFile(relPath);
                 return success;
             }
             fileManager.copyRaw(rootDir, relPath, relPath);
