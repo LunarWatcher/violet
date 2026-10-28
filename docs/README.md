@@ -58,6 +58,17 @@ My [personal website](https://lunarwatcher.codeberg.page/) was the motivation be
 
 If you use Violet in an open-source website, consider adding the topic to your repo so it's more easily discoverable. There's also a [webring for violet sites](https://lunarwatcher.codeberg.page/violet-webring/), also built on violet.
 
+## Installation
+
+The recommended installation method is using the install script:
+```bash
+curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.sh | bash
+# Or for a prerelease version (warning: may be unstable):
+VIOLET_NIGHTLY=true curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.sh | bash
+```
+
+For manual install instructions, as well as alternate installation methods, see [the installation section in the getting started guide](/Getting started.md#installation)
+
 ## Getting started
 
 See [Getting started](/Getting started.md)

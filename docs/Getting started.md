@@ -9,7 +9,6 @@
 
 ## Installation
 
-
 ### From source
 
 See [the build guide](/build.md) for instructions on manually installing violet, as well as which dependencies you need.
@@ -18,6 +17,8 @@ If you prefer not running the commands by hand, there's an install script you ca
 
 ```bash
 curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.sh | bash
+# Or for a prerelease version (warning: may be unstable):
+VIOLET_NIGHTLY=true curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.sh | bash
 ```
 
 > [!note]
@@ -26,13 +27,15 @@ curl https://codeberg.org/LunarWatcher/violet/raw/branch/master/scripts/install.
 
 ### pkgbuild (Arch)
 
-At the time of writing, [AUR is in lockdown](https://lists.archlinux.org/archives/list/aur-general@lists.archlinux.org/thread/L7FYPMAMJOWCMXCCPHUFVQDJQT7TZX67/), and as I do not have an account, I cannot create the AUR listing. 
+At the time of writing, [AUR is in lockdown](https://lists.archlinux.org/archives/list/aur-general@lists.archlinux.org/thread/L7FYPMAMJOWCMXCCPHUFVQDJQT7TZX67/), and as I do not have an account, I cannot create the AUR listing.
 
-The [PKGBUILD template file is available on codeberg](https://codeberg.org/LunarWatcher/violet/src/branch/master/PKGBUILD), and should work manually still.
+That said, violet provides a [PKGBUILD template file](https://codeberg.org/LunarWatcher/violet/src/branch/master/PKGBUILD) that can be installed by hand. Once AUR re-enables registration, this package will become available there.
 
-### From GitHub
+### Precompiled binaries
 
-On GitHub releases, you can find [precompiled binaries for x86_64 Linux](https://github.com/LunarWatcher/violet/releases). These are primarily intended for use with GitHub Actions, but should work on most systems that meets violet's requirements.
+On GitHub releases, you can find [precompiled binaries for x86_64 Linux](https://github.com/LunarWatcher/violet/releases). These are primarily intended for use with GitHub Actions, but should work on most systems that meet violet's requirements.
+
+At this time, precompiled binaries are not readily available due to difficulty in compiling and hosting said binaries.
 
 ## Setting up a project
 
