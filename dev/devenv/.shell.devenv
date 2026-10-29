@@ -10,7 +10,7 @@ function gen-docs() {
     fi
 
     pushd "${git_root}/docs"
-    "${violet_root}/bin/violet generate -d -p /"
+    "${violet_root}/bin/violet" generate -d -p /
     popd
 }
 
@@ -22,7 +22,7 @@ function gen-docs-local() {
     fi
 
     pushd "${git_root}/docs"
-    "${violet_root}/bin/violet generate -d -l"
+    "${violet_root}/bin/violet" generate -d -l
     popd
 }
 
