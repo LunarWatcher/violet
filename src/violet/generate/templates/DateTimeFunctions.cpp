@@ -1,9 +1,8 @@
 #include  "DateTimeFunctions.hpp"
-#include "violet/exceptions/FileParsingException.hpp"
+#include "iris/exceptions.hpp"
 #include "violet/generate/templates/DateTimeFunctions.hpp"
 #include "violet/generate/templates/IrisManager.hpp"
 #include "violet/parsing/DateTimeParsing.hpp"
-#include <format>
 #include <chrono>
 
 namespace violet {
@@ -35,6 +34,13 @@ iris::DataObject DateTimeFunctions::parseDate(iris::Arguments& args) {
 }
 
 iris::DataObject DateTimeFunctions::formatDate(iris::Arguments& args) {
+    if (!args.at(0)->is_int()) {
+        throw iris::ContextlessRenderError(
+            "user", // TODO: temporary, iris should provide better types
+            "formatDate() requires that the first arg is a number, but got a string. "
+            "If you have a string source date, use parseDate() on the string to convert it"
+        );
+    }
     auto timestamp = args.at(0)->get<iris::Int>();
     auto fmt = args.at(1)->get<iris::String>();
     std::string timezone = man.cfg.timezone;
@@ -45,18 +51,7 @@ iris::DataObject DateTimeFunctions::formatDate(iris::Arguments& args) {
         throw std::runtime_error("formatDate takes 2 or 3 arguments, but got 4");
     }
 
-    auto tp = std::chrono::zoned_time(
-        timezone,
-        std::chrono::system_clock::time_point(
-            std::chrono::seconds(timestamp)
-        )
-    );
-    return std::vformat(
-        "{:" + fmt + "}",
-        std::make_format_args(
-            tp
-        )
-    );
+    return ::violet::formatDate(timestamp, fmt, timezone);
 }
 
 }

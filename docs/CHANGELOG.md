@@ -18,6 +18,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.17.0] (2026-10-29)
+
 ### Added
 
 * URLs now support the `[text](<url>)` format (escaped links). This format is more permissive with what URLs are allowed, since `<>` are reserved characters that are always URL-encoded in a valid URL. See the [markdown spec](specs/Markdown spec.md) for more info
@@ -31,6 +33,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
   * This allows URLs like `https://en.wikipedia.org/wiki/Violet_(color)` to be pasted directly (render: [url](https://en.wikipedia.org/wiki/Violet_(color))) ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
   * If the parentheses are unbalanced, violet throws a slightly more useful error message. This is because spaces are allowed inside the URLs to allow for markdown file links where the source files have spaces in the name.
 * Fixed a smol bug that caused rendered markdown syntax errors to show a slight offset in the arrow pointing to a (most of the time) relevant-ish character that's at least related to the problem
+* Timezone-less dates and timestamps are now parsed relative to `site.timezone` instead of UTC ([#31](https://codeberg.org/LunarWatcher/violet/issues/31))
+  * A frontmatter containing `"date": "2026-10-29"` and `"date": "2026-10-29T00:00:00"` would, before this change, evaluate to midnight UTC rather than midnight in `site.timezone`. You can verify this with `{{ formatDate(parseDate("2026-10-29", "%F"), violet.datetime.iso) }}`. Assuming you have a timezone set, it should render as midnight in your site's timezone rather than before midnight. 
+
+    As an example with actual numbers, before this change, that date would render as `2026-10-29T01:00:00+01:00` instead of `2026-10-29:00:00:00+01:00` in `Europe/Oslo`, because midnight UTC is 01:00 in +01:00
 
 ## [v0.16.1] (2026-10-26)
 
@@ -312,7 +318,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.1...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...master
+[v0.17.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.1...v0.17.0
 [v0.16.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...v0.16.0
 [v0.15.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.14.0...v0.15.0

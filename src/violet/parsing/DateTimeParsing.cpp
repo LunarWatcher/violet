@@ -3,6 +3,8 @@
 #include <chrono>
 #include <sstream>
 #include "violet/exceptions/FileParsingException.hpp"
+#include "violet/conf/Config.hpp"
+#include <format>
 
 int64_t violet::parseDate(
     const std::string& raw,
@@ -10,19 +12,37 @@ int64_t violet::parseDate(
 ) {
     std::stringstream ss;
     ss << raw;
-    std::chrono::system_clock::time_point timestamp;
 
-    if (!(ss >> std::chrono::parse(format, timestamp))) {
-        throw FileParsingException(
-            std::format(
-                "Failed to parse date \"{}\" with format {}",
-                raw, format
-            )
-        );
+    if (format.contains("%z") || format.contains("%Z")) {
+        std::chrono::system_clock::time_point timestamp;
+        if (!(ss >> std::chrono::parse(format, timestamp))) {
+            throw FileParsingException(
+                std::format(
+                    "Failed to parse date \"{}\" with format {}",
+                    raw, format
+                )
+            );
+        }
+        return std::chrono::duration_cast<std::chrono::seconds>(
+            timestamp.time_since_epoch()
+        ).count();
+    } else {
+        std::chrono::local_seconds timestamp;
+
+        if (!(ss >> std::chrono::parse(format, timestamp))) {
+            throw FileParsingException(
+                std::format(
+                    "Failed to parse date \"{}\" with format {}",
+                    raw, format
+                )
+            );
+        }
+
+        std::chrono::zoned_time t { Config::timezone, timestamp };
+        return std::chrono::duration_cast<std::chrono::seconds>(
+            t.get_sys_time().time_since_epoch()
+        ).count();
     }
-
-    return std::chrono::duration_cast<std::chrono::seconds>(timestamp.time_since_epoch())
-        .count();
 }
 
 int64_t violet::parseISO8601(const std::string& raw) {
@@ -57,4 +77,19 @@ int64_t violet::parseISO8601(const std::string& raw) {
     }
 
     return parseDate(raw, format);
+}
+
+std::string violet::formatDate(int64_t ts, const std::string& fmt, const std::string& tz) {
+    auto tp = std::chrono::zoned_time(
+        tz,
+        std::chrono::system_clock::time_point(
+            std::chrono::seconds(ts)
+        )
+    );
+    return std::vformat(
+        "{:" + fmt + "}",
+        std::make_format_args(
+            tp
+        )
+    );
 }

@@ -21,7 +21,9 @@ struct Config {
     std::optional<std::string> theme = "_default";
     iris::Object data = {};
 
-    std::string timezone = "Etc/GMT";
+    // Note: This is temporarily static until we can shed nlohmann/json to pass the timezone in directly where
+    // appropriate. This being static is a workaround until then
+    static inline std::string timezone = "Etc/GMT";
 
     int tocStartLevel = 2;
 

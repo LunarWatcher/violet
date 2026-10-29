@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/conf/Config.hpp"
 #include "violet/conf/Frontmatter.hpp"
 namespace tests {
 

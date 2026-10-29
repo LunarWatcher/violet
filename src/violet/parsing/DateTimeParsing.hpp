@@ -19,4 +19,6 @@ extern int64_t parseDate(
  */
 extern int64_t parseISO8601(const std::string& input);
 
+extern std::string formatDate(int64_t ts, const std::string& fmt, const std::string& tz);
+
 }

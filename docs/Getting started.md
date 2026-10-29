@@ -136,7 +136,7 @@ jobs:
   deploy:
     # Violet requires a version of GCC not yet offered by ubuntu 24 (which is ubuntu-latest),
     # so we need to use ubuntu:latest, which paradoxically is newer than
-    # ubuntu-latest. 
+    # ubuntu-latest.
     # GitHub Actions, brought to you by Microslop
     runs-on: ubuntu-24.04
     container: ubuntu:latest
