@@ -42,9 +42,9 @@ The frontmatter schema is used when you write the schema itself, while the `page
 Both `date` and `last_modified` are parsed using the ISO 8601 standard. Specifically, the following formats are supported:
 
 * `2026-01-01`
-  * Parses time to midnight and timezone to UTC
+  * Parses time to midnight and timezone to `site.timezone` (default UTC if no site-wide timezone is set)
 * `2026-01-01T00:00:00`
-  * parses the timezone to UTC implicitly
+  * parses the timezone to `site.timezone`
 * `2026-01-01T00:00:00Z`
   * parses the timezone to UTC explicitly
 * `2026-01-01T00:00:00+02:00`
