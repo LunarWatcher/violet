@@ -18,31 +18,32 @@ enum class NodeType {
     Template = 3,
 
     // Root nodes
-    Paragraph = 4,
-    CodeBlock = 5,
-    Quote = 6,
-    Callout = 7,
-    UnorderedList = 8,
-    OrderedList = 9,
-    Header = 10,
-    AnchorDef = 11,
-    FootnoteDef = 12,
+    Paragraph = 10,
+    CodeBlock = 11,
+    Quote = 12,
+    Callout = 13,
+    UnorderedList = 14,
+    OrderedList = 15,
+    Header = 16,
+    AnchorDef = 17,
+    FootnoteDef = 18,
 
     // Span styles
-    Bold = 13,
-    Italic = 14,
-    BoldItalic = 15,
-    InlineCode = 16,
-    Anchor = 17,
-    Footnote = 18,
-    Strike = 19,
+    Bold = 100,
+    Italic = 101,
+    BoldItalic = 102,
+    InlineCode = 103,
+    Anchor = 104,
+    Footnote = 105,
+    Strike = 106,
+    Del = 107,
 
-    UnorderedListEntry = 20,
-    UnorderedListChecklistEntry = 21,
-    OrderedListEntry = 22,
+    UnorderedListEntry = 200,
+    UnorderedListChecklistEntry = 201,
+    OrderedListEntry = 202,
 
-    Image = 23,
-    HorizontalRule = 24,
+    Image = 300,
+    HorizontalRule = 301,
 };
 
 struct DOMTree {

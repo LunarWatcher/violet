@@ -23,6 +23,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Added
 
 * URLs now support the `[text](<url>)` format (escaped links). This format is more permissive with what URLs are allowed, since `<>` are reserved characters that are always URL-encoded in a valid URL. See the [markdown spec](specs/Markdown spec.md) for more info
+* Added syntax for `<del>` tags (`~~~text~~~`; rendered: ~~~text~~~). `~~strike~~` still renders as `<s>strike</s>`
 
 ### Fixed
 
@@ -34,7 +35,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
   * If the parentheses are unbalanced, violet throws a slightly more useful error message. This is because spaces are allowed inside the URLs to allow for markdown file links where the source files have spaces in the name.
 * Fixed a smol bug that caused rendered markdown syntax errors to show a slight offset in the arrow pointing to a (most of the time) relevant-ish character that's at least related to the problem
 * Timezone-less dates and timestamps are now parsed relative to `site.timezone` instead of UTC ([#31](https://codeberg.org/LunarWatcher/violet/issues/31))
-  * A frontmatter containing `"date": "2026-10-29"` and `"date": "2026-10-29T00:00:00"` would, before this change, evaluate to midnight UTC rather than midnight in `site.timezone`. You can verify this with `{{ formatDate(parseDate("2026-10-29", "%F"), violet.datetime.iso) }}`. Assuming you have a timezone set, it should render as midnight in your site's timezone rather than before midnight. 
+  * A frontmatter containing `"date": "2026-10-29"` and `"date": "2026-10-29T00:00:00"` would, before this change, evaluate to midnight UTC rather than midnight in `site.timezone`. You can verify this with `{{ formatDate(parseDate("2026-10-29", "%F"), violet.datetime.iso) }}`. Assuming you have a timezone set, it should render as midnight in your site's timezone rather than before midnight.
 
     As an example with actual numbers, before this change, that date would render as `2026-10-29T01:00:00+01:00` instead of `2026-10-29:00:00:00+01:00` in `Europe/Oslo`, because midnight UTC is 01:00 in +01:00
 

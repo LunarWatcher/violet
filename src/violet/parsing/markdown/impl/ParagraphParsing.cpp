@@ -382,11 +382,23 @@ void Markdown::parseParagraphContent(
 
             commitContentNode(content, out);
 
-            if (out->type == NodeType::Strike) {
+            auto type = NodeType::Strike;
+
+            if (in.peek() == '~') {
+                in.get(); // consume peeked ~
+                type = NodeType::Del;
+            }
+
+            if (out->type == type) {
                 break;
             }
 
-            auto* node = new StrikeNode();
+            DOMTree* node;
+            if (type == NodeType::Strike) {
+                node = new StrikeNode();
+            } else {
+                node = new DelNode();
+            }
             out->addChild(node);
             parseParagraphContent(
                 in,

@@ -109,6 +109,9 @@ static void stringifyTreeImpl(
     case Markdown::NodeType::Strike: {
         ss << "<s>";
     } break;
+    case Markdown::NodeType::Del: {
+        ss << "<del>";
+    } break;
     default:
         break;
     }
@@ -201,6 +204,9 @@ static void stringifyTreeImpl(
         break;
     case Markdown::NodeType::Strike: {
         ss << "</s>";
+    } break;
+    case Markdown::NodeType::Del: {
+        ss << "</del>";
     } break;
     default:
         break;

@@ -205,9 +205,11 @@ In v1, this is not going to be supported. However, you can bypass this with some
 
 Supporting mixed emphasis with three opens is a goal eventually, but not right now. The space variants will always be supported.
 
-## Strike
+## Strike and del
 
-Striking out text is implemented with `~~strike~~` (~~strike~~). This is rendered as `<s>strike</s>`. If you need `<del>` specifically, use the raw HTML tag.
+Striking out text is implemented with `~~strike~~` (~~strike~~). This is rendered as `<s>strike</s>`.
+
+If you need to use `<del>` specifically (which has a slightly different [semantic meaning in HTML](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/del)), this is also implemented as markdown (added in 0.17.0). Use `~~~del~~~` (~~~del~~~) to get `<del>strike</del>`.
 
 ## Footnotes
 
@@ -319,6 +321,10 @@ Each level of the list is indented by precisely two spaces. Similarly, content c
   * With sub-bullet
     1. with sub-numbered list
 ```
+
+> [!note]
+>
+> List items currently always render with `<li><p></p></li>`, even if there's just one line/paragraph in the source markdown.
 
 ### Checklists
 
