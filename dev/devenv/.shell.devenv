@@ -1,0 +1,35 @@
+# -*- mode: shell[bash] -*-
+
+git_root=$(git rev-parse --show-toplevel)
+
+function gen-docs() {
+    violet_root="$(pwd)"
+    if ! make -j $(nproc); then
+        echo "Build failed"
+        return 1
+    fi
+
+    pushd "${git_root}/docs"
+    "${violet_root}/bin/violet generate -d -p /"
+    popd
+}
+
+function gen-docs-local() {
+    violet_root="$(pwd)"
+    if ! make -j $(nproc); then
+        echo "Build failed"
+        return 1
+    fi
+
+    pushd "${git_root}/docs"
+    "${violet_root}/bin/violet generate -d -l"
+    popd
+}
+
+function publish() {
+    "${git_root}/scripts/publish.sh"
+}
+
+function genpkg() {
+    "${git_root}/scripts/pkgbuild-gen.sh"
+}

@@ -67,6 +67,19 @@ All it does is run the same build and tests that you may have already done, but 
 
 It does this twice, once for your default compiler, and once for clang, because clang runs different checks. Basically just hedging that one of two compilers should be able to pick up problems.
 
+### Development utils
+
+Some dev utils have been added in `dev/devenv/.shell.devenv`. You can either source it manually, or use [`umbra devenv`](https://codeberg.org/LunarWatcher/umbra) to load it. This file primarily contains utilities meant for stuff like generating the docs, because the command for it is kinda shit. It also contains maintainer-only commands like `publish`, which is meant to save a few characters over `../scripts/publish.sh`.
+
+This script does not help with general setup of CMake or similar.
+
+The available commands are:
+
+* `gen-docs`: must be run from the build directory. Used to run violet to generate violet's docs for local preview. Note that this command uses `-p /` to be valid with [firefox local mode](https://firefox-source-docs.mozilla.org/devtools-user/local_mode/index.html)
+  * `gen-docs-local`: Alternative version of `gen-docs` that passes `-l` to generate. Useful if you don't use firefox and can't use the local 
+* `publish`: **Maintainer only**. Runs `publish.sh`
+* `genpkg`: Runs `pkgbuild-gen.sh`
+
 ## Naming conventions
 
 ### Enum values and constants
