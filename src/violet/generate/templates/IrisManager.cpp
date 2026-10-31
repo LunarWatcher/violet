@@ -85,7 +85,8 @@ std::string IrisManager::renderPage(
             if (fm.internalFileType == ProcessedFileType::Xml) {
                 return env.render(
                     fileContent,
-                    context
+                    context,
+                    (void*) &context
                 );
             } else {
                 throw iris::CallbackError(
@@ -101,12 +102,14 @@ std::string IrisManager::renderPage(
         env.include_template("content", content);
         return env.render_file(
             *templateLocation,
-            context
+            context,
+            (void*) &context
         );
     } else {
         return env.render(
             fileContent,
-            context
+            context,
+            (void*) &context
         );
     }
 }

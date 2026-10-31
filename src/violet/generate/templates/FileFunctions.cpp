@@ -488,9 +488,11 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
         throw iris::CallbackError("Illegal value of internalFileType injected");
     }
 
+    auto context = this->man.buildCommonContext(safeFm);
     res.content = this->man.env.render(
         rawContent,
-        this->man.buildCommonContext(safeFm)
+        context,
+        &context
     );
 
     return res;
