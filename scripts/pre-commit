@@ -8,7 +8,7 @@ cd "$git_root"
 build() {
     # rm CMakeCache.txt
 
-    if ! cmake .. -DCMAKE_BUILD_TYPE=Debug -DVIOLET_SANITISE=ON -DVIOLET_WARNINGS_ARE_ERRORS=OFF -DVIOLET_CLANG_TIDY=ON; then
+    if ! cmake .. -DCMAKE_BUILD_TYPE=Debug -DVIOLET_SANITISE=ON -DVIOLET_WARNINGS_ARE_ERRORS=ON -DVIOLET_CLANG_TIDY=ON; then
         echo "Failed to run CMake setup!"
         exit 1
     fi
