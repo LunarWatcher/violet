@@ -66,7 +66,7 @@ Must be set to one of the values in the global variable `violet.sort`. See [the 
 Similar to `listPages`, but returns an object in the following format:
 ```json
 {
-    "folder_name": "Folder name (or README page title)",
+    "folder_name": "folder_name",
     "items": [ { ...frontmatter } ],
     "subfolders": [
         {
@@ -81,6 +81,8 @@ Similar to `listPages`, but returns an object in the following format:
 ```
 
 Where:
+* `folder_name` is a string with the folder name, or null of treePages was run in the site root.
+  * The site root folder name is always excluded, because it's assumed that all sites have an index, while that isn't guaranteed for subfolders within a site. Additionally, due to worktrees or just internal folder name prefs, there's no guarantee that the folder name for the site is going to be stable or even public.
 * `items` is an array of the pages for the provided context, with the exception of `index.html` (index.md/README.md)
 * `subfolders` is an array of subfolders in the provided context. The values are more of the same object currently being described
 * `index`: `index.md`/`README.md`'s frontmatter, or null if the section doesn't have an index file.

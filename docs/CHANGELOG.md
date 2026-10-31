@@ -53,6 +53,10 @@ This release has breaking changes:
   }
   ```
 
+### Fixed
+
+* BREAKING (templates): `treePages` no longer returns empty intermediate steps if `treePages` is used outside the site root. 
+
 ## [v0.17.0] (2026-10-29)
 
 ### Added

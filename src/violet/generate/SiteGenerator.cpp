@@ -347,17 +347,6 @@ bool SiteGenerator::generate() {
             auto ext = p.extension();
 
             if (ext == ".md") {
-
-                if (
-                    p.filename() == "README.md"
-                    && std::filesystem::is_regular_file(
-                        p.parent_path() / "index.md"
-                    )
-                ) {
-                    // index.md takes precedence, so skip README
-                    return success;
-                }
-
                 success &= processFile(relPath);
                 return success;
             } else if (ext == ".html") {

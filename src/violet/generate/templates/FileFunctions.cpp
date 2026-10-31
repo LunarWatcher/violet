@@ -200,9 +200,14 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
-    path /= scope;
+    path = std::filesystem::weakly_canonical(path / scope);
 
     TreePagesData root;
+
+    if (std::filesystem::weakly_canonical(man.fileManager.getRootFolder()) != path) {
+        root.folder_name = path.filename();
+    }
+    
     bool hasFiles = false;
     man.fileManager.recursivelyIterateFiles(
         path,
@@ -216,9 +221,16 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
             ) {
                 return true;
             }
+            // This path must only be used for accessing the frontmatter
             auto filePath = std::filesystem::relative(
                 entryPath,
                 man.fileManager.getRootFolder()
+            );
+            // This past must only be used for deriving the relative path to the frontmatter, i.e. determining where
+            // things go in the output object
+            auto rootRelativePath = std::filesystem::relative(
+                entryPath,
+                path
             );
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
@@ -233,8 +245,8 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
 
             TreePagesData* next = &root;
 
-            if (filePath.has_parent_path()) {
-                for (auto& segment : filePath.parent_path()) {
+            if (rootRelativePath.has_parent_path()) {
+                for (auto& segment : rootRelativePath.parent_path()) {
                     if (!next->subfolders.contains(segment)) {
                         next->subfolders[segment] = TreePagesData{
                             segment
@@ -245,12 +257,6 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
             }
 
             if (filePath.filename() == "README.md" || filePath.filename() == "index.md") {
-                if (
-                    filePath.filename() == "README.md"
-                    && std::filesystem::exists(filePath.parent_path() / "index.md")
-                ) {
-                    return true;;
-                }
                 (*next).index = metadata.frontmatter;
             } else {
                 (*next).items.push_back(metadata.frontmatter);

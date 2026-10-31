@@ -221,6 +221,15 @@ void FileManager::recursivelyIterateFiles(
             ) {
                 continue;
             }
+
+            if (
+                p.filename() == "README.md"
+                && std::filesystem::is_regular_file(
+                    p.parent_path() / "index.md"
+                )
+            ) {
+                continue;
+            }
         } // For now, skip anything that isn't a normal file. This screws symlinks, but I see that as acceptable.
 
         // This gets very verbose on bigger sites

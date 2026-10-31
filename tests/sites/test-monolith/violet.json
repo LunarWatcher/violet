@@ -1,0 +1,10 @@
+{
+    "name": "test site",
+    "description": "used for unit and integration tests",
+    "exclude": [
+        "secrets"
+    ],
+    "data": {
+        "m_key": 69420
+    }
+}

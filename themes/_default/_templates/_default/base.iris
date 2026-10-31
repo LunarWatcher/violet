@@ -13,7 +13,7 @@
             <h2>Index</h2>
             {% set subtree = treePages(site, ".") %}
             {# In theory, this should never trigger since every site _will_ have an index, but whatever #}
-            {% if existsIn(subtree, "index") %}
+            {% if subtree.index != null %}
             <p><a href="{{ site.prefix }}/{{ subtree.index.url }}">{{ subtree.index.title }}</a></p>
             {% endif %}
             <ul>

@@ -17,6 +17,11 @@ enum class SiteVariant {
      * Standard test site modelled after a blog. Includes a feed and pagination features
      */
     BlogTestSite,
+
+    /**
+     * For everything else  
+     */
+    TestMonolith,
 };
 
 struct LoadWorkspace {
