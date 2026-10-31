@@ -1,26 +1,22 @@
 {# Direct root descendants #}
-{% if existsIn(currTree, "items") %}
-    {% for page in currTree.items %}
-        <li><a href="{{ site.prefix }}/{{ page.url }}">{{ page.title }}</a></li>
-    {% endfor %}
-{% endif %}
+{% for page in currTree.items %}
+    <li><a href="{{ site.prefix }}/{{ page.url }}">{{ page.title }}</a></li>
+{% endfor %}
 
-{% if existsIn(currTree, "subfolders") %}
-    {% for nextTree in currTree.subfolders %}
-        <li>
-            {% if existsIn(nextTree, "index") and nextTree.index != null %}
-                <a href="{{ site.prefix }}/{{ nextTree.index.url }}">{{ nextTree.index.title }}</a>
-            {% else %}
-                {{ nextTree.folder_name }}
-            {% endif %}
-            <ul>
-                {% set context = {
-                    "currTree": nextTree,
-                    "page": page,
-                    "site": site
-                } %}
-                {{ recurseInclude("partials/tree_builder.iris", context) }}
-            </ul>
-        </li>
-    {% endfor %}
-{% endif %}
+{% for nextTree in currTree.subfolders %}
+    <li>
+        {% if nextTree.index != null %}
+            <a href="{{ site.prefix }}/{{ nextTree.index.url }}">{{ nextTree.index.title }}</a>
+        {% else %}
+            {{ nextTree.folder_name }}
+        {% endif %}
+        <ul>
+            {% set context = {
+                "currTree": nextTree,
+                "page": page,
+                "site": site
+            } %}
+            {{ recurseInclude("partials/tree_builder.iris", context) }}
+        </ul>
+    </li>
+{% endfor %}
