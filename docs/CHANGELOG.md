@@ -35,11 +35,13 @@ This release has breaking changes:
 
   The new type has a new `folder_name` variable, and `subfolders` is no longer an object. To migrate, switch `{% for subfolderName, nextTree in currTree.subfolders %}` with `{& for nextTree in currTree.subfolders %}`.
 
-  If you need more info, the default theme has been updated. See `tree_builder.iris` in the codeberg repo
+  Additionally, all fields in the object are now guaranteed to be present; switch any `existsIn` checks to `!= null` checks instead. This affects all existing fields.
+
+  If you need more info, the default theme has been updated. See `tree_builder.iris` in the codeberg repo. I have also done this migration on my own website with a different usecase, which can be seen [in this patch](https://codeberg.org/LunarWatcher/pages/commit/30453fa29b26297d002eaadf9fd7f6c3f8e50c6c)
 
   ```json
   {
-      "folder_name": "Folder name (or README page title)",
+      "folder_name": "Folder name or null",
       "items": [ { ...frontmatter } ],
       "subfolders": [
           {
@@ -55,7 +57,8 @@ This release has breaking changes:
 
 ### Fixed
 
-* BREAKING (templates): `treePages` no longer returns empty intermediate steps if `treePages` is used outside the site root. 
+* BREAKING (templates): `treePages` no longer returns empty intermediate steps if `treePages` is used outside the site root.
+  * This is breaking if you used the three-arg `treePages` and had intermediate `.subfolders`, or if you used `treePages(page, ".")` or similar. The root object in the data is now going to be the data object you are looking for, so intermediate access steps before iteration can simply be removed.
 
 ## [v0.17.0] (2026-10-29)
 
