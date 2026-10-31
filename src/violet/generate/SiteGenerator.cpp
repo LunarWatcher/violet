@@ -346,7 +346,7 @@ bool SiteGenerator::generate() {
             }
             auto ext = p.extension();
 
-            if (ext == ".md") {
+            if (ext == ".md" || ext == ".in") {
                 success &= processFile(relPath);
                 return success;
             } else if (ext == ".html") {
@@ -376,9 +376,6 @@ bool SiteGenerator::generate() {
                     success &= *result;
                     return success;
                 }
-            } else if (ext == ".in") {
-                success &= processFile(relPath);
-                return success;
             }
             fileManager.copyRaw(rootDir, relPath, relPath);
             this->buildMeta.registerInputFile();
