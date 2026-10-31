@@ -8,6 +8,8 @@
 #include "violet/data/RenderResult.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
+#include "violet/generate/templates/types/TreePagesData.hpp"
+#include "violet/paginator/SortPredicates.hpp"
 #include "violet/parsing/Markdown.hpp"
 #include "violet/transitional/JsonToDataObject.hpp"
 #include "violet/util/ErrorHandling.hpp"
@@ -90,6 +92,17 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
 iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     auto& frontmatter = *args.at(0);
     auto scope = args.at(1)->get<iris::String>();
+    auto sortMethod = SortMethod::ByTitle;
+    if (args.size() == 3) {
+        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
+        if (opt) {
+            sortMethod = *opt;
+        } else {
+            throw iris::CallbackError(
+                "listPages got invalid sort method: make sure you use the constants in violet.sort"
+            );
+        }
+    }
 
     if (scope.contains("..")) {
         throw iris::CallbackError(
@@ -108,7 +121,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     }
     path /= scope;
 
-    iris::DataObject pages = iris::Array {};
+    std::vector<Frontmatter> fms;
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {
@@ -131,17 +144,46 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
                 filePath
             );
             if (!metadata.frontmatter.isAsset && !metadata.frontmatter.hidden) {
-                pages.push_back(metadata.frontmatter);
+                fms.push_back(metadata.frontmatter);
             }
             return true;
         }
     );
-    return pages;
+    std::sort(
+        fms.begin(),
+        fms.end(),
+        sort::sortMethodsRef.at(sortMethod)
+    );
+    
+    return fms;
 }
 
 iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
     auto& frontmatter = *args.at(0);
     auto scope = args.at(1)->get<iris::String>();
+
+    auto sortMethod = SortMethod::ByTitle;
+    if (args.size() >= 3) {
+        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
+        if (opt) {
+            sortMethod = *opt;
+        } else {
+            throw iris::CallbackError(
+                "listPages got invalid sort method: make sure you use the constants in violet.sort"
+            );
+        }
+    }
+    auto leafSortMethod = sortMethod;
+    if (args.size() >= 4) {
+        auto opt = safeCastEnum<SortMethod>(args.at(3)->get<iris::Int>());
+        if (opt) {
+            leafSortMethod = *opt;
+        } else {
+            throw iris::CallbackError(
+                "listPages got invalid leafSortMethod: make sure you use the constants in violet.sort"
+            );
+        }
+    }
 
     if (scope.contains("..")) {
         throw iris::CallbackError(
@@ -160,7 +202,8 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
     }
     path /= scope;
 
-    iris::DataObject pages = iris::Object {};
+    TreePagesData root;
+    bool hasFiles = false;
     man.fileManager.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {
@@ -188,33 +231,41 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
                 return true;
             }
 
-            iris::DataObject* next = &pages;
+            TreePagesData* next = &root;
 
             if (filePath.has_parent_path()) {
                 for (auto& segment : filePath.parent_path()) {
-                    if (!next->contains("subfolders")) {
-                        (*next)["subfolders"] = iris::Object {};
+                    if (!next->subfolders.contains(segment)) {
+                        next->subfolders[segment] = TreePagesData{
+                            segment
+                        };
                     }
-                    if (!next->at("subfolders").contains(segment)) {
-                        next->at("subfolders")[segment] = iris::Object {};
-                    }
-                    iris::DataObject* curr = &((*next)["subfolders"][segment]);
-                    next = curr;
+                    next = &((*next).subfolders[segment]);
                 }
             }
 
             if (filePath.filename() == "README.md" || filePath.filename() == "index.md") {
-                (*next)["index"] = metadata.frontmatter;
-            } else {
-                if (!next->contains("items")) {
-                    (*next)["items"] = iris::Array {};
+                if (
+                    filePath.filename() == "README.md"
+                    && std::filesystem::exists(filePath.parent_path() / "index.md")
+                ) {
+                    return true;;
                 }
-                (*next)["items"].push_back(metadata.frontmatter);
+                (*next).index = metadata.frontmatter;
+            } else {
+                (*next).items.push_back(metadata.frontmatter);
             }
+            hasFiles = true;
             return true;
         }
     );
-    return pages;
+    if (!hasFiles) {
+        return iris::Object();
+    }
+    return root.convert(
+        leafSortMethod,
+        sortMethod
+    );
 }
 
 iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
@@ -238,7 +289,8 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
 iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
     const auto& frontmatter = *args.at(0);
     const auto scope = args.at(1)->get<iris::String>();
-    // TODO: this is technically 
+    // TODO: this is technically
+    // This is technicalyl WHAT, past me?!
     const auto sortMethod = safeCastEnum<SortMethod>(
         args.at(2)->get<iris::Int>()
     );

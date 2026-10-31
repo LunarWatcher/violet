@@ -45,3 +45,7 @@ Refers to the sort method that sorts by (in order):
 2. `created`, if present
 3. The filename (fallback)
 
+### `violet.sort.by_title` (enum constant value)
+
+Refers to the sort method that sorts by `page.title`
+

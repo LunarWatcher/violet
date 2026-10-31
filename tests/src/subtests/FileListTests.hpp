@@ -75,8 +75,18 @@ inline void testFileIterationExcludesOutputDir(
                 auto pages = gen->getIrisManager().fileFuncs.treePages(irisArgs);
 
                 auto subfolders = pages.at("subfolders");
-                REQUIRE_FALSE(
-                    subfolders.contains(outputDir.filename().string())
+                REQUIRE(subfolders.is_array());
+                auto arr = subfolders.get<iris::Array>();
+                INFO(subfolders.serialize());
+                INFO("We do not want to find folder_name = " << outputDir.filename());
+                REQUIRE(
+                    std::find_if(
+                        arr.begin(), arr.end(),
+                        [&](const iris::DataObject& it) -> bool {
+                            REQUIRE(it.contains("folder_name"));
+                            return it.at("folder_name").get<iris::String>() == outputDir.filename().string();
+                        }
+                    ) == arr.end()
                 );
             }
         }

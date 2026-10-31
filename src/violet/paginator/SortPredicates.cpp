@@ -15,6 +15,7 @@ bool sort::byCreationDate(
     std::filesystem::path aPath = a->internalPath,
         bPath = b->internalPath;
 
+    // TODO: Should this be title instead?
     auto aFn = aPath.filename();
     auto bFn = bPath.filename();
 
@@ -34,10 +35,47 @@ bool sort::byLastModifiedDate(
     std::filesystem::path aPath = a->internalPath,
         bPath = b->internalPath;
 
+    // TODO: Should this be title instead?
     auto aFn = aPath.filename();
     auto bFn = bPath.filename();
 
     return aFn > bFn;
+}
+
+bool sort::byTitle(
+    const Frontmatter* a,
+    const Frontmatter* b
+) {
+    // TODO: this is the lazy implementation for now, but I also want to support numbers, so this doesn't happen:
+    // - 1
+    // - 11
+    // - 2
+    // but rather
+    // - 1
+    // - 2
+    // - 11
+    return *a->title < *b->title;
+}
+
+bool sort::byCreationDateRef(
+    const Frontmatter& a,
+    const Frontmatter& b
+) {
+    return byCreationDate(&a, &b);
+}
+
+extern bool sort::byLastModifiedDateRef(
+    const Frontmatter& a,
+    const Frontmatter& b
+) {
+    return sort::byLastModifiedDate(&a, &b);
+}
+
+extern bool sort::byTitleRef(
+    const Frontmatter& a,
+    const Frontmatter& b
+) {
+    return sort::byTitle(&a, &b);
 }
 
 }

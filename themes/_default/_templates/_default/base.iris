@@ -17,11 +17,11 @@
             <p><a href="{{ site.prefix }}/{{ subtree.index.url }}">{{ subtree.index.title }}</a></p>
             {% endif %}
             <ul>
-                {# For whatever reason, setting the context inline does not work and results in a syntax error #}
-                {% set context = {} %}
-                {% set context.currTree = subtree %}
-                {% set context.page = page %}
-                {% set context.site = site %}
+                {% set context = {
+                    "currTree": subtree,
+                    "page": page,
+                    "site": site
+                } %}
                 {{ recurseInclude("partials/tree_builder.iris", context) }}
             </ul>
         </aside>

@@ -6,18 +6,19 @@
 {% endif %}
 
 {% if existsIn(currTree, "subfolders") %}
-    {% for folderName, nextTree in currTree.subfolders %}
+    {% for nextTree in currTree.subfolders %}
         <li>
-            {% if existsIn(nextTree, "index") %}
+            {% if existsIn(nextTree, "index") and nextTree.index != null %}
                 <a href="{{ site.prefix }}/{{ nextTree.index.url }}">{{ nextTree.index.title }}</a>
             {% else %}
-                {{ folderName }}
+                {{ nextTree.folder_name }}
             {% endif %}
             <ul>
-                {% set context = {} %}
-                {% set context.currTree = nextTree %}
-                {% set context.page = page %}
-                {% set context.site = site %}
+                {% set context = {
+                    "currTree": nextTree,
+                    "page": page,
+                    "site": site
+                } %}
                 {{ recurseInclude("partials/tree_builder.iris", context) }}
             </ul>
         </li>

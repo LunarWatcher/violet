@@ -17,6 +17,7 @@ inline const iris::DataObject violet_global = iris::Object {
     {"sort", iris::Object {
         {"by_creation_date", static_cast<int>(SortMethod::ByCreationDate)},
         {"by_last_modified_date", static_cast<int>(SortMethod::ByLastModifiedDate)},
+        {"by_title", static_cast<int>(SortMethod::ByTitle)},
     }},
     {"version", std::string(GitVersion())},
 };

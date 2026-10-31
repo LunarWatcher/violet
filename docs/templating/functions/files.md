@@ -37,7 +37,7 @@ The frontmatter object to render.
 The return value is an object to allow for future expansions (notably, a generated `.summary`)
 
 
-## `listPages(object, location)`
+## `listPages(object, location[, sortMethod])`
 
 This function recursively lists pages from the provided `location`. The return value is a flat list of frontmatters (see [the frontmatter schema spec](/schemas/Frontmatter.md)).
 
@@ -55,27 +55,34 @@ A location relative to the provided `object`. For example:
 * `listPages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
 * `listPages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
+#### `sortMethod` (enum constant: `violet.sort`)
 
-## `treePages(object, location)`
+Defaults to `violet.sort.by_title`.
+
+Must be set to one of the values in the global variable `violet.sort`. See [the spec for the global `violet` variable](/schemas/violet.md#violetsort-enum-constants). 
+
+## `treePages(object, location[, sortMethod[, leafSortMethod]])`
 
 Similar to `listPages`, but returns an object in the following format:
 ```json
 {
+    "folder_name": "Folder name (or README page title)",
     "items": [ { ...frontmatter } ],
-    "subfolders": {
-        "subfolder_name": {
+    "subfolders": [
+        {
+            "folder_name": "subfolder",
             "items": [ { ...frontmatter }],
-            "subfolders": { ... }
+            "subfolders": [ ... ]
         },
-        "subfolder2_name": { ... }
-    },
+        { ... }
+    ],
     "index": { ... optional frontmatter },
 }
 ```
 
 Where:
 * `items` is an array of the pages for the provided context, with the exception of `index.html` (index.md/README.md)
-* `subfolders` is a dict of subfolders in the provided context. The values are more of the same object currently being described
+* `subfolders` is an array of subfolders in the provided context. The values are more of the same object currently being described
 * `index`: `index.md`/`README.md`'s frontmatter, or null if the section doesn't have an index file.
 
 This function can be used when hierarchy is important.
@@ -93,6 +100,24 @@ A location relative to the provided `object`. For example:
 * `treePages(site, ".")`: Lists pages relative to the site root. Useful for listing out the entire site
 * `treePages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
 * `treePages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
+
+#### `sortMethod` (enum constant: `violet.sort`)
+
+Defaults to `violet.sort.by_title`.
+
+This defines the sort method for the pages. If `leafSortMethod` is also supplied, this specifies how to sort the group nodes (folders).
+
+Must be set to one of the values in the global variable `violet.sort`. See [the spec for the global `violet` variable](/schemas/violet.md#violetsort-enum-constants). 
+
+**Note:** The data objects for pages and folders are separated in the data object, so no sorting method allows interchangeably mixing folder trees and individual files.
+
+#### `leafSortMethod` (enum constant: `violet.sort`)
+
+Defaults to `sortMethod`.
+
+This sort method specifies how to sort the leaf items, i.e. non-README files.
+
+Must be set to one of the values in the global variable `violet.sort`. See [the spec for the global `violet` variable](/schemas/violet.md#violetsort-enum-constants). 
 
 ## `listPagesByTaxonomy(taxonomy, value)`
 

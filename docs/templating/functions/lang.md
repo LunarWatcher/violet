@@ -15,12 +15,11 @@ TODO: rename to `includeContext`
 
 This function can be used to include a template and provide the context object directly. Example usage:
 ```jinja
-{# For whatever reason, setting the context inline does not work and results in a syntax error. #}
-{# This appears to maybe be a limitation of iris, but I have not verified #}
-{% set context = {} %}
-{% set context.currTree = subtree %}
-{% set context.page = page %}
-{% set context.site = site %}
+{% set context = {
+    "currTree": nextTree,
+    "page": page,
+    "site": site
+} %}
 {{ recurseInclude("partials/tree_builder.iris", context) }}
 ```
 

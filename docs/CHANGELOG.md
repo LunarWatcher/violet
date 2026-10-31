@@ -18,9 +18,40 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+This release has breaking changes:
+
+* `treePages` has a new return type
+
+### Added
+
+* Templates: New sort method: `violet.sort.by_title` (see the [violet global schema](/schemas/violet.md#violetsortby_title-enum-constant-value))
+* Templates: `listPages` now takes an optional third argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+* Templates: `treePages` now takes two new optional arguments; a sort method, and a leaf sort method. The leaf sort method defautls to the sort method if not provided, and the sort method defaults to `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+
 ### Changed
 
 * Bumped [iris](https://lunarwatcher.codeberg.page/iris/) to [v0.3.0](https://lunarwatcher.codeberg.page/iris/changelog.html#v030-2026-10-31)
+* BREAKING (templates): `treePages` return type changed
+
+  The new type has a new `folder_name` variable, and `subfolders` is no longer an object. To migrate, switch `{% for subfolderName, nextTree in currTree.subfolders %}` with `{& for nextTree in currTree.subfolders %}`.
+
+  If you need more info, the default theme has been updated. See `tree_builder.iris` in the codeberg repo
+
+  ```json
+  {
+      "folder_name": "Folder name (or README page title)",
+      "items": [ { ...frontmatter } ],
+      "subfolders": [
+          {
+              "folder_name": "subfolder",
+              "items": [ { ...frontmatter }],
+              "subfolders": [ ... ]
+          },
+          { ... }
+      ],
+      "index": { ... optional frontmatter },
+  }
+  ```
 
 ## [v0.17.0] (2026-10-29)
 
