@@ -1,12 +1,12 @@
 #include "FileFunctions.hpp"
 
 #include "IrisManager.hpp"
+#include "iris/exceptions.hpp"
 #include "violet/algorithm/SortMethod.hpp"
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/data/Constants.hpp"
 #include "violet/data/RenderResult.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
-#include "violet/exceptions/TemplateError.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
 #include "violet/parsing/Markdown.hpp"
 #include "violet/transitional/JsonToDataObject.hpp"
@@ -92,7 +92,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     auto scope = args.at(1)->get<iris::String>();
 
     if (scope.contains("..")) {
-        throw std::runtime_error(
+        throw iris::CallbackError(
             "listPages does not accept paths that recurse upwards"
         );
     }
@@ -144,7 +144,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
     auto scope = args.at(1)->get<iris::String>();
 
     if (scope.contains("..")) {
-        throw std::runtime_error(
+        throw iris::CallbackError(
             "listPages does not accept paths that recurse upwards"
         );
     }
@@ -222,7 +222,7 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
     auto page = args.at(1)->get<iris::Int>();
     // This restricts us to half the max uint64_t value, but no one will ever care
     if (page <= 0) {
-        throw std::runtime_error("Invalid page number");
+        throw iris::CallbackError("Invalid page number");
     }
 
     std::stringstream ss;
@@ -244,7 +244,7 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
     );
 
     if (!sortMethod.has_value()) {
-        throw std::runtime_error(
+        throw iris::CallbackError(
             "listPagesPaginated got illegal sortMethod. Make sure you're using one of the values in violet.sort."
         );
     }
@@ -268,7 +268,7 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
         *sortMethod
     };
     if (pageNumber == 0) {
-        throw std::runtime_error("Page numbers are 1-indexed");
+        throw iris::CallbackError("Page numbers are 1-indexed");
     }
     --pageNumber;
 
@@ -290,7 +290,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
     std::string fn;
 
     if (args.size() < 1 || args.size() > 2) {
-        throw TemplateError(
+        throw iris::CallbackError(
             std::format(
                 "loadJson takes either one or two arguments, but got {}",
                 args.size()
@@ -314,12 +314,12 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
     std::filesystem::path p;
     if (fn.starts_with('/')) {
         if (fn.starts_with("//")) {
-            throw std::runtime_error("Absolute paths cannot start with two slashes!");
+            throw iris::CallbackError("Absolute paths cannot start with two slashes!");
         }
         p = this->man.opts.root / fn.substr(1);
     } else {
         if (frontmatter == nullptr) {
-            throw TemplateError(
+            throw iris::CallbackError(
                 "loadJson was called with a non-absolute path, but no frontmatter was provided. To use a relative "
                 "path, you must provide the page or site global so the function can tell what the filename is relative "
                 "to."
@@ -342,7 +342,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
             "loadJson found possible root escaping: fn = {}, resolved path = {}",
             fn, p.string()
         );
-        throw std::runtime_error(
+        throw iris::CallbackError(
            "loadJson found possible root escaping. See log messages."
         );
     }
@@ -352,7 +352,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
         minilog::error(
             "Failed to open {}", p.string()
         );
-        throw std::runtime_error("failed to open file");
+        throw iris::CallbackError("failed to open file");
     }
 
     nlohmann::json data;
@@ -371,7 +371,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
 
     // TODO: desperately need better out of bounds path checking
     if (fm.internalPath.starts_with('/') || fm.internalPath.contains("..")) {
-        throw std::runtime_error("Path passed to render breaks project containment");
+        throw iris::CallbackError("Path passed to render breaks project containment");
     }
 
     auto path = std::filesystem::path(fm.internalPath);
@@ -406,7 +406,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                 synError,
                 fileContent
             );
-            throw TemplateError(
+            throw iris::CallbackError(
                 std::format(
                     "Template API error: A nested markdown rendering error occurred while rendering {}",
                     fm.internalPath
@@ -422,12 +422,12 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
         break;
     case ProcessedFileType::Uninitialized:
         [[unlikely]]
-        throw std::runtime_error(
+        throw iris::CallbackError(
             "Critical engine bug: internalFileType not initialized."
         );
     default:
         [[unlikely]]
-        throw std::runtime_error("Illegal value of internalFileType injected");
+        throw iris::CallbackError("Illegal value of internalFileType injected");
     }
 
     res.content = this->man.env.render(

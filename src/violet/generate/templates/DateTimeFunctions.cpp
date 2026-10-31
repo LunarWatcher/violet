@@ -35,8 +35,7 @@ iris::DataObject DateTimeFunctions::parseDate(iris::Arguments& args) {
 
 iris::DataObject DateTimeFunctions::formatDate(iris::Arguments& args) {
     if (!args.at(0)->is_int()) {
-        throw iris::ContextlessRenderError(
-            "user", // TODO: temporary, iris should provide better types
+        throw iris::CallbackError(
             "formatDate() requires that the first arg is a number, but got a string. "
             "If you have a string source date, use parseDate() on the string to convert it"
         );
@@ -47,8 +46,11 @@ iris::DataObject DateTimeFunctions::formatDate(iris::Arguments& args) {
     if (args.size() == 3) {
         timezone = args.at(2)->get<iris::String>();
     } else if (args.size() > 3) {
-        // TODO: Create custom error (maybe? or do I just want to handle inja's exceptions better?)
-        throw std::runtime_error("formatDate takes 2 or 3 arguments, but got 4");
+        throw iris::CallbackError(
+            std::format(
+                "formatDate takes 2 or 3 arguments, but got {}", args.size()
+            )
+        );
     }
 
     return ::violet::formatDate(timestamp, fmt, timezone);

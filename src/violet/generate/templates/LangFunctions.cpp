@@ -30,9 +30,9 @@ iris::DataObject LangFunctions::createPaginatedList(iris::Arguments& args) {
     int64_t rTotalPages = args.at(1)->get<iris::Int>();
 
     if (rCurrPage <= 0) {
-        throw std::runtime_error("currPage must be strictly greater than 0");
+        throw iris::CallbackError("currPage must be strictly greater than 0");
     } else if (rTotalPages <= 0) {
-        throw std::runtime_error("totalPages must be strictly greater than 0");
+        throw iris::CallbackError("totalPages must be strictly greater than 0");
     }
 
     uint64_t currPage = rCurrPage;

@@ -40,7 +40,7 @@ IrisManager::IrisManager(
                 path / templateName
             );
         } else {
-            throw std::runtime_error("Failed to resolve partial");
+            throw iris::CallbackError("Failed to resolve partial");
         }
     });
 }
@@ -89,7 +89,7 @@ std::string IrisManager::renderPage(
                     context
                 );
             } else {
-                throw std::runtime_error(
+                throw iris::CallbackError(
                     std::format(
                         "Failed to find template for type {}/layout {}",
                         fm.type,

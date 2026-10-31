@@ -489,7 +489,7 @@ void Markdown::parseParagraphContent(
                 out,
                 false
             )) {
-                throw std::runtime_error("Unexpected indent");
+                throw SyntaxError("Unexpected indent", in.tellg());
             }
 
             // equivalent to the last \n check, but in the context of the block. We have a block continuation that is
