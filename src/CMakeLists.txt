@@ -25,6 +25,7 @@ add_library(violetsrc STATIC
     violet/generate/templates/EscapingFunctions.cpp
     violet/generate/templates/LangFunctions.cpp
 
+    violet/generate/templates/types/RenderContext.cpp
     violet/generate/templates/types/TreePagesData.cpp
 
     violet/init/InitModule.cpp

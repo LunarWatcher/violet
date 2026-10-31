@@ -10,6 +10,7 @@
 #include "violet/generate/templates/FileFunctions.hpp"
 #include "violet/generate/templates/EscapingFunctions.hpp"
 #include "violet/generate/templates/LangFunctions.hpp"
+#include "violet/generate/templates/types/RenderContext.hpp"
 #include "violet/paginator/Paginator.hpp"
 
 namespace violet {
@@ -39,7 +40,7 @@ public:
     IrisManager(IrisManager&) = delete;
     IrisManager(IrisManager&&) = delete;
 
-    iris::DataObject buildCommonContext(const Frontmatter& pageFm);
+    RenderContext buildCommonContext(const Frontmatter& pageFm);
 
     std::string renderPage(
         const std::string& fileContent,
