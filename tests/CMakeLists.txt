@@ -14,6 +14,7 @@ add_executable(tests
     src/integration/BasicSiteGenerationTests.cpp
     src/integration/BlogIntegrationTests.cpp
 
+    src/integration/monolith/ListPagesTests.cpp
     src/integration/monolith/TreePagesTests.cpp
 
     src/parsing/FootnoteTests.cpp

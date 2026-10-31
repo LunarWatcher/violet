@@ -12,13 +12,13 @@ namespace tests {
 
 struct DebugMarkerFixture {
     static inline std::regex extract {
-        R"(\[\[violet-test\(([^)]+)\):(.*?)\]\])",
-        std::regex::optimize
+        R"(\[\[violet-test\(([^)]+)\):(\|*)(.*?)\2\]\])",
+        std::regex::optimize | std::regex::ECMAScript
     };
 
     std::string createDebugMarker(const std::string& key, const std::string& content) const {
         return std::format(
-            R"(\[\[violet-test({}):{}\]\])",
+            R"(\[\[violet-test({}):||||{}||||\]\])" "\n",
             key,
             content
         );
@@ -39,7 +39,7 @@ struct DebugMarkerFixture {
         for (auto it = std::sregex_iterator(buff.begin(), buff.end(), extract); it != std::sregex_iterator(); ++it) {
             const std::smatch& match = *it;
 
-            out[match.str(1)] = match.str(2);
+            out[match.str(1)] = match.str(3);
         }
         return out;
     }
