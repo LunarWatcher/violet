@@ -18,6 +18,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Changed
+
+* Bumped [iris](https://lunarwatcher.codeberg.page/iris/) to [v0.3.0](https://lunarwatcher.codeberg.page/iris/changelog.html#v030-2026-10-31)
+
 ## [v0.17.0] (2026-10-29)
 
 ### Added
