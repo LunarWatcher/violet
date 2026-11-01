@@ -18,6 +18,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### [v0.18.0] (2026-11-01)
+
 This release has significant breaking changes:
 
 * `treePages` has a new return type
@@ -403,7 +405,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...master
+[v0.18.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...v0.18
 [v0.17.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.1...v0.17.0
 [v0.16.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...v0.16.0
