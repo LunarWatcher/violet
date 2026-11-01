@@ -308,12 +308,11 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
 }
 
 iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, RenderContext* ctx) {
-    const auto& frontmatter = *args.at(0);
-    const auto scope = args.at(1)->get<iris::String>();
-    // TODO: this is technically
-    // This is technicalyl WHAT, past me?!
+    const auto& frontmatter = ctx->fm;
+    const auto scope = args.at(0)->get<iris::String>();
+
     const auto sortMethod = safeCastEnum<SortMethod>(
-        args.at(2)->get<iris::Int>()
+        args.at(1)->get<iris::Int>()
     );
 
     if (!sortMethod.has_value()) {
@@ -324,16 +323,16 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, Render
 
     uint64_t pageSize = 50;
     uint64_t pageNumber = 1;
-    if (args.size() > 3) {
-        pageSize = args.at(3)->get<iris::Int>();
+    if (args.size() > 2) {
+        pageSize = args.at(2)->get<iris::Int>();
     }
-    if (args.size() > 4) {
-        pageNumber = args.at(4)->get<iris::Int>();
+    if (args.size() > 3) {
+        pageNumber = args.at(3)->get<iris::Int>();
     }
 
 
     Paginator pag {
-        frontmatter.at(violet::constants::InternalPathRef).get<std::string>(),
+        frontmatter.internalPath,
         this->man.fileManager,
         this->man.metaCache,
         pageSize,

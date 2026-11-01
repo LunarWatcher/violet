@@ -44,15 +44,18 @@ Paginator::Paginator(
     //     );
     // }
 
-    // TODO: support scoping so /index.md can be an index for /posts/*
     // TODO: error handling
-    auto path = fileMan.getRootFolder() / std::filesystem::path {
-        owningFilePath
-    };
+    auto path = fileMan.getRootFolder();
+
+    bool isAbsPath = prefix.string().starts_with('/');
+    
+    if (!isAbsPath) {
+        path /= owningFilePath;
+    }
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
-    path /= prefix;
+    path /= isAbsPath ? prefix.string().substr(1) : prefix.string();
     fileMan.recursivelyIterateFiles(
         path,
         [&](auto& entry) -> bool {

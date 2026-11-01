@@ -6,7 +6,7 @@
     <id>{{ site.data.domain }}/{{ page.url }}</id>
     <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
 
-    {% for entry in listPagesPaginated(page, ".", violet.sort.by_last_modified_date) %}
+    {% for entry in listPagesPaginated(".", violet.sort.by_last_modified_date) %}
         <entry>
             <title><![CDATA[{{ entry.title }}]]></title>
             <link rel="alternate" href="{{ site.data.domain }}/{{ entry.url }}" />

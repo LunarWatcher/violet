@@ -1,10 +1,11 @@
 {
-    "name": "test site",
-    "description": "used for unit and integration tests",
-    "exclude": [
-        "secrets"
-    ],
-    "data": {
-        "m_key": 69420
-    }
+  "name": "test site",
+  "description": "used for unit and integration tests",
+  "timezone": "Etc/GMT",
+  "exclude": [
+    "secrets"
+  ],
+  "data": {
+    "m_key": 69420
+  }
 }
