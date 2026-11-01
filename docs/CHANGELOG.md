@@ -67,7 +67,7 @@ This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`, and 
       "index": { ... optional frontmatter },
   }
   ```
-* BREAKING: `treePages` no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
+* BREAKING: `listPages`, `treePages`, `loadJson`, `listPagesPaginated`, and `listPagesByTaxonomy` no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
 
 ### Fixed
 

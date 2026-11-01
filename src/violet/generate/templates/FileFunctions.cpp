@@ -19,13 +19,13 @@
 namespace violet {
 
 FileFunctions::FileFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("listPages", 2, [this](iris::Arguments& args, void* udata) {
+    man.env.add_callback("listPages", [this](iris::Arguments& args, void* udata) {
         return listPages(args, (RenderContext*) udata);
     });
-    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args, void* udata) {
+    man.env.add_callback("listPagesPaginated", [this](iris::Arguments& args, void* udata) {
         return listPagesPaginated(args, (RenderContext*) udata);
     });
-    man.env.add_callback("treePages", 1, [this](iris::Arguments& args, void* udata) {
+    man.env.add_callback("treePages", [this](iris::Arguments& args, void* udata) {
         return treePages(args, (RenderContext*) udata);
     });
     man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
@@ -91,11 +91,11 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args, Rende
 }
 
 iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* ctx) {
-    auto& frontmatter = *args.at(0);
-    auto scope = args.at(1)->get<iris::String>();
+    const auto& frontmatter = ctx->fm;
+    auto scope = args.at(0)->get<iris::String>();
     auto sortMethod = SortMethod::ByTitle;
-    if (args.size() == 3) {
-        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
+    if (args.size() == 2) {
+        auto opt = safeCastEnum<SortMethod>(args.at(1)->get<iris::Int>());
         if (opt) {
             sortMethod = *opt;
         } else {
@@ -112,15 +112,23 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
     }
 
     // TODO: error handling
-    // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
-    // bad
-    auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at(violet::constants::InternalPathRef).get<iris::String>()
-    };
+    bool isAbsPath = scope.starts_with('/');
+
+    auto path = man.fileManager.getRootFolder();
+    if (!isAbsPath) {
+        path /= ctx->fm.internalPath;
+    }
+
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
-    path /= scope;
+
+    path = std::filesystem::weakly_canonical(
+        path / (
+            // I hate all path implementations and I desperately need to write my own rather than deal with this shit
+            isAbsPath ? scope.substr(1) : scope
+        )
+    );
 
     std::vector<Frontmatter> fms;
     man.fileManager.recursivelyIterateFiles(
@@ -194,8 +202,6 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
     bool isAbsPath = scope.starts_with('/');
 
     // TODO: error handling
-    // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
-    // bad
     auto path = man.fileManager.getRootFolder();
     if (!isAbsPath) {
         path /= ctx->fm.internalPath;
