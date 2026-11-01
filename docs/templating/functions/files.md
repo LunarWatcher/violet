@@ -11,7 +11,7 @@
 
 *Added in 0.9.0*
 
-This function is used to render content in other files. To render content in the current file, the correcet method is to use `{% include "content" %}`.
+This function is used to render content in other files. To render content in the current file, the correct method is to use `{% include "content" %}`.
 
 The output varies by what filetype the frontmatter is for:
 
@@ -37,23 +37,19 @@ The frontmatter object to render.
 The return value is an object to allow for future expansions (notably, a generated `.summary`)
 
 
-## `listPages(object, location[, sortMethod])`
+## `listPages(location[, sortMethod])`
 
 This function recursively lists pages from the provided `location`. The return value is a flat list of frontmatters (see [the frontmatter schema spec](/schemas/Frontmatter.md)).
 
 ### Arguments
 
-#### `object`
-
-Either `site` or `page`. This is used to get the root path.
-
 #### `location`
 
 A location relative to the provided `object`. For example:
 
-* `listPages(site, ".")`: Lists pages relative to the site root. Useful for listing out the entire site
-* `listPages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
-* `listPages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
+* `listPages("/")`: Lists pages relative to the site root. Useful for listing out the entire site
+* `listPages(".")`: Lists pages relative to the folder the current page being rendered. Useful if you only care about subtrees from a given page
+* `listPages("/some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
 #### `sortMethod` (enum constant: `violet.sort`)
 
@@ -61,7 +57,7 @@ Defaults to `violet.sort.by_title`.
 
 Must be set to one of the values in the global variable `violet.sort`. See [the spec for the global `violet` variable](/schemas/violet.md#violetsort-enum-constants). 
 
-## `treePages(object, location[, sortMethod[, leafSortMethod]])`
+## `treePages(location[, sortMethod[, leafSortMethod]])`
 
 Similar to `listPages`, but returns an object in the following format:
 ```json
@@ -91,17 +87,13 @@ This function can be used when hierarchy is important.
 
 ### Arguments
 
-#### `object`
-
-Either `site` or `page`. This is used to get the root path. 
-
 #### `location`
 
-A location relative to the provided `object`. For example:
+Where to list. May be a relative path or an absolute path
 
-* `treePages(site, ".")`: Lists pages relative to the site root. Useful for listing out the entire site
-* `treePages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
-* `treePages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
+* `treePages("/")`: Lists pages relative to the site root. Useful for listing out the entire site
+* `treePages(".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
+* `treePages("/some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
 #### `sortMethod` (enum constant: `violet.sort`)
 
@@ -169,7 +161,7 @@ Standard practice in URLs is to chain it with `site.prefix` (this will change in
 <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, 69) }}>Text</a>"
 ```
 
-## `listPagesPaginated(object, location, sortMethod[, pageSize[, pageNumber]])`
+## `listPagesPaginated(location, sortMethod[, pageSize[, pageNumber]])`
 
 Equivalent to `listPages`, but returns up to `pageSize` entries at page `pageNumber`, as determined by the `sortMethod`. 
 
@@ -177,15 +169,9 @@ Returns an empty list if `pageNumber` exceeds the number of available pages.
 
 ### Arguments
 
-#### `object`
-
-The object the location is relative to. Usually `page` or `site`. 
-
 #### `location`
 
-The path relative to the provided object to iterate. 
-
-The page number to get the pages for. 
+Either an absolute path (the path is relative to the site), or a relative patht (the path is relative to the page being rendered).
 
 #### `sortMethod` (enum constant: `violet.sort`)
 
@@ -199,9 +185,7 @@ The size of each page. Default value: 50
 
 The page number to load. Default value: 1
 
-## `loadJson(filename_or_path[, object])`
-
-*Added in 0.7.0*
+## `loadJson(filename_or_path)`
 
 This function is used to load JSON files into variables. Can be useful if you need to contain large amounts of structured data and don't want to do so in iris templates directly.
 
@@ -210,11 +194,8 @@ Example use:
 ```jinja
 With an absolute path (only works relative to the site being generated):
 {% set linkCategories = loadJson("/_templates/outlinks/data.json") %}
-This is identical to the previous example, but the `page` argument is entirely
- ignored, as it's only used when constructing relative paths
-{% set linkCategories = loadJson("/_templates/outlinks/data.json", page) %}
-... or with a relative path (recommended):
-{% set linkCategories = loadJson("data.json", page) %}
+With a relative path (renders relative to the current page being rendered)
+{% set linkCategories = loadJson("data.json") %}
 ```
 
 If you keep JSON files alongside content, and don't want them to be included in the finished render, use the [exclude property in `violet.json`](/Config.md).
@@ -225,14 +206,12 @@ If you keep JSON files alongside content, and don't want them to be included in 
 
 ### Arguments
 
-#### `object`
 
-A page or site object. Used to build relative URLs.
 
 #### `filename_or_path`
 
 A path to the file.
 
 * If the path is absolute: the path is relative to the site root (the folder containing `violet.json`)
-* If relative: the path is relative to the object (either the site, which is equivalent to passing an absolute path, or a page)
+* If relative: the path is relative to the page being rendered
 

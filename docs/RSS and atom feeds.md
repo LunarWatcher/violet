@@ -56,7 +56,7 @@ This example shows an atom feed with no base template, so everything is containe
     <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
 
     <!-- Since feed.atom is alongside the pages it wants to list, it uses the object page and the scope . (the . is
-    relative to the page's path, which is stored through internal magic in the page object that isn't important)
+    relative to the page's path)
     This function therefore iterates /posts/*, and sorts by last_modified. The other sort method currently implemented
     is violet.sort.by_creation_date. I chose by_last_modified_date to allow this feed to bump pages I edit.
 
@@ -64,7 +64,7 @@ This example shows an atom feed with no base template, so everything is containe
     sets pagesize to 50 and page to 1. For an RSS feed, page should in practice always be 1, and it can be omitted.
     See /templating/functions/files.html (File operation functions) for more info on the function 
     -->
-    {% for entry in listPagesPaginated(page, ".", violet.sort.by_last_modified_date) %}
+    {% for entry in listPagesPaginated(".", violet.sort.by_last_modified_date) %}
         <entry>
             <!-- All userdata must be escaped. Here, I use CDATA, because it's the easiest option. You can also use
                 {{ htmlEscape(entry.title) }}
@@ -124,7 +124,7 @@ This example is the same in principle as the standalone example. Its comments ap
     <id>{{ site.data.domain }}/{{ page.url }}</id>
     <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
 
-    {% for entry in listPagesPaginated(page, ".", violet.sort.by_last_modified_date) %}
+    {% for entry in listPagesPaginated(".", violet.sort.by_last_modified_date) %}
         <entry>
             <title><![CDATA[{{ entry.title }}]]></title>
             <link rel="alternate" href="{{ site.data.domain }}/{{ entry.url }}" />
@@ -195,19 +195,19 @@ Here's an abridged example based on the Atom feed example, using the file `/comb
     You can in theory iterate the root as well, but this really depends on your site and its needs.
     For my use, I avoid iterating the root since I have non-blog content I don't want in the feed.
     -->
-    {% for entry in listPagesPaginated(site, "blog", violet.sort.by_last_modified_date, 10) %}
+    {% for entry in listPagesPaginated("/blog", violet.sort.by_last_modified_date, 10) %}
         <entry>
             <!-- Entry content omitted for brevity -->
         </entry>
     {% endfor %}
 
-    {% for entry in listPagesPaginated(site, "til", violet.sort.by_last_modified_date, 10) %}
+    {% for entry in listPagesPaginated("/til", violet.sort.by_last_modified_date, 10) %}
         <entry>
             <!-- Entry content omitted for brevity -->
         </entry>
     {% endfor %}
 
-    {% for entry in listPagesPaginated(site, "notes", violet.sort.by_last_modified_date, 10) %}
+    {% for entry in listPagesPaginated("/notes", violet.sort.by_last_modified_date, 10) %}
         <entry>
             <!-- Entry content omitted for brevity -->
         </entry>

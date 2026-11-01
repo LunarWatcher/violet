@@ -74,7 +74,7 @@ void FileManager::copyThemeFiles() {
         return;
     }
     std::ifstream confFile(themeDir / "violet.theme.json");
-    
+
     if (!confFile) {
         minilog::warn(
             "Failed to open violet.theme.json for theme. Tried path: {}",

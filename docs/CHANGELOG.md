@@ -18,19 +18,35 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
-This release has breaking changes:
+This release has significant breaking changes:
 
 * `treePages` has a new return type
+* `treePages` has a bugfix that is breaking (intermediate folders are no longer returned if `treePages` is used on a non-root location)
+* The `{tree,list}*` and `loadJson` functions no longer take a page object (see migration guide for the migration steps and full list of affected functions.)
+
+### Migration guide
+
+For the new `treePages` return type, see the CHANGED section.
+
+#### Removed `site`/`page` argument to multiple functions
+
+This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`
+
+* If you pass `page`: remove the argument: `listPages(page, ".")` => `listPages(".")`
+* If you pass `site`: remove the argument and make the path absolute: `listPages(page, ".")` => `listPages("/")`. Absolute paths are now always relative to the site root.
+
+This same pattern applies to all four functions.
 
 ### Added
 
 * Templates: New sort method: `violet.sort.by_title` (see the [violet global schema](/schemas/violet.md#violetsortby_title-enum-constant-value))
-* Templates: `listPages` now takes an optional third argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+* Templates: `listPages` now takes an optional second (after the breaking changes that removed the formerly first argument) argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
 * Templates: `treePages` now takes two new optional arguments; a sort method, and a leaf sort method. The leaf sort method defautls to the sort method if not provided, and the sort method defaults to `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
 
 ### Changed
 
-* Bumped [iris](https://lunarwatcher.codeberg.page/iris/) to [v0.3.0](https://lunarwatcher.codeberg.page/iris/changelog.html#v030-2026-10-31)
+* Templates: Bumped [iris](https://lunarwatcher.codeberg.page/iris/) from v0.2.0 to [v0.3.2](https://lunarwatcher.codeberg.page/iris/changelog.html?v=4#v031-v032)
+  * This does not have any notable changes for template writers, but has significant internal updates that enables a *lot* of stuff in this release, including not needing to pass an object to multiple functions, an drastically improved error reporting.
 * BREAKING (templates): `treePages` return type changed
 
   The new type has a new `folder_name` variable, and `subfolders` is no longer an object. To migrate, switch `{% for subfolderName, nextTree in currTree.subfolders %}` with `{& for nextTree in currTree.subfolders %}`.
@@ -54,6 +70,7 @@ This release has breaking changes:
       "index": { ... optional frontmatter },
   }
   ```
+* BREAKING: `listPages`, `treePages`, `loadJson`, and `listPagesPaginated` and no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
 
 ### Fixed
 

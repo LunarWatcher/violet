@@ -8,6 +8,7 @@
 #include "violet/data/RenderResult.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
+#include "violet/generate/templates/types/RenderContext.hpp"
 #include "violet/generate/templates/types/TreePagesData.hpp"
 #include "violet/paginator/SortPredicates.hpp"
 #include "violet/parsing/Markdown.hpp"
@@ -18,14 +19,14 @@
 namespace violet {
 
 FileFunctions::FileFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("listPages", 2, [this](iris::Arguments& args) {
-        return listPages(args);
+    man.env.add_callback("listPages", [this](iris::Arguments& args, void* udata) {
+        return listPages(args, (RenderContext*) udata);
     });
-    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args) {
-        return listPagesPaginated(args);
+    man.env.add_callback("listPagesPaginated", [this](iris::Arguments& args, void* udata) {
+        return listPagesPaginated(args, (RenderContext*) udata);
     });
-    man.env.add_callback("treePages", 2, [this](iris::Arguments& args) {
-        return treePages(args);
+    man.env.add_callback("treePages", [this](iris::Arguments& args, void* udata) {
+        return treePages(args, (RenderContext*) udata);
     });
     man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
         return paginatedUrl(args);
@@ -33,8 +34,8 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
         return listPagesByTaxonomy(args);
     });
-    man.env.add_callback("loadJson", [this](auto& args) {
-        return loadJson(args);
+    man.env.add_callback("loadJson", 1, [this](auto& args, void* udata) {
+        return loadJson(args, (RenderContext*) udata);
     });
     man.env.add_callback("render", 1, [this](auto& args) {
         return render(args);
@@ -89,12 +90,11 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
     return pages;
 }
 
-iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
-    auto& frontmatter = *args.at(0);
-    auto scope = args.at(1)->get<iris::String>();
+iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* ctx) {
+    auto scope = args.at(0)->get<iris::String>();
     auto sortMethod = SortMethod::ByTitle;
-    if (args.size() == 3) {
-        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
+    if (args.size() == 2) {
+        auto opt = safeCastEnum<SortMethod>(args.at(1)->get<iris::Int>());
         if (opt) {
             sortMethod = *opt;
         } else {
@@ -111,15 +111,23 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     }
 
     // TODO: error handling
-    // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
-    // bad
-    auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at(violet::constants::InternalPathRef).get<iris::String>()
-    };
+    bool isAbsPath = scope.starts_with('/');
+
+    auto path = man.fileManager.getRootFolder();
+    if (!isAbsPath) {
+        path /= ctx->fm.internalPath;
+    }
+
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
-    path /= scope;
+
+    path = std::filesystem::weakly_canonical(
+        path / (
+            // I hate all path implementations and I desperately need to write my own rather than deal with this shit
+            isAbsPath ? scope.substr(1) : scope
+        )
+    );
 
     std::vector<Frontmatter> fms;
     man.fileManager.recursivelyIterateFiles(
@@ -158,13 +166,12 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     return fms;
 }
 
-iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
-    auto& frontmatter = *args.at(0);
-    auto scope = args.at(1)->get<iris::String>();
+iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* ctx) {
+    auto scope = args.at(0)->get<iris::String>();
 
     auto sortMethod = SortMethod::ByTitle;
-    if (args.size() >= 3) {
-        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
+    if (args.size() >= 2) {
+        auto opt = safeCastEnum<SortMethod>(args.at(1)->get<iris::Int>());
         if (opt) {
             sortMethod = *opt;
         } else {
@@ -174,8 +181,8 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
         }
     }
     auto leafSortMethod = sortMethod;
-    if (args.size() >= 4) {
-        auto opt = safeCastEnum<SortMethod>(args.at(3)->get<iris::Int>());
+    if (args.size() >= 3) {
+        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
         if (opt) {
             leafSortMethod = *opt;
         } else {
@@ -191,23 +198,31 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
         );
     }
 
+    bool isAbsPath = scope.starts_with('/');
+
     // TODO: error handling
-    // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
-    // bad
-    auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at(violet::constants::InternalPathRef).get<std::string>()
-    };
+    auto path = man.fileManager.getRootFolder();
+    if (!isAbsPath) {
+        path /= ctx->fm.internalPath;
+    }
+
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
-    path = std::filesystem::weakly_canonical(path / scope);
+
+    path = std::filesystem::weakly_canonical(
+        path / (
+            // I hate all path implementations and I desperately need to write my own rather than deal with this shit
+            isAbsPath ? scope.substr(1) : scope
+        )
+    );
 
     TreePagesData root;
 
     if (std::filesystem::weakly_canonical(man.fileManager.getRootFolder()) != path) {
         root.folder_name = path.filename();
     }
-    
+
     bool hasFiles = false;
     man.fileManager.recursivelyIterateFiles(
         path,
@@ -292,13 +307,12 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
     return ss.str();
 }
 
-iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
-    const auto& frontmatter = *args.at(0);
-    const auto scope = args.at(1)->get<iris::String>();
-    // TODO: this is technically
-    // This is technicalyl WHAT, past me?!
+iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, RenderContext* ctx) {
+    const auto& frontmatter = ctx->fm;
+    const auto scope = args.at(0)->get<iris::String>();
+
     const auto sortMethod = safeCastEnum<SortMethod>(
-        args.at(2)->get<iris::Int>()
+        args.at(1)->get<iris::Int>()
     );
 
     if (!sortMethod.has_value()) {
@@ -309,16 +323,16 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
 
     uint64_t pageSize = 50;
     uint64_t pageNumber = 1;
-    if (args.size() > 3) {
-        pageSize = args.at(3)->get<iris::Int>();
+    if (args.size() > 2) {
+        pageSize = args.at(2)->get<iris::Int>();
     }
-    if (args.size() > 4) {
-        pageNumber = args.at(4)->get<iris::Int>();
+    if (args.size() > 3) {
+        pageNumber = args.at(3)->get<iris::Int>();
     }
 
 
     Paginator pag {
-        frontmatter.at(violet::constants::InternalPathRef).get<std::string>(),
+        frontmatter.internalPath,
         this->man.fileManager,
         this->man.metaCache,
         pageSize,
@@ -343,31 +357,9 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
     return out;
 }
 
-iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
-    iris::DataObject frontmatter = nullptr;
-    std::string fn;
-
-    if (args.size() < 1 || args.size() > 2) {
-        throw iris::CallbackError(
-            std::format(
-                "loadJson takes either one or two arguments, but got {}",
-                args.size()
-            )
-        );
-    }
-    if (!args.at(0)->is_string()) {
-        minilog::warn(
-            "loadJson(frontmatter, fn) is deprecated. The new signature is loadJson(fn[, frontmatter]), where the "
-            "frontmatter is optional if `fn` is an absolute path"
-        );
-        frontmatter = *args.at(0);
-        fn = args.at(1)->get<iris::String>();
-    } else {
-        fn = args.at(0)->get<iris::String>();
-        if (args.size() == 2) {
-            frontmatter = *args.at(1);
-        }
-    }
+iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* ctx) {
+    std::string fn = args.at(0)->get<iris::String>();
+    auto& frontmatter = ctx->fm;
 
     std::filesystem::path p;
     if (fn.starts_with('/')) {
@@ -376,15 +368,8 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
         }
         p = this->man.opts.root / fn.substr(1);
     } else {
-        if (frontmatter == nullptr) {
-            throw iris::CallbackError(
-                "loadJson was called with a non-absolute path, but no frontmatter was provided. To use a relative "
-                "path, you must provide the page or site global so the function can tell what the filename is relative "
-                "to."
-            );
-        }
         p = std::filesystem::path {
-            frontmatter.at(violet::constants::InternalPathRef).get<iris::String>()
+            this->man.opts.root / frontmatter.internalPath
         };
         if (!std::filesystem::is_directory(p)) {
             p = p.parent_path();
@@ -394,7 +379,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
 
     // This feels bad, but it should work.
     // Should probably turn this into a standard function somewhere
-    p = std::filesystem::canonical(p);
+    p = std::filesystem::weakly_canonical(p);
     if (!p.string().starts_with(this->man.opts.root.string())) {
         minilog::error(
             "loadJson found possible root escaping: fn = {}, resolved path = {}",
@@ -488,9 +473,12 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
         throw iris::CallbackError("Illegal value of internalFileType injected");
     }
 
+    auto context = this->man.buildCommonContext(safeFm);
     res.content = this->man.env.render(
         rawContent,
-        this->man.buildCommonContext(safeFm)
+        context,
+        &context,
+        fm.internalPath
     );
 
     return res;

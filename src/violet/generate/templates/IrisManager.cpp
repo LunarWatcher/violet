@@ -45,11 +45,10 @@ IrisManager::IrisManager(
     });
 }
 
-iris::DataObject IrisManager::buildCommonContext(const Frontmatter& pageFm) {
-    return iris::Object {
-        {"page", pageFm},
-        {"site", this->cfg.raw},
-        {"violet", violet::violet_global}
+RenderContext IrisManager::buildCommonContext(const Frontmatter& pageFm) {
+    return RenderContext {
+        .fm = pageFm,
+        .site = cfg.raw,
     };
 }
 
@@ -62,18 +61,18 @@ std::string IrisManager::renderPage(
     auto context = buildCommonContext(fm);
 
     if (pagIt != nullptr) {
-        std::vector<iris::DataObject> pages;
+        std::vector<Frontmatter> pages;
 
         // TODO: This isn't great :/ But it work shaped
         for (auto& page : **pagIt) {
             pages.push_back(*page);
         }
 
-        context["listing"] = iris::Object{
-            { "page", pagIt->getPage() + 1 },
-            { "total_pages", pagIt->getTotalPages() },
-            { "pages", std::move(pages) },
-            { "base_path", std::filesystem::path(pagIt->paginator.basePath).parent_path().string() },
+        context.listing = ListingRenderContext {
+            .page = (int64_t) pagIt->getPage() + 1,
+            .total_pages = (int64_t) pagIt->getTotalPages(),
+            .pages = std::move(pages),
+            .base_path = std::filesystem::path(pagIt->paginator.basePath).parent_path(),
         };
     }
 
@@ -86,7 +85,9 @@ std::string IrisManager::renderPage(
             if (fm.internalFileType == ProcessedFileType::Xml) {
                 return env.render(
                     fileContent,
-                    context
+                    context,
+                    (void*) &context,
+                    fm.internalPath
                 );
             } else {
                 throw iris::CallbackError(
@@ -98,16 +99,19 @@ std::string IrisManager::renderPage(
                 );
             }
         }
-        iris::Template content = env.parse(fileContent);
+        iris::Template content = env.parse(fileContent, fm.internalPath);
         env.include_template("content", content);
         return env.render_file(
             *templateLocation,
-            context
+            context,
+            (void*) &context
         );
     } else {
         return env.render(
             fileContent,
-            context
+            context,
+            (void*) &context,
+            fm.internalPath
         );
     }
 }

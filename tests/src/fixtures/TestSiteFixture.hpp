@@ -84,14 +84,14 @@ struct TestSiteFixture : public DebugMarkerFixture {
     const std::filesystem::path& sourcePath() const { return workspace.rootDirectory; }
 
     void generateWithAsserts() const {
-        REQUIRE_FALSE(std::filesystem::exists(buildPath()));
-        REQUIRE_NOTHROW(gen->generate());
-        REQUIRE(std::filesystem::exists(buildPath()));
-    }
-
-    void assertGenerated() const {
-        INFO("gen->generate must be called before this section is declared");
-        REQUIRE(std::filesystem::exists(buildPath()));
+        gen->generate();
+        if (!std::filesystem::exists(buildPath())) {
+            throw std::runtime_error(
+                std::format(
+                    "Generate of test site {} failed", static_cast<int>(Site)
+                )
+            );
+        }
     }
 
     std::filesystem::path output() const override {

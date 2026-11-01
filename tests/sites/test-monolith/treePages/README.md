@@ -3,6 +3,6 @@
     "title": "Root"
 }
 ---
-\[\[violet-test(treePages):{{ treePages(page, ".") }}\]\]
+\[\[violet-test(treePages):{{ treePages(".") }}\]\]
 
-\[\[violet-test(listPages):||{{ listPages(page, ".") }}||\]\]
+\[\[violet-test(listPages):||{{ listPages(".") }}||\]\]

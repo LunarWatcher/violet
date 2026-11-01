@@ -11,7 +11,7 @@
 
         <aside id="_default-index">
             <h2>Index</h2>
-            {% set subtree = treePages(site, ".") %}
+            {% set subtree = treePages("/") %}
             {# In theory, this should never trigger since every site _will_ have an index, but whatever #}
             {% if subtree.index != null %}
             <p><a href="{{ site.prefix }}/{{ subtree.index.url }}">{{ subtree.index.title }}</a></p>

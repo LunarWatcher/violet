@@ -9,7 +9,7 @@ If you need to load any [unsupported filetype](/templating/README.md#filetypes-a
 
 ```json
 [
-    {% for page in listPages(site, ".") %}
+    {% for page in listPages(".") %}
         {
             "title": "{{ replace(page.title, "\"", "\\\"" }}",
             "url": "{{ site.prefix }}/{{ page.url }}"
