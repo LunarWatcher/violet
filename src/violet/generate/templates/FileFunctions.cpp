@@ -8,6 +8,7 @@
 #include "violet/data/RenderResult.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/generate/templates/ext/SafeCastEnum.hpp"
+#include "violet/generate/templates/types/RenderContext.hpp"
 #include "violet/generate/templates/types/TreePagesData.hpp"
 #include "violet/paginator/SortPredicates.hpp"
 #include "violet/parsing/Markdown.hpp"
@@ -18,30 +19,30 @@
 namespace violet {
 
 FileFunctions::FileFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("listPages", 2, [this](iris::Arguments& args) {
-        return listPages(args);
+    man.env.add_callback("listPages", 2, [this](iris::Arguments& args, void* udata) {
+        return listPages(args, (RenderContext*) udata);
     });
-    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args) {
-        return listPagesPaginated(args);
+    man.env.add_callback("listPagesPaginated",  [this](iris::Arguments& args, void* udata) {
+        return listPagesPaginated(args, (RenderContext*) udata);
     });
-    man.env.add_callback("treePages", 2, [this](iris::Arguments& args) {
-        return treePages(args);
+    man.env.add_callback("treePages", 1, [this](iris::Arguments& args, void* udata) {
+        return treePages(args, (RenderContext*) udata);
     });
     man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
         return paginatedUrl(args);
     });
-    man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
-        return listPagesByTaxonomy(args);
+    man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args, void* udata) {
+        return listPagesByTaxonomy(args, (RenderContext*) udata);
     });
-    man.env.add_callback("loadJson", [this](auto& args) {
-        return loadJson(args);
+    man.env.add_callback("loadJson", [this](auto& args, void* udata) {
+        return loadJson(args, (RenderContext*) udata);
     });
     man.env.add_callback("render", 1, [this](auto& args) {
         return render(args);
     });
 }
 
-iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
+iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args, RenderContext* ctx) {
     auto& root = man.fileManager.getRootFolder();
     auto taxonomy = args.at(0)->get<iris::String>();
     auto value = args.at(1)->get<iris::String>();
@@ -89,7 +90,7 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
     return pages;
 }
 
-iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
+iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* ctx) {
     auto& frontmatter = *args.at(0);
     auto scope = args.at(1)->get<iris::String>();
     auto sortMethod = SortMethod::ByTitle;
@@ -158,13 +159,12 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args) {
     return fms;
 }
 
-iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
-    auto& frontmatter = *args.at(0);
-    auto scope = args.at(1)->get<iris::String>();
+iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* ctx) {
+    auto scope = args.at(0)->get<iris::String>();
 
     auto sortMethod = SortMethod::ByTitle;
-    if (args.size() >= 3) {
-        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
+    if (args.size() >= 2) {
+        auto opt = safeCastEnum<SortMethod>(args.at(1)->get<iris::Int>());
         if (opt) {
             sortMethod = *opt;
         } else {
@@ -174,8 +174,8 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
         }
     }
     auto leafSortMethod = sortMethod;
-    if (args.size() >= 4) {
-        auto opt = safeCastEnum<SortMethod>(args.at(3)->get<iris::Int>());
+    if (args.size() >= 3) {
+        auto opt = safeCastEnum<SortMethod>(args.at(2)->get<iris::Int>());
         if (opt) {
             leafSortMethod = *opt;
         } else {
@@ -191,23 +191,33 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args) {
         );
     }
 
+    bool isAbsPath = scope.starts_with('/');
+
     // TODO: error handling
     // TODO: validation, violet_internals can technically be modified to theoretically allow arbitrary paths, which is
     // bad
-    auto path = man.fileManager.getRootFolder() / std::filesystem::path {
-        frontmatter.at(violet::constants::InternalPathRef).get<std::string>()
-    };
+    auto path = man.fileManager.getRootFolder();
+    if (!isAbsPath) {
+        path /= ctx->fm.internalPath;
+    }
+
     if (std::filesystem::is_regular_file(path)) {
         path = path.parent_path();
     }
-    path = std::filesystem::weakly_canonical(path / scope);
+
+    path = std::filesystem::weakly_canonical(
+        path / (
+            // I hate all path implementations and I desperately need to write my own rather than deal with this shit
+            isAbsPath ? scope.substr(1) : scope
+        )
+    );
 
     TreePagesData root;
 
     if (std::filesystem::weakly_canonical(man.fileManager.getRootFolder()) != path) {
         root.folder_name = path.filename();
     }
-    
+
     bool hasFiles = false;
     man.fileManager.recursivelyIterateFiles(
         path,
@@ -292,7 +302,7 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
     return ss.str();
 }
 
-iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
+iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, RenderContext* ctx) {
     const auto& frontmatter = *args.at(0);
     const auto scope = args.at(1)->get<iris::String>();
     // TODO: this is technically
@@ -343,7 +353,7 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args) {
     return out;
 }
 
-iris::DataObject FileFunctions::loadJson(iris::Arguments& args) {
+iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* ctx) {
     iris::DataObject frontmatter = nullptr;
     std::string fn;
 
@@ -492,7 +502,8 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
     res.content = this->man.env.render(
         rawContent,
         context,
-        &context
+        &context,
+        fm.internalPath
     );
 
     return res;

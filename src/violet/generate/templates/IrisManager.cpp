@@ -86,7 +86,8 @@ std::string IrisManager::renderPage(
                 return env.render(
                     fileContent,
                     context,
-                    (void*) &context
+                    (void*) &context,
+                    fm.internalPath
                 );
             } else {
                 throw iris::CallbackError(
@@ -98,7 +99,7 @@ std::string IrisManager::renderPage(
                 );
             }
         }
-        iris::Template content = env.parse(fileContent);
+        iris::Template content = env.parse(fileContent, fm.internalPath);
         env.include_template("content", content);
         return env.render_file(
             *templateLocation,
@@ -109,7 +110,8 @@ std::string IrisManager::renderPage(
         return env.render(
             fileContent,
             context,
-            (void*) &context
+            (void*) &context,
+            fm.internalPath
         );
     }
 }

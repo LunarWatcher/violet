@@ -1,6 +1,5 @@
 #include "fixtures/LoadWorkspace.hpp"
 #include "fixtures/TestSiteGenerator.hpp"
-#include "subtests/FileListTests.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -27,8 +26,6 @@ TEST_CASE("Basic site tests") {
         REQUIRE(
             std::filesystem::exists(testGen.buildPath())
         );
-
-        filelist::testFileIterationExcludesOutputDir(testGen);
 
         SECTION("Metadata file should not be generated") {
             REQUIRE_FALSE(

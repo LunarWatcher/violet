@@ -22,7 +22,8 @@ iris::DataObject LangFunctions::recurseInclude(iris::Arguments& args, RenderCont
     return this->man.env.render(
         ss.str(),
         context,
-        (void*) renderContext
+        (void*) renderContext,
+        templateName
     );
 }
 

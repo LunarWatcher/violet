@@ -99,9 +99,9 @@ Either `site` or `page`. This is used to get the root path.
 
 A location relative to the provided `object`. For example:
 
-* `treePages(site, ".")`: Lists pages relative to the site root. Useful for listing out the entire site
-* `treePages(page, ".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
-* `treePages(site, "some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
+* `treePages("/")`: Lists pages relative to the site root. Useful for listing out the entire site
+* `treePages(".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page
+* `treePages("/some/specific/folder")`: lists the content of a specific folder. Can be useful for certain manual lists.
 
 #### `sortMethod` (enum constant: `violet.sort`)
 
