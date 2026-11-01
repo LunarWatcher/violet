@@ -11,7 +11,7 @@
 
 *Added in 0.9.0*
 
-This function is used to render content in other files. To render content in the current file, the correcet method is to use `{% include "content" %}`.
+This function is used to render content in other files. To render content in the current file, the correct method is to use `{% include "content" %}`.
 
 The output varies by what filetype the frontmatter is for:
 
@@ -61,7 +61,7 @@ Defaults to `violet.sort.by_title`.
 
 Must be set to one of the values in the global variable `violet.sort`. See [the spec for the global `violet` variable](/schemas/violet.md#violetsort-enum-constants). 
 
-## `treePages(object, location[, sortMethod[, leafSortMethod]])`
+## `treePages(location[, sortMethod[, leafSortMethod]])`
 
 Similar to `listPages`, but returns an object in the following format:
 ```json
@@ -91,13 +91,9 @@ This function can be used when hierarchy is important.
 
 ### Arguments
 
-#### `object`
-
-Either `site` or `page`. This is used to get the root path. 
-
 #### `location`
 
-A location relative to the provided `object`. For example:
+Where to list. May be a relative path or an absolute path
 
 * `treePages("/")`: Lists pages relative to the site root. Useful for listing out the entire site
 * `treePages(".")`: Lists pages relative to the folder the current page is in. Useful if you only care about subtrees from a given page

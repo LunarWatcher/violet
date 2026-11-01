@@ -21,11 +21,24 @@ This page contains the changelog for violet. Please note that you'll encounter t
 This release has breaking changes:
 
 * `treePages` has a new return type
+* `treePages` has a bugfix that is breaking (intermediate folders are no longer returned if `treePages` is used on a non-root location)
+* The `{tree,list}*` and `loadJson` functions no longer take a page object (see migration guide for the migration steps and full list of affected functions.)
+
+### Migration guide
+
+For the new `treePages` return type, see the CHANGED section.
+
+#### Removed `site`/`page` argument to multiple functions
+
+This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`, and `listPagesByTaxonomy`
+
+* If you pass `page`: remove the argument: `listPages(page, ".")` => `listPages(".")`
+* If you pass `site`: remove the argument and make the path absolute: `listPages(page, ".")` => `listPages("/")`. Absolute paths are now always relative to the site root.
 
 ### Added
 
 * Templates: New sort method: `violet.sort.by_title` (see the [violet global schema](/schemas/violet.md#violetsortby_title-enum-constant-value))
-* Templates: `listPages` now takes an optional third argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+* Templates: `listPages` now takes an optional second argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
 * Templates: `treePages` now takes two new optional arguments; a sort method, and a leaf sort method. The leaf sort method defautls to the sort method if not provided, and the sort method defaults to `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
 
 ### Changed
@@ -54,6 +67,7 @@ This release has breaking changes:
       "index": { ... optional frontmatter },
   }
   ```
+* BREAKING: `treePages` no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
 
 ### Fixed
 
