@@ -18,7 +18,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
-### [v0.18.0] (2026-11-01)
+## [v0.18.0] (2026-11-01)
 
 This release has significant breaking changes:
 
