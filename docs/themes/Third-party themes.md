@@ -8,7 +8,7 @@ This page contains a list of third-party themes, meaning themes that are not inc
 >
 > The currently aren't any themes, but this page contains a placeholder list for when there are third-party themes that can be linked to.
 
-{% set data = loadJson("third-party-themes.json", page) %}
+{% set data = loadJson("third-party-themes.json") %}
 <table>
     <thead>
         <tr>
