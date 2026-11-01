@@ -474,12 +474,25 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
     }
 
     auto context = this->man.buildCommonContext(safeFm);
-    res.content = this->man.env.render(
-        rawContent,
-        context,
-        &context,
-        fm.internalPath
-    );
+    try {
+        res.content = this->man.env.render(
+            rawContent,
+            context,
+            &context,
+            fm.internalPath
+        );
+    } catch (const iris::IrisError& e) {
+        renderIrisError(
+            e,
+            path
+        );
+        throw iris::CallbackError(
+            std::format(
+                "Failed to render {} due to nested render errors",
+                path.string()
+            )
+        );
+    }
 
     return res;
 }

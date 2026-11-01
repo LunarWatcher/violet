@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <stc/StringUtil.hpp>
+#include <fstream>
+#include <cmath>
 
 void violet::renderSyntaxError(
     const std::filesystem::path& relPath,
@@ -58,14 +60,14 @@ void violet::renderSyntaxError(
 
         std::cerr << "  " << line << "\n";
         if (pos >= textPtr && pos <= lineEnd) {
-            // This is the line
-            std::cerr << "  ";
-            // Very bad and very naive implementation. Also probably suboptimal code in general
-            std::stringstream ss;
-            for (size_t i = 0; i < pos - textPtr; ++i) {
-                ss << '~';
+            std::string marker(pos - textPtr, '~');
+            // I don't think this is necessary, but doesn't hurt
+            if (marker.size() == 0) {
+                marker = '^';
+            } else {
+                marker.back() = '^';
             }
-            std::cerr << ss.rdbuf() << '^' << std::endl;
+            std::cerr << "  " << marker << " " << synError.what() << std::endl;
         }
         // +1 to account for the newline that isn't part of this line
         textPtr += line.size() + 1;
@@ -83,3 +85,99 @@ void violet::renderFileParsingException(
     );
 }
 
+void violet::renderIrisError(
+    const iris::IrisError& err,
+    const std::filesystem::path& relPath
+) {
+    minilog::error(
+        "Failed to render templates. Error message: {}",
+        err.message
+    );
+
+    std::cerr
+        << "Error source: "
+        << err.location.filePathOrIdentifier
+        << " line " << err.location.line
+        << " column " << err.location.column
+        << std::endl;
+
+    std::filesystem::path source = err.location.filePathOrIdentifier;
+    if (source.extension() != ".md") {
+        if (!std::filesystem::exists(source)) {
+            minilog::error(
+                "An error occurred while handling the previous error: failed to find {}",
+                err.location.filePathOrIdentifier
+            );
+            return;
+        }
+        std::ifstream f(source);
+        if (!f) {
+            minilog::error(
+                "An error occurred while handling the previous error: failed to open {}",
+                source.string()
+            );
+            return;
+        }
+        
+        std::stringstream ss;
+        ss << f.rdbuf();
+        std::string content = ss.str();
+
+        auto split = stc::string::split(content, '\n');
+
+        if (split.size() < err.location.line) {
+            minilog::error(
+                "Failed to render error location: reported line exceeds the number of lines in the file "
+                "(wanted line {}, but only {} lines available)",
+                err.location.line,
+                split.size()
+            );
+        } else {
+            int64_t line = err.location.line - 1;
+
+            auto minLine = std::max<int64_t>(line - 3, 0);
+            auto maxLine = std::min<int64_t>(line + 3, (int64_t) split.size() - 1);
+
+            std::cerr << std::endl;
+            for (int64_t i = minLine; i <= maxLine; ++i) {
+                std::cerr << "  " << split.at(i) << std::endl;
+                if (i == line) {
+                    std::string marker(err.location.column, '~');
+                    marker.back() = '^';
+
+                    std::cerr << "  " << marker << " " << err.message << std::endl;
+                }
+            }
+            std::cerr << std::endl;
+        }
+        
+    } else {
+        std::cerr
+            << "The source file is a translated markdown file. Error info only exists for the translated "
+            "HTML, so cannot preview the error location in this file."
+            << std::endl;
+    }
+
+    if (!err.location.importStack.empty()) {
+        std::cerr << "Imported via:" << std::endl;
+
+        auto stack = err.location.importStack;
+
+        while (!stack.empty()) {
+            auto top = stack.top();
+            stack.pop();
+
+            std::cerr << "* "
+                      << top.filePathOrIdentifier
+                      << " on line " << top.line << ":" << top.column
+                      << std::endl;
+        }
+    }
+    std::cerr
+        << "\n"
+        << "While rendering templates for "
+        << relPath.string()
+        << "\n"
+        << std::string(60, '=')
+        << "\n\n";
+}

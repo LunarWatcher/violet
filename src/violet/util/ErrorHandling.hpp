@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iris/exceptions.hpp"
 #include "violet/exceptions/FileParsingException.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include <filesystem>
@@ -15,6 +16,11 @@ extern void renderSyntaxError(
 
 extern void renderFileParsingException(
     const FileParsingException& fpError
+);
+
+extern void renderIrisError(
+    const iris::IrisError& err,
+    const std::filesystem::path& relPath
 );
 
 }

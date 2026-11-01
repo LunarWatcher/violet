@@ -249,6 +249,12 @@ bool SiteGenerator::processFile(
     } catch (const FileParsingException& e) {
         renderFileParsingException(e);
         return false;
+    } catch (const iris::IrisError& e) {
+        renderIrisError(
+            e,
+            relPath
+        );
+        return false;
     }
 
     return true;

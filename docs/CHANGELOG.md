@@ -42,6 +42,30 @@ This same pattern applies to all four functions.
 * Templates: New sort method: `violet.sort.by_title` (see the [violet global schema](/schemas/violet.md#violetsortby_title-enum-constant-value))
 * Templates: `listPages` now takes an optional second (after the breaking changes that removed the formerly first argument) argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
 * Templates: `treePages` now takes two new optional arguments; a sort method, and a leaf sort method. The leaf sort method defautls to the sort method if not provided, and the sort method defaults to `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+* *Drastically* improved iris template error rendering. Example:
+  ```none
+  04:34:28.297 | error    | ErrorHandling.cpp:93     | Failed to render templates. Error message: variable 'non_existent_variable' not found
+  Error source: /home/olivia/programming/cpp/violet/build/bin/../share/violet/themes/_default/_templates/_default/base.iris line 35 column 12
+
+
+            <div class="flag end-flag"></div>
+            {% include "partials/footer.iris" %}
+            {{ non_existent_variable }}
+    ~~~~~~~~~~~^ variable 'non_existent_variable' not found
+
+        </body>
+    </html>
+
+  Imported via:
+  * /home/olivia/programming/cpp/violet/build/bin/../share/violet/themes/_default/_templates/_default/single_page.iris on line 1:12
+
+  While rendering templates for Taxonomies.md
+  ============================================================
+
+  Site generation failed. See error log
+  ```
+  * Please note that errors in markdown files do not show this much detail. Violet's markdown renderer currently lacks a way to map a location in the markdown source to the HTML source, and it's obviously the HTML source that gets rendered and therefore defines the line and column numbers for the error.
+  * Also note that absolute paths should only be rendered when using the default theme. It'll be all relative paths for non-default themes.
 
 ### Changed
 
