@@ -30,7 +30,7 @@ For the new `treePages` return type, see the CHANGED section.
 
 #### Removed `site`/`page` argument to multiple functions
 
-This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`, and `listPagesByTaxonomy`
+This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`
 
 * If you pass `page`: remove the argument: `listPages(page, ".")` => `listPages(".")`
 * If you pass `site`: remove the argument and make the path absolute: `listPages(page, ".")` => `listPages("/")`. Absolute paths are now always relative to the site root.
@@ -67,7 +67,7 @@ This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`, and 
       "index": { ... optional frontmatter },
   }
   ```
-* BREAKING: `listPages`, `treePages`, `loadJson`, `listPagesPaginated`, and `listPagesByTaxonomy` no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
+* BREAKING: `listPages`, `treePages`, `loadJson`, and `listPagesPaginated` and no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
 
 ### Fixed
 

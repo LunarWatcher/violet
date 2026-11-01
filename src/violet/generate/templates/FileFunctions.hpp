@@ -15,7 +15,7 @@ public:
     iris::DataObject listPages(iris::Arguments& args, RenderContext* ctx);
     iris::DataObject treePages(iris::Arguments& args, RenderContext* ctx);
 
-    iris::DataObject listPagesByTaxonomy(iris::Arguments& args, RenderContext* ctx);
+    iris::DataObject listPagesByTaxonomy(iris::Arguments& args);
 
     iris::DataObject listPagesPaginated(iris::Arguments& args, RenderContext* ctx);
 

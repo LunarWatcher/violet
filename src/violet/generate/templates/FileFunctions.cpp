@@ -31,8 +31,8 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
         return paginatedUrl(args);
     });
-    man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args, void* udata) {
-        return listPagesByTaxonomy(args, (RenderContext*) udata);
+    man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
+        return listPagesByTaxonomy(args);
     });
     man.env.add_callback("loadJson", 1, [this](auto& args, void* udata) {
         return loadJson(args, (RenderContext*) udata);
@@ -42,7 +42,7 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     });
 }
 
-iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args, RenderContext* ctx) {
+iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
     auto& root = man.fileManager.getRootFolder();
     auto taxonomy = args.at(0)->get<iris::String>();
     auto value = args.at(1)->get<iris::String>();
