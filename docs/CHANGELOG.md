@@ -12,7 +12,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * `Internal:` - changes made to the internals of violet that are observable, but don't provide anything very breaking to the workflow for the average user, or provide no observable change what so ever.
 * `Markdown:` - changes made to the markdown engine
 * `Templates:` - changes made to the API used by templates, i.e. referring to the violet-specific functions used in the iris templates
-* `Theme(theme name):` - changes made to specific builtin themes
+* `Theme (theme name):` - changes made to specific builtin themes
 
 {{ page.table_of_contents }}
 
@@ -71,6 +71,7 @@ This same pattern applies to all four functions.
   }
   ```
 * BREAKING: `listPages`, `treePages`, `loadJson`, and `listPagesPaginated` and no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
+* Theme (_default): Drop margins from the first and last `<p>` tag in a list, and add a smol margin between list items to compensate
 
 ### Fixed
 

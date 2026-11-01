@@ -70,30 +70,20 @@ void SiteGenerator::renderAndWrite(
         minilog::error("Failed to open {}", file.string());
         return;
     }
-    try {
-        auto renderedContent = irisManager.renderPage(
-            fileContent,
-            relPath,
-            frontmatter,
-            pag
-        );
+    auto renderedContent = irisManager.renderPage(
+        fileContent,
+        relPath,
+        frontmatter,
+        pag
+    );
 
-        // TODO: this is the output file, not the input file. Need to fix. Should be understandable still, at least for
-        // now.
-        minilog::info("Committing generated page to {}", file.string());
-        f.write(
-            renderedContent.data(),
-            renderedContent.size()
-        );
-    } catch (const iris::RenderError& renderError) {
-        minilog::error(
-            "Failed to render {}: {}",
-            relPath.string(),
-            renderError.what()
-        );
-        throw;
-    }
-
+    // TODO: this is the output file, not the input file. Need to fix. Should be understandable still, at least for
+    // now.
+    minilog::info("Committing generated page to {}", file.string());
+    f.write(
+        renderedContent.data(),
+        renderedContent.size()
+    );
 }
 
 void SiteGenerator::handleTemplatesAndSave(
