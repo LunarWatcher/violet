@@ -34,7 +34,7 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args, void* udata) {
         return listPagesByTaxonomy(args, (RenderContext*) udata);
     });
-    man.env.add_callback("loadJson", [this](auto& args, void* udata) {
+    man.env.add_callback("loadJson", 1, [this](auto& args, void* udata) {
         return loadJson(args, (RenderContext*) udata);
     });
     man.env.add_callback("render", 1, [this](auto& args) {
@@ -91,7 +91,6 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args, Rende
 }
 
 iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* ctx) {
-    const auto& frontmatter = ctx->fm;
     auto scope = args.at(0)->get<iris::String>();
     auto sortMethod = SortMethod::ByTitle;
     if (args.size() == 2) {
@@ -360,30 +359,8 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, Render
 }
 
 iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* ctx) {
-    iris::DataObject frontmatter = nullptr;
-    std::string fn;
-
-    if (args.size() < 1 || args.size() > 2) {
-        throw iris::CallbackError(
-            std::format(
-                "loadJson takes either one or two arguments, but got {}",
-                args.size()
-            )
-        );
-    }
-    if (!args.at(0)->is_string()) {
-        minilog::warn(
-            "loadJson(frontmatter, fn) is deprecated. The new signature is loadJson(fn[, frontmatter]), where the "
-            "frontmatter is optional if `fn` is an absolute path"
-        );
-        frontmatter = *args.at(0);
-        fn = args.at(1)->get<iris::String>();
-    } else {
-        fn = args.at(0)->get<iris::String>();
-        if (args.size() == 2) {
-            frontmatter = *args.at(1);
-        }
-    }
+    std::string fn = args.at(0)->get<iris::String>();
+    auto& frontmatter = ctx->fm;
 
     std::filesystem::path p;
     if (fn.starts_with('/')) {
@@ -392,15 +369,8 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
         }
         p = this->man.opts.root / fn.substr(1);
     } else {
-        if (frontmatter == nullptr) {
-            throw iris::CallbackError(
-                "loadJson was called with a non-absolute path, but no frontmatter was provided. To use a relative "
-                "path, you must provide the page or site global so the function can tell what the filename is relative "
-                "to."
-            );
-        }
         p = std::filesystem::path {
-            frontmatter.at(violet::constants::InternalPathRef).get<iris::String>()
+            this->man.opts.root / frontmatter.internalPath
         };
         if (!std::filesystem::is_directory(p)) {
             p = p.parent_path();
@@ -410,7 +380,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
 
     // This feels bad, but it should work.
     // Should probably turn this into a standard function somewhere
-    p = std::filesystem::canonical(p);
+    p = std::filesystem::weakly_canonical(p);
     if (!p.string().starts_with(this->man.opts.root.string())) {
         minilog::error(
             "loadJson found possible root escaping: fn = {}, resolved path = {}",
