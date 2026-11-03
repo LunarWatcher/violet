@@ -16,7 +16,9 @@ struct ServerContext : public magpie::data::CommonData {
     ) : generateOpts(
             generateOpts
         )
-    {}
+    {
+        this->generateOpts.postParse();
+    }
 };
 
 }

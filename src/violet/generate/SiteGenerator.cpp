@@ -40,6 +40,7 @@ SiteGenerator::SiteGenerator(
         this->cfg
     )
 {
+    this->opts.postParse();
 }
 
 
