@@ -380,7 +380,9 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
     // This feels bad, but it should work.
     // Should probably turn this into a standard function somewhere
     p = std::filesystem::weakly_canonical(p);
-    if (!p.string().starts_with(this->man.opts.root.string())) {
+    if (!p.string().starts_with(
+            this->man.opts.root.string()
+    )) {
         minilog::error(
             "loadJson found possible root escaping: fn = {}, resolved path = {}",
             fn, p.string()

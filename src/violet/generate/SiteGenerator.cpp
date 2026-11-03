@@ -39,7 +39,8 @@ SiteGenerator::SiteGenerator(
         this->opts,
         this->cfg
     )
-{}
+{
+}
 
 
 std::filesystem::path SiteGenerator::resolvePagination(

@@ -13,10 +13,24 @@ option(VIOLET_SANITISE "Whether or not to -fsanitise=undefined. No effect on Win
 option(VIOLET_CLANG_TIDY "Whether or not to enable clang-tidy" OFF)
 option(VIOLET_WARNINGS_ARE_ERRORS "Whether or not to enable warnings are errors in linters" OFF)
 
+if (NOT WIN32)
+    message(STATUS "Building with preview server")
+    option(VIOLET_ENABLE_SERVER "Whether or not to build with the preview server enabled" ON)
+else()
+    option(VIOLET_ENABLE_SERVER "Whether or not to build with the preview server enabled" OFF)
+
+    if (VIOLET_ENABLE_SERVER)
+        message(FATAL_ERROR "Violet's server library does not support windows.")
+    endif()
+endif()
+
 message(STATUS "Violet build configuration:")
 message(STATUS "\t- Sanitising: ${VIOLET_SANITISE}")
 message(STATUS "\t- Coverage: ${VIOLET_COVERAGE}")
 message(STATUS "\t- Linting (clang-tidy): ${VIOLET_CLANG_TIDY}")
+message(STATUS "\t- Server: ${VIOLET_ENABLE_SERVER}")
+
+set(VIOLET_EXTRA_LIBRARIES "")
 
 if (VIOLET_COVERAGE)
     string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" CMAKE_CXX_COMPILER_VERSION_REGEX_MATCH  ${CMAKE_CXX_COMPILER_VERSION})
@@ -42,6 +56,8 @@ if (NOT WIN32 AND VIOLET_SANITISE)
 endif()
 
 set(IRIS_BUILD_TESTS OFF CACHE STRING "" FORCE)
+
+set(MAGPIE_DISABLE_HTTP2 ON CACHE STRING "" FORCE)
 
 include(FetchContent)
 FetchContent_Declare(stc
@@ -73,6 +89,20 @@ FetchContent_MakeAvailable(
     json
     iris
 )
+
+if (VIOLET_ENABLE_SERVER)
+    find_package(OpenSSL REQUIRED)
+    find_package(ZLIB REQUIRED)
+    FetchContent_Declare(magpie
+        GIT_REPOSITORY https://codeberg.org/LunarWatcher/magpie
+        GIT_TAG v0.3.2
+    )
+    FetchContent_MakeAvailable(
+        magpie
+    )
+
+    set(VIOLET_EXTRA_LIBRARIES magpie)
+endif()
 
 if (VIOLET_BUILD_VERSION)
     set(VIOLET_VERSION "${VIOLET_BUILD_VERSION}")

@@ -37,7 +37,8 @@ fi
 
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local \
+      -DVIOLET_ENABLE_SERVER=ON
 
 if ! make -j $(nproc); then
    echo "Failed to build violet!"

@@ -28,6 +28,12 @@ struct GenerateOpts {
 
     std::filesystem::path root = std::filesystem::current_path();
     std::optional<std::string> overridePrefix = std::nullopt;
+
+    void postParse() {
+        this->root = std::filesystem::weakly_canonical(
+            this->root
+        );
+    }
 };
 
 }

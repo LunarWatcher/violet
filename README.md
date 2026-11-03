@@ -33,12 +33,12 @@ All the good SSGs have turned to AI slop, and migrating between SSGs is a pain i
 
 ### Additional requirements for serving
 
-> [!note]
-> Serving is still a good while out due to page generation and QOL taking much higher priority now that violet is actually being used
-
 Violet has a built-in server for local previews based on [magpie](https://codeberg.org/LunarWatcher/magpie). The serve command is disabled by default to allow windows builds, and to allow violet to me embedded in other servers. If enabled, magpie's dependencies are added to the list.
 
-Due to limitations of the underlying socket library at the time of writing, magpie and by extension the `serve` command are Linux-only, and therefore require linux to work.
+Due to limitations of the underlying socket library at the time of writing, magpie and by extension the `serve` command are Linux-only, and therefore require linux to work. In addition, the following system libraries are required:
+
+* `openssl` (debian: `libssl-dev`)
+* `zlib` (debian: `zlib-dev`)
 
 ## Documentation
 

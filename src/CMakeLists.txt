@@ -5,6 +5,11 @@ set_source_files_properties(violet/data/GitVersion.cpp PROPERTIES COMPILE_DEFINI
 add_library(violetgitdata STATIC
     violet/data/GitVersion.cpp
 )
+
+set(VIOLET_SERVE_FILES
+    violet/serve/SiteServer.cpp
+)
+
 add_library(violetsrc STATIC
     violet/CommandLine.cpp
 
@@ -46,7 +51,16 @@ add_library(violetsrc STATIC
     violet/parsing/markdown/impl/Render.cpp
 
     violet/util/ErrorHandling.cpp
+
+    $<$<BOOL:${VIOLET_ENABLE_SERVER}>:${VIOLET_SERVE_FILES}>
 )
+
+
+if (VIOLET_ENABLE_SERVER)
+    target_compile_definitions(
+        violetsrc PUBLIC -DVIOLET_ENABLE_SERVER=ON
+    )
+endif()
 
 target_include_directories(violetsrc PUBLIC .)
 target_link_libraries(violetsrc PUBLIC
@@ -56,6 +70,7 @@ target_link_libraries(violetsrc PUBLIC
     stc
     minilog
     violetgitdata
+    ${VIOLET_EXTRA_LIBRARIES}
 )
 
 if (LINUX)
