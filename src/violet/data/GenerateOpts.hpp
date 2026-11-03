@@ -31,7 +31,9 @@ struct GenerateOpts {
 
     void postParse() {
         this->root = std::filesystem::weakly_canonical(
-            this->root
+            std::filesystem::absolute(
+                this->root
+            )
         );
     }
 };
