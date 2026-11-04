@@ -61,15 +61,15 @@ set(MAGPIE_DISABLE_HTTP2 ON CACHE STRING "" FORCE)
 
 include(FetchContent)
 FetchContent_Declare(stc
-    GIT_REPOSITORY https://github.com/LunarWatcher/stc
-    GIT_TAG v2026-09-13
+    GIT_REPOSITORY https://codeberg.org/LunarWatcher/stc
+    GIT_TAG v2026-11-04
 )
 FetchContent_Declare(minilog
-    GIT_REPOSITORY https://github.com/LunarWatcher/minilog
+    GIT_REPOSITORY https://codeberg.org/LunarWatcher/minilog
     GIT_TAG adfca0bcd67d4416778621e5071f512e8bf27bc4
 )
 FetchContent_Declare(cli12
-    GIT_REPOSITORY https://github.com/LunarWatcher/CLI12
+    GIT_REPOSITORY https://codeberg.org/LunarWatcher/CLI12
     GIT_TAG v3.1.0
 )
 FetchContent_Declare(json
@@ -95,7 +95,7 @@ if (VIOLET_ENABLE_SERVER)
     find_package(ZLIB REQUIRED)
     FetchContent_Declare(magpie
         GIT_REPOSITORY https://codeberg.org/LunarWatcher/magpie
-        GIT_TAG v0.3.2
+        GIT_TAG v0.3.7
     )
     FetchContent_MakeAvailable(
         magpie
