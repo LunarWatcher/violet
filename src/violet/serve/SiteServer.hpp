@@ -30,6 +30,7 @@ private:
         {".svg", "image/svg"},
         {".webp", "image/webp"},
         {".xml", "application/xml"},
+        {".atom", "application/atom+xml"},
         {".json", "application/json"},
     };
 
