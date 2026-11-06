@@ -92,6 +92,8 @@ public:
 
     FileManager& getFileManager() { return fileManager; }
     IrisManager& getIrisManager() { return irisManager; }
+
+    void resetCaches();
 };
 
 }

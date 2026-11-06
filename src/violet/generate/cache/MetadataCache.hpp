@@ -115,6 +115,9 @@ public:
         return nullptr;
     }
 
+    void clear() {
+        this->fileToMetadataCache.clear();
+    }
 };
 
 }

@@ -27,6 +27,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Changed
 
 * The markdown URL converter should now support additional schemes and URL formats, though the underlying URI parser is relatively untested at scale. If you experience link conversion errors after upgrading, please open an issue with the link you used  that caused problems.
+* Added caching to `treePages` and `listPages`
+  * The introduction of sort methods to these have slowed page generation a bit just on account of sorting taking time
 
 ### Fixed
 

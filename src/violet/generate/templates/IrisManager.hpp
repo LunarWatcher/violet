@@ -48,6 +48,8 @@ public:
         const Frontmatter& fm,
         Paginator::iterator* pag
     );
+
+    void resetCaches();
 };
 
 }

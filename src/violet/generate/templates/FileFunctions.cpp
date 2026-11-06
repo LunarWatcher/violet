@@ -105,6 +105,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
     }
 
     if (scope.contains("..")) {
+        [[unlikely]]
         throw iris::CallbackError(
             "listPages does not accept paths that recurse upwards"
         );
@@ -128,6 +129,16 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
             isAbsPath ? scope.substr(1) : scope
         )
     );
+
+    SingleSortCacheKey cacheKey {
+        sortMethod,
+        path.string()
+    };
+
+    if (auto it = this->listPagesCache.find(cacheKey); it != listPagesCache.end()) {
+        [[likely]]
+        return it->second;
+    }
 
     std::vector<Frontmatter> fms;
     man.fileManager.recursivelyIterateFiles(
@@ -162,7 +173,8 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
         fms.end(),
         sort::sortMethodsRef.at(sortMethod)
     );
-    
+
+    this->listPagesCache[cacheKey] = fms;
     return fms;
 }
 
@@ -175,8 +187,9 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
         if (opt) {
             sortMethod = *opt;
         } else {
+            [[unlikely]]
             throw iris::CallbackError(
-                "listPages got invalid sort method: make sure you use the constants in violet.sort"
+                "treePages got invalid sort method: make sure you use the constants in violet.sort"
             );
         }
     }
@@ -186,15 +199,17 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
         if (opt) {
             leafSortMethod = *opt;
         } else {
+            [[unlikely]]
             throw iris::CallbackError(
-                "listPages got invalid leafSortMethod: make sure you use the constants in violet.sort"
+                "treePages got invalid leafSortMethod: make sure you use the constants in violet.sort"
             );
         }
     }
 
     if (scope.contains("..")) {
+        [[unlikely]]
         throw iris::CallbackError(
-            "listPages does not accept paths that recurse upwards"
+            "treePages does not accept paths that recurse upwards"
         );
     }
 
@@ -216,6 +231,17 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
             isAbsPath ? scope.substr(1) : scope
         )
     );
+
+    DualSortCacheKey cacheKey {
+        leafSortMethod,
+        sortMethod,
+        path.string()
+    };
+
+    if (auto it = treePagesCache.find(cacheKey); it != treePagesCache.end()) {
+        [[likely]]
+        return it->second;
+    }
 
     TreePagesData root;
 
@@ -283,10 +309,13 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
     if (!hasFiles) {
         return iris::Object();
     }
-    return root.convert(
+    auto data = root.convert(
         leafSortMethod,
         sortMethod
     );
+
+    treePagesCache[cacheKey] = data;
+    return data;
 }
 
 iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
@@ -498,6 +527,11 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
     }
 
     return res;
+}
+
+void FileFunctions::clear() {
+    this->treePagesCache.clear();
+    this->listPagesCache.clear();
 }
 
 }

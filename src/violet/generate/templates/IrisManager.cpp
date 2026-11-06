@@ -116,4 +116,8 @@ std::string IrisManager::renderPage(
     }
 }
 
+void IrisManager::resetCaches() {
+    fileFuncs.clear();
+}
+
 }

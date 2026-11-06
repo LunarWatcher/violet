@@ -17,6 +17,17 @@
 
 namespace violet {
 
+namespace {
+
+struct CacheBuster {
+    SiteGenerator* gen;
+    ~CacheBuster() {
+        gen->resetCaches();
+    }
+};
+
+}
+
 SiteGenerator::SiteGenerator(
     const GenerateOpts& opts,
     Config&& workspaceConf
@@ -302,6 +313,7 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
 }
 
 bool SiteGenerator::generate() {
+    CacheBuster cacheBuster(this);
     const auto& rootDir = this->opts.root;
 
     minilog::info(
@@ -418,6 +430,11 @@ std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::l
         opts,
         std::move(cfg)
     ));
+}
+
+void SiteGenerator::resetCaches() {
+    this->metadataCache.clear();
+    this->irisManager.resetCaches();
 }
 
 }

@@ -156,12 +156,7 @@ void FileManager::recursivelyIterateFiles(
     auto it = std::filesystem::recursive_directory_iterator(root);
     auto end = std::filesystem::recursive_directory_iterator();
 
-    std::filesystem::path realOutputPath = opts.outputFolder;
-    if (!realOutputPath.is_absolute()) {
-        realOutputPath = this->root / opts.outputFolder;
-    }
-    realOutputPath = std::filesystem::weakly_canonical(realOutputPath);
-
+    std::filesystem::path realOutputPath = opts.output();
 
     // Subfolder of output path (avoids scopes set to {output_dir}/**)
     // The implementation is shit because there is no trivial way to check if a path is a subpath of another

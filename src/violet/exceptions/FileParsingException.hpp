@@ -24,6 +24,7 @@ public:
     std::optional<std::filesystem::path> file;
 
     FileParsingException(std::string&& message) : message(std::move(message)) {}
+    FileParsingException(const FileParsingException& other) noexcept = default;
 
     const char * what() const noexcept override { return message.c_str(); }
 };
