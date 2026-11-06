@@ -2,6 +2,20 @@
 #include <catch2/catch_test_macros.hpp>
 #include <functional>
 
+namespace {
+
+std::function<std::string(const std::string&)> genCall(
+    const std::string& pathPrefix,
+    const std::filesystem::path& relSourceFile
+) {
+    return std::bind(
+        violet::projectBasedTranslator,
+        pathPrefix, relSourceFile, std::nullopt, std::placeholders::_1
+    );
+}
+
+}
+
 TEST_CASE("renameFile") {
     SECTION("Space words") {
         REQUIRE(violet::renameFile("Project structure.md") == "project-structure.md");
@@ -10,12 +24,7 @@ TEST_CASE("renameFile") {
 
 // TODO: These tests could be generated sections with a vector
 TEST_CASE("projectBasedTranslator - no prefix, subpath") {
-    std::string pathPrefix = "";
-    std::filesystem::path relSourceFilePath = "subpath/file.md";
-    auto call = std::bind(
-        violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
-    );
+    auto call = genCall("", "subpath/file.md");
 
     SECTION("relative URLs") {
         SECTION("Dumb") {
@@ -82,13 +91,7 @@ TEST_CASE("projectBasedTranslator - no prefix, subpath") {
 }
 
 TEST_CASE("projectBasedTranslator - prefix, subpath") {
-
-    std::string pathPrefix = "/violet/";
-    std::filesystem::path relSourceFilePath = "subpath/file.md";
-    auto call = std::bind(
-        violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
-    );
+    auto call = genCall("/violet/", "subpath/file.md");
 
     SECTION("relative URLs") {
         SECTION("Dumb") {
@@ -155,13 +158,7 @@ TEST_CASE("projectBasedTranslator - prefix, subpath") {
 }
 
 TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
-
-    std::string pathPrefix = "/violet";
-    std::filesystem::path relSourceFilePath = "subpath/file.md";
-    auto call = std::bind(
-        violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
-    );
+    auto call = genCall("/violet", "subpath/file.md");
 
     SECTION("relative URLs") {
         SECTION("Dumb") {
@@ -235,12 +232,7 @@ TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
 }
 
 TEST_CASE("projectBasedTranslator should handle relative files in subpaths") {
-    std::string pathPrefix = "/violet";
-    std::filesystem::path relSourceFilePath = "subpath/subsubpath/subsubsubpath/file.md";
-    auto call = std::bind(
-        violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
-    );
+    auto call = genCall("/violet", "subpath/subsubpath/subsubsubpath/file.md");
 
     SECTION("Relative paths should be handled correctly") {
         REQUIRE(
@@ -265,4 +257,36 @@ TEST_CASE("projectBasedTranslator should handle relative files in subpaths") {
             call("deeper/path/file.txt") == "/violet/subpath/subsubpath/subsubsubpath/deeper/path/file.txt"
         );
     }
+}
+
+#define REQUIRE_CALL_EQUALS(string) REQUIRE(call(string) == string);
+
+TEST_CASE("projectBasedTranslator should return HTTP links as-is") {
+    auto call = genCall("/violet", "subpath/subsubpath/subsubsubpath/file.md");
+
+    REQUIRE_CALL_EQUALS("https://example.com");
+    REQUIRE_CALL_EQUALS("http://example.com");
+    REQUIRE_CALL_EQUALS("https:");
+    REQUIRE_CALL_EQUALS("http:");
+    REQUIRE_CALL_EQUALS("https://academictorrents.com/details/82075af82e83b99e9a4c6ef17e564947efe65a66");
+    REQUIRE_CALL_EQUALS("https://en.wikipedia.org/wiki/Wikipedia:Database_download");
+    REQUIRE_CALL_EQUALS("https://codeberg.org/explore/repos?q=violet-ssg&topic=1");
+    REQUIRE_CALL_EQUALS("");
+}
+
+TEST_CASE("projectBasedTranslator should return non-HTTP non-site-relative URIs as-is") {
+    auto call = genCall("/violet", "subpath/subsubpath/subsubsubpath/file.md");
+
+    // Test cases based on examples shown in https://www.rfc-editor.org/info/rfc3986/. stc uses these as well to verify
+    // the URI parser, so we might as well verify that they're all treated as external URLs
+    REQUIRE_CALL_EQUALS("ftp://ftp.is.co.za/rfc/rfc1808.txt");
+    REQUIRE_CALL_EQUALS("ldap://[2001:db8::7]/c=GB?objectClass?one");
+    REQUIRE_CALL_EQUALS("mailto:John.Doe@example.com");
+    REQUIRE_CALL_EQUALS("news:comp.infosystems.www.servers.unix");
+    REQUIRE_CALL_EQUALS("tel:+1-816-555-1212");
+    REQUIRE_CALL_EQUALS("telnet://192.0.2.16:80/");
+    REQUIRE_CALL_EQUALS("urn:oasis:names:specification:docbook:dtd:xml:4.1.2");
+
+    // Magnet URL for https://academictorrents.com/details/82075af82e83b99e9a4c6ef17e564947efe65a66
+    REQUIRE_CALL_EQUALS("magnet:?xt=urn:btih:82075af82e83b99e9a4c6ef17e564947efe65a66&tr=https%3A%2F%2Facademictorrents.com%2Fannounce.php&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce");
 }

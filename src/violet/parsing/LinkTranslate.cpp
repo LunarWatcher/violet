@@ -64,6 +64,9 @@ std::string violet::projectBasedTranslator(
                 relSourceFilePath.string()
             )
         );
+    } else if (in == "") {
+        minilog::error("Found empty link in {}!", relSourceFilePath.string());
+        return in;
     }
 
     // // We need an absolute path, which we don't (shouldn't) get from the outside explicitly. SiteGenerator runs on
