@@ -46,6 +46,8 @@ add_executable(tests
     src/parsing/markdown/regression/18-CodeBlockCharactersEaten.cpp
     src/parsing/markdown/regression/35-RelativeURLs.cpp
 
+    src/parsing/urls/UrlValidityTests.cpp
+
     src/utils/FileReader.cpp
 )
 

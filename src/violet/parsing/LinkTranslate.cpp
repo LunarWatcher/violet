@@ -17,7 +17,7 @@ bool violet::checkPathValidity(
     if (in.starts_with('/')) {
         expectedLocation += in;
     } else {
-        expectedLocation /= std::filesystem::is_directory(relSourceFilePath)
+        expectedLocation /= std::filesystem::is_directory(projectRoot / relSourceFilePath)
             ? relSourceFilePath
             : relSourceFilePath.parent_path();
         expectedLocation /= in;
@@ -44,6 +44,23 @@ bool violet::checkPathValidity(
         }
         return false;
     }
+
+    if (std::filesystem::is_directory(expectedLocation)) {
+        if (
+            !std::filesystem::exists(expectedLocation / "README.md")
+            && !std::filesystem::exists(expectedLocation / "index.md")
+            && !std::filesystem::exists(expectedLocation / "index.html")
+        ) {
+            minilog::warn(
+                "Possibly dead link: {} links to {}, which is a valid folder, but it doesn't contain anything "
+                "that resolves to `index.html` after compilation (found none of: README.md, index.md, index.html)",
+                relSourceFilePath.string(),
+                in
+            );
+            return false;
+        }
+    }
+    
     return true;
 }
 
