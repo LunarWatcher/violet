@@ -36,6 +36,12 @@ struct GenerateOpts {
             )
         );
     }
+
+    std::filesystem::path output() {
+        return std::filesystem::weakly_canonical(
+            root / outputFolder
+        );
+    }
 };
 
 }

@@ -33,6 +33,9 @@ add_library(violetsrc STATIC
     violet/generate/templates/types/RenderContext.cpp
     violet/generate/templates/types/TreePagesData.cpp
 
+    violet/generate/watch/OneShotRebuildHandler.cpp
+    violet/generate/watch/WatchRebuildHandler.cpp
+
     violet/init/InitModule.cpp
 
     violet/paginator/Paginator.cpp

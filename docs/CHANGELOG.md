@@ -21,10 +21,12 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Added
 
 * Added `violet serve`
+* Made `violet generate --watch` actually watch (on Linux)
 
 ### Fixed
 
 * Fixed a bug where a relative `--root` (i.e. `--root=../docs`) resulted in JSON loading failing on sanitization checks
+* Fixed a bug where `--root` resulted in all theme exports being copied into `{current working directory}/{output dir}` instead of `{root dir}/{output dir}`
 
 ## [v0.18.0] (2026-11-01)
 

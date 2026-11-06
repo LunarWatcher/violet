@@ -31,6 +31,12 @@ Workflow:
 
 ## Using `violet generate`
 
+> [!tip]
+>
+> On Linux, `violet generate` supports the additional `-w`/`--watch` flag, which allows `generate` to work similar to `serve`, and watch for changes. This allows `generate` to function identically to `serve`, minus some error handling features.
+> 
+> This must be combined with one of the two approaches listed in this section to have decent preview functionality.
+
 ### Using the file local mode flag
 
 `-l`/`--local` flag can be used to replace the prefix with a file path. This allows you to open the file in a browser as if it was a regular file. The main disadvantage with this is that any `fetch` requests you may have against the local site, for example to the meta file, will not work.

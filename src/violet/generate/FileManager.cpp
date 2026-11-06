@@ -15,7 +15,7 @@ void FileManager::copyRaw(
 ) {
     assertReady();
     auto fullSource = root / relPath;
-    auto fullDest = opts.outputFolder / destName;
+    auto fullDest = opts.output() / destName;
 
     std::filesystem::create_directories(
         fullDest.parent_path()

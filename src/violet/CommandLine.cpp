@@ -4,6 +4,9 @@
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/data/GitVersion.hpp"
 #include "violet/generate/SiteGenerator.hpp"
+#include "violet/generate/watch/AutoRebuildHandler.hpp"
+#include "violet/generate/watch/OneShotRebuildHandler.hpp"
+#include "violet/generate/watch/WatchRebuildHandler.hpp"
 #include "violet/init/InitModule.hpp"
 #include <CLI/CLI.hpp>
 #include <filesystem>
@@ -48,7 +51,7 @@ CLI::App* violet::generateCommand(CLI::App& app, violet::GenerateOpts& generateO
         "Converts the input project (always in the working directory) to a generated site"
     );
     withStandardFlags(cmdGenerate);
-    cmdGenerate->add_option(
+    cmdGenerate->add_flag(
         "-w,--watch",
         generateOpts.watch,
         "Whether or not to watch for changes. Not setting this will generate the site and then immediately exit."
@@ -153,6 +156,8 @@ int violet::cliMain(int argc, char** argv) {
     CLI::App app {
         "C++-based static site generator",
     };
+    // There's two instances to prevent the defaults from one command from overriding the input from the other. I don't
+    // know if this is an actual problem, but this costs nothing
     GenerateOpts generateOpts, generateServeOpts {
         .overridePrefix = "/"
     };
@@ -172,13 +177,16 @@ int violet::cliMain(int argc, char** argv) {
 
     CLI12_PARSE(app, argc, argv);
 
+    
     if (cmdVersion->parsed()) {
         std::cout << "violet " << violet::GitVersion() << std::endl;
     } else if (cmdGenerate->parsed()) {
+        generateOpts.postParse();
         return generateMain(
             generateOpts
         );
     } else if (cmdServe->parsed()) {
+        generateServeOpts.postParse();
         return serveMain(
             generateServeOpts
         );
@@ -189,18 +197,14 @@ int violet::cliMain(int argc, char** argv) {
 }
 
 int violet::generateMain(const GenerateOpts& opts) {
-    auto siteGenResult = SiteGenerator::loadWorkspace(opts);
-    if (siteGenResult.has_value()) {
-        auto& ptr = siteGenResult.value();
-        auto genRes = ptr->generate();
-        if (!genRes) {
-            std::cerr << "Site generation failed. See error log" << std::endl;
-            return 1;
-        }
+    std::shared_ptr<AutoRebuildHandler> generateHandler = nullptr;
+
+    if (opts.watch) {
+        generateHandler = std::make_shared<WatchRebuildHandler>(opts);
     } else {
-        std::cerr << "Failed to load workspace: " << siteGenResult.error() << std::endl;
-        return 1;
+        generateHandler = std::make_shared<OneShotRebuildHandler>(opts);
     }
+    generateHandler->watch();
     return 0;
 }
 
