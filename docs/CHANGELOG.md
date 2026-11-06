@@ -22,6 +22,11 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 * Added `violet serve`
 * Made `violet generate --watch` actually watch (on Linux)
+* Added a warning for possibly dead internal links at compile time, so it's more obvious when a link is invalid. This does not check fragment validity, just the URL relative to the expected source file location.
+
+### Changed
+
+* The markdown URL converter should now support additional schemes and URL formats, though the underlying URI parser is relatively untested at scale. If you experience link conversion errors after upgrading, please open an issue with the link you used  that caused problems.
 
 ### Fixed
 

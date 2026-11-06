@@ -30,7 +30,7 @@ The site prefix may change this, but everything is still relative to some root, 
 * `.md`, `.html`: standard content files, defaults to `"layout": "single_page"`
 * `.js`, `.mjs`, `.css`: asset files, defaults to `"layout": "none"`
 * `.xml`, `.rss`, `.atom`: feed files, defaults to `"layout": "feed"`. Note that you can have `.xml` files that aren't feeds, as there are no URL translations, this is just the default assumption. For RSS and ATOM feeds, see [RSS and atom feeds](/RSS and atom feeds.md)
-* `.in`: a special extension that's stripped, and indicates that the file should be template-processed. See [templating non-supported filetypes](Templating non-supported filetypes.md). Defaults to `"layout": "none"`.
+* `.in`: a special extension that's stripped, and indicates that the file should be template-processed. See [templating non-supported filetypes](/templating/Templating non-supported filetypes.md). Defaults to `"layout": "none"`.
 * Everything else: copied verbatim without template processing.
 
 In addition to the layout, the default `"type"` is `"_default"` for all of the above.

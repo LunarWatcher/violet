@@ -7,7 +7,7 @@
 
 The `listing` object is a metaobject that contains information about pagination, and serves as a namespace for page interation when operating on a paginated listing page.
 
-The `listing` object is available exclusively in paginated page lists. For non-paginated page lists, use [`listPages`](/templating/files.md#listpagesobject-location) or [`treePages`](/templating/files.md#treepagesobject-location).
+The `listing` object is available exclusively in paginated page lists. For non-paginated page lists, use [`listPages`](/templating/functions/files.md#listpagesobject-location) or [`treePages`](/templating/functions/files.md#treepagesobject-location).
 
 ## Schema
 

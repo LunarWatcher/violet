@@ -440,6 +440,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                     projectBasedTranslator,
                     this->man.cfg.prefix,
                     fm.internalPath,
+                    this->man.opts.root,
                     std::placeholders::_1
                 )
             );

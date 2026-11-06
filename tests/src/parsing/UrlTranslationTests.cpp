@@ -14,7 +14,7 @@ TEST_CASE("projectBasedTranslator - no prefix, subpath") {
     std::filesystem::path relSourceFilePath = "subpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::placeholders::_1
+        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
     );
 
     SECTION("relative URLs") {
@@ -87,7 +87,7 @@ TEST_CASE("projectBasedTranslator - prefix, subpath") {
     std::filesystem::path relSourceFilePath = "subpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::placeholders::_1
+        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
     );
 
     SECTION("relative URLs") {
@@ -160,7 +160,7 @@ TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
     std::filesystem::path relSourceFilePath = "subpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::placeholders::_1
+        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
     );
 
     SECTION("relative URLs") {
@@ -239,7 +239,7 @@ TEST_CASE("projectBasedTranslator should handle relative files in subpaths") {
     std::filesystem::path relSourceFilePath = "subpath/subsubpath/subsubsubpath/file.md";
     auto call = std::bind(
         violet::projectBasedTranslator,
-        pathPrefix, relSourceFilePath, std::placeholders::_1
+        pathPrefix, relSourceFilePath, std::nullopt, std::placeholders::_1
     );
 
     SECTION("Relative paths should be handled correctly") {

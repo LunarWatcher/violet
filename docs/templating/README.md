@@ -35,7 +35,7 @@ There are two root-level objects that are always available:
 Additionally, there are two that may be available depending on the page context:
 
 * `listing`: A special object for paginated `page_list`s that contain all the page specified by the [paginated page list](/Page lists.md#paginated-page-lists).
-* `theme`: Contains options set by the theme. Only available if a theme is set, and it defines variables. See [Themes](/Themes.md).
+* `theme`: Contains options set by the theme. Only available if a theme is set, and it defines variables. See [Themes](Themes.md).
 
 ## Engine limitations
 

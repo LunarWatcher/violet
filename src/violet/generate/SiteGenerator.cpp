@@ -199,8 +199,10 @@ bool SiteGenerator::processFile(
                     content,
                     std::bind(
                         projectBasedTranslator,
+                        // args
                         this->cfg.prefix,
                         relPath,
+                        this->opts.root,
                         std::placeholders::_1
                     ),
                     this->cfg.tocStartLevel

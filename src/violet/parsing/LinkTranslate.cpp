@@ -2,12 +2,55 @@
 #include "violet/exceptions/FatalError.hpp"
 #include "violet/parsing/Escaping.hpp"
 
+#include "stc/uri.hpp"
+
+#include <filesystem>
 #include <vector>
 #include <minilog/minilog.hpp>
+
+bool violet::checkPathValidity(
+    const std::filesystem::path& relSourceFilePath,
+    const std::string& in,
+    const std::filesystem::path& projectRoot
+) {
+    std::filesystem::path expectedLocation = projectRoot;
+    if (in.starts_with('/')) {
+        expectedLocation += in;
+    } else {
+        expectedLocation /= std::filesystem::is_directory(relSourceFilePath)
+            ? relSourceFilePath
+            : relSourceFilePath.parent_path();
+        expectedLocation /= in;
+    }
+
+    expectedLocation = std::filesystem::weakly_canonical(expectedLocation);
+
+    if (!std::filesystem::exists(expectedLocation)) {
+        if (expectedLocation.filename().string().starts_with('_')) {
+            minilog::debug(
+                "Possibly dead link: {} links to \"{}\", which was expected at {}. However, this appears to be "
+                "a reserved filename or folder (starts with _), so likely fine.",
+                relSourceFilePath.string(),
+                in,
+                expectedLocation.string()
+            );
+        } else {
+            minilog::warn(
+                "Possibly dead link: {} links to \"{}\", which was expected at {}",
+                relSourceFilePath.string(),
+                in,
+                expectedLocation.string()
+            );
+        }
+        return false;
+    }
+    return true;
+}
 
 std::string violet::projectBasedTranslator(
     const std::string& pathPrefix,
     const std::filesystem::path& relSourceFilePath,
+    const std::optional<std::filesystem::path>& projectRoot,
     const std::string& in
 ) {
     if (relSourceFilePath.is_absolute()) {
@@ -23,20 +66,38 @@ std::string violet::projectBasedTranslator(
         );
     }
 
-    // We need an absolute path, which we don't (shouldn't) get from the outside explicitly. SiteGenerator runs on
-    // project root-relative paths, so this function matches that.
-    //
-    // If this ends up not being relative, that means std::filesystem::relative fails, because it has nothing to anchor
-    // to. Specifically, std::filesystem::relative(p, ...) fails when `p` is relative, and is NOT relative to the
-    // current working directory. If `--root` is passed, `projectRoot` creates `relSourceFilePaths` that do not exist
-    // relative to the current working directory, thereby causing `std::filesystem::relative to return an empty string
+    // // We need an absolute path, which we don't (shouldn't) get from the outside explicitly. SiteGenerator runs on
+    // // project root-relative paths, so this function matches that.
+    // //
+    // // If this ends up not being relative, that means std::filesystem::relative fails, because it has nothing to anchor
+    // // to. Specifically, std::filesystem::relative(p, ...) fails when `p` is relative, and is NOT relative to the
+    // // current working directory. If `--root` is passed, `projectRoot` creates `relSourceFilePaths` that do not exist
+    // // relative to the current working directory, thereby causing `std::filesystem::relative to return an empty string
+    // if (
+    //     in.starts_with("//")
+    //     || in.starts_with("http://")
+    //     || in.starts_with("https://")
+    //     // || !in.contains(".md")
+    // ) {
+    //     return in;
+    // }
+
+    auto uri = stc::uri(in);
+
     if (
-        in.starts_with("//")
-        || in.starts_with("http://")
-        || in.starts_with("https://")
-        // || !in.contains(".md")
+        uri.components().scheme.has_value()
+        || uri.components().host.has_value()
+        || !uri.components().path.has_value()
     ) {
         return in;
+    }
+
+    if (projectRoot.has_value()) {
+        checkPathValidity(
+            relSourceFilePath,
+            uri.components().path.value(),
+            *projectRoot
+        );
     }
 
     std::stringstream ss;

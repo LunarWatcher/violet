@@ -62,7 +62,7 @@ set(MAGPIE_DISABLE_HTTP2 ON CACHE STRING "" FORCE)
 include(FetchContent)
 FetchContent_Declare(stc
     GIT_REPOSITORY https://codeberg.org/LunarWatcher/stc
-    GIT_TAG v2026-11-06
+    GIT_TAG v2026-11-06.1
 )
 FetchContent_Declare(minilog
     GIT_REPOSITORY https://codeberg.org/LunarWatcher/minilog
