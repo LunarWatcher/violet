@@ -45,7 +45,7 @@ In addition to the layout, the default `"type"` is `"_default"` for all of the a
 
 The `_themes` folder contains the themes available to the project, with one notable exception: the built-in `_default` theme. Theme names with a leading underscore are reserved names, and are checked against violet's internal theme folder. The `_default` theme is meant to provide some sane defaults if you don't want to build the whole site from scratch.
 
-For more information about themes, see [Themes](Themes.md).
+For more information about themes, see [Themes](templating/Themes.md).
 
 The recommended way to add themes is a git submodule:
 ```

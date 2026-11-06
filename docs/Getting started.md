@@ -171,7 +171,7 @@ jobs:
 Depending on what your site is for and how hard you want to go into theming, you can:
 
 * Write content. The default theme is intended for documentation use, and contains all the basic content types. See also [the docs for the theme](/themes/Default.md) for information about the extra config options it provides.
-* Write a reusable theme for your site and other sites. See [Themes](/Themes.md) and [the templating intro](/templating/README.md)
+* Write a reusable theme for your site and other sites. See [Themes](templating/Themes.md) and [the templating intro](/templating/README.md)
 * Write a project-specific theme for your site to use. See [the templating intro](/templating/README.md)
 
 
