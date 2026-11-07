@@ -4,6 +4,7 @@
 #include "magpie/transfer/StatusCode.hpp"
 #include "minilog/logger/ConsoleLogger.hpp"
 #include "minilog/minilog.hpp"
+#include "violet/generate/watch/WatchRebuildHandler.hpp"
 #include <fstream>
 #include <sstream>
 
@@ -25,11 +26,13 @@ SiteServer::SiteServer(const GenerateOpts &generateOpts)
                   magpie::Http11AdapterFactory>()
               }
           )
-      )
+      ),
+      isBuildValid(false),
+      watcher(std::make_shared<WatchRebuildHandler>(generateOpts, &isBuildValid))
 {
     initLogger();
     initRoutes();
-    watchRoot();
+    watchThread = std::thread(std::bind(&SiteServer::watchRoot, this));
 }
 
 SiteServer::~SiteServer() {
@@ -84,6 +87,17 @@ void SiteServer::initRoutes() {
             magpie::Response &res,
             std::string_view path
         ) {
+            if (!this->isBuildValid.load()) {
+                res = magpie::Response(
+                    magpie::Status::InternalServerError,
+                    "<html><body>"
+                    "<h1>Build error!</h1>"
+                    "<p>The site failed to compile (or the first build has not yet completed). See the terminal for more information</p>"
+                    "</body></html>",
+                    "text/html"
+                );
+                return;
+            }
             // Proper path normalization is an stc TODO
             if (path.contains("../") || path.contains("/..") || path.starts_with('/')) {
                 res = magpie::Response(magpie::Status::BadRequest, "Bad");
@@ -154,7 +168,23 @@ void SiteServer::initLogger() {
     );
 }
 void SiteServer::watchRoot() {
-    // TODO
+    while (true) {
+        try {
+            if (!this->watcher->watch()) {
+                minilog::error("Watch thread shut down unexpectedly!");
+                abort();
+            }
+        } catch (const std::exception& e) {
+            minilog::error("Handled uncaught exception: {}", e.what());
+        } catch (...) {
+            minilog::error("Caught non-exception type");
+        }
+
+        minilog::info(
+            "waiting 10 seconds before restarting the site generation watcher"
+        );
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+    }
 }
 
 }
