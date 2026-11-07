@@ -63,6 +63,9 @@ struct TestSiteFixture : public DebugMarkerFixture {
               .root = workspace.rootDirectory,
           })
     {
+        std::cout << "Now initializing test site at "
+                  << workspace.rootDirectory
+                  << std::endl;
         auto result = violet::SiteGenerator::loadWorkspace(
             opts
         );
@@ -84,11 +87,17 @@ struct TestSiteFixture : public DebugMarkerFixture {
     const std::filesystem::path& sourcePath() const { return workspace.rootDirectory; }
 
     void generateWithAsserts() const {
-        gen->generate();
-        if (!std::filesystem::exists(buildPath())) {
+        if (!gen->generate()) {
             throw std::runtime_error(
                 std::format(
                     "Generate of test site {} failed", static_cast<int>(Site)
+                )
+            );
+        }
+        if (!std::filesystem::exists(buildPath())) {
+            throw std::runtime_error(
+                std::format(
+                    "Generate of test site {} allegedly succeeded, but buildPath() is missing", static_cast<int>(Site)
                 )
             );
         }
