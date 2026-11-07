@@ -18,6 +18,13 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.19.1] (2026-11-07)
+
+### Fixed
+
+* Bumped magpie (server dep) to fix possible compilation errors on systems without nghttp2 in the systems headers
+  * nghttp2 is not in use, but two files incorrectly included them. This release contains the version bump to sort that
+
 ## [v0.19.0] (2026-11-07)
 
 ### Added
@@ -425,7 +432,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.1...master
+[v0.19.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...v0.19.1
 [v0.19.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...v0.19.0
 [v0.18.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...v0.18.0
 [v0.17.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.1...v0.17.0

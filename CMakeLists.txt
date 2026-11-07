@@ -95,7 +95,7 @@ if (VIOLET_ENABLE_SERVER)
     find_package(ZLIB REQUIRED)
     FetchContent_Declare(magpie
         GIT_REPOSITORY https://codeberg.org/LunarWatcher/magpie
-        GIT_TAG v0.3.7
+        GIT_TAG v0.3.8
     )
     FetchContent_MakeAvailable(
         magpie
