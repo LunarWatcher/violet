@@ -44,11 +44,15 @@ This section contains general information about the documentation itself. Failur
 
 ### Violet uses json, but the documentation uses jsonc
 
-Json is not the best format for configuration, largely because of the lack of comments, but this limitation isn't really as bad for these kinds of applications. The technical reason for why json is used anyway is that there are very few alternative *parser implementations* in C++. There is a YAML library, but it has some severe problems, and that was before it too fell to AI slop. There are far more JSON implementations, however, and through [iris](https://codeberg.org/LunarWatcher/iris), we're already using a JSON library (slop-free fork of nlohmann/json[^json]). Therefore, JSON *is* the more convenient option.
+Json is not the best format for configuration, largely because of the lack of comments, but this limitation isn't really as bad for these kinds of applications. The technical reason for why json is used anyway is that there are very few alternative *parser implementations* in C++. There is a YAML library, but it has some severe problems, and that was before it too fell to AI slop. There are far more JSON implementations, however. Additionally, the templating library used to use one too before iris was made. Therefore, JSON *is* the more convenient option.
 
 Comments are nice, sure, but they can always be substituted by a decent commit history and decent documentation in the tool. However, the one exception to this is in said decent documentation, where the JSON may need to be directly commented.
 
 As a consequence, while violet's config files are comment-free JSON, the documentation uses jsonc to be able to explain things inline. If you copy-paste config, you must remove the comments before running, or violet will error out.
+
+> [!note]
+>
+> In the future, violet will switch to a different JSON library that does support comments. However, this is still a while out.
 
 ## Some sites using Violet
 
