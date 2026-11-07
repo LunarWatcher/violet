@@ -38,6 +38,14 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         dest.theme = "_default";
     }
 
+    if (auto it = src.find("destination"); it != src.end()) {
+        if (!it->is_null()) {
+            dest.destination = it->get<std::string>();
+        }
+    } else {
+        dest.destination = "pages";
+    }
+
     if (auto it = src.find("metadata"); it != src.end() && !it->is_null()) {
         dest.metadata = it->get<bool>();
     }
@@ -234,6 +242,10 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
 
     if (src.theme) {
         dest["theme"] = *src.theme;
+    }
+
+    if (src.destination) {
+        dest["destination"] = *src.destination;
     }
 
     dest["data"] = transitional::convertDataObject(

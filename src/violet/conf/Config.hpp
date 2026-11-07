@@ -20,6 +20,7 @@ struct Config {
     std::string prefix = "";
     std::vector<std::string> exclude = {};
     std::optional<std::string> theme = "_default";
+    std::optional<std::string> destination = "pages";
     iris::Object data = {};
 
     // Note: This is temporarily static until we can shed nlohmann/json to pass the timezone in directly where

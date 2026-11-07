@@ -30,7 +30,7 @@ void BuildMeta::commit() {
     // terms of performance might be better than null/empty checks everywhere. Not actually sure about that, but /shrug
     if (this->conf.metadata) {
         nlohmann::json j = data;
-        auto metaPath = std::filesystem::path(opts.outputFolder) / "_violet-meta.json";
+        auto metaPath = opts.root / opts.outputFolder / "_violet-meta.json";
         std::ofstream f(metaPath);
 
         if (!f) {
