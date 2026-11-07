@@ -1,4 +1,5 @@
 #include "violet/parsing/Escaping.hpp"
+#include "violet/parsing/markdown/DocumentContext.hpp"
 #include "violet/parsing/markdown/ParseAPI.hpp"
 #include "violet/parsing/markdown/ContextConsumingNodes.hpp"
 #include "violet/util/LockStreamPos.hpp"
@@ -6,6 +7,118 @@
 #include <iostream>
 
 namespace violet {
+
+namespace Markdown { namespace {
+
+void parseUrlContent(
+    LinkableNode* node,
+    std::stringstream& in,
+    const DocumentContext& context,
+    const std::stringstream& sourceContent
+) {
+    char ch;
+    if (in.peek() == '[') {
+        // [text][ref]
+        std::ignore /* open bracket */ = in.get();
+
+        std::stringstream ref;
+        while (in >> std::noskipws >> ch) {
+            if (ch == ']') {
+                break;
+            } else if (ch == '\n') {
+                throw SyntaxError(
+                    "Unclosed url",
+                    in.tellg()
+                );
+            }
+            ref << ch;
+        }
+        node->urlType  = URLNode::Type::Reference;
+        node->urlOrRef = ref.str();
+    } else if (in.peek() == '(') {
+        // [text](url)
+        std::ignore /* open paren */ = in.get();
+        size_t start = in.tellg();
+        // This starts at 1 so we know whether the initial open has been closed or not
+        size_t internalParens = 1;
+
+        bool literalMode = false; // TODO: better name
+        char close = ')';
+        if (in.peek() == '<') { // [](<>)-style URLs
+            in.get();
+            close = '>';
+            literalMode = true;
+        }
+
+        if (!in) {
+            throw SyntaxError(
+                "Unexpected end of file while parsing URL",
+                start
+            );
+        }
+
+        std::stringstream urlOrRef;
+        while (in >> std::noskipws >> ch) {
+            if (ch == close) {
+                --internalParens;
+                if (literalMode) {
+                    auto ch = in.get();
+                    if (ch != ')') {
+                        throw SyntaxError(
+                            "Invalid escaped URL: failed to find ')' after '>'.",
+                            in.tellg()
+                        );
+                    }
+                }
+                if (internalParens == 0) {
+                    break;
+                }
+            } else if (ch == '(' && !literalMode) {
+                ++internalParens;
+            } else if (ch == '\n') {
+                if (internalParens == 0) {
+                    throw SyntaxError(
+                        "Unclosed URL",
+                        start
+                    );
+                } else {
+                    // It's deceptively difficult to tell if the next character is EOF for whatever fucking reason
+                    break;
+                }
+            }
+            urlOrRef << ch;
+        }
+        if (internalParens != 0) {
+            throw SyntaxError(
+                "Unclosed URL. Hint: if your URL contains unbalanced parentheses and it's meant to "
+                "be unbalanced, use an escaped link (`[text](<https://en.wikipedia.org/wiki/Violet_(color>)`). Otherwise, make "
+                "sure you actually closed this URL correctly.",
+                start
+            );
+        }
+        node->urlType  = URLNode::Type::Standard;
+        node->urlOrRef = context.linkTranslator(urlOrRef.str());
+    } else {
+        if (node->requireTerminate()) {
+            throw SyntaxError(
+                "Expected '(' or '['",
+                in.tellg()
+            );
+        }
+        /**
+         * ```markdown
+         * [url]
+         * ...
+         * [url]: https://example.com
+         * ```
+         * The content from the parser becomes both the content of the node and the content of the URL ref
+         */
+        node->urlType = URLNode::Type::Reference;
+        node->urlOrRef = sourceContent.str();
+    }
+}
+
+}}
 
 void Markdown::parseParagraphContent(
     std::stringstream& in,
@@ -195,7 +308,7 @@ void Markdown::parseParagraphContent(
                 std::ignore = in.get();
 
                 bool hasClose = false;
-                std::stringstream content;
+                std::stringstream altContent;
                 while (in >> std::noskipws >> ch) {
                     if (ch == ']') {
                         hasClose = true;
@@ -203,45 +316,24 @@ void Markdown::parseParagraphContent(
                     } else if (ch == '\n') {
                         break;
                     }
-                    htmlEscape(ch, content, true);
+                    htmlEscape(ch, altContent, true);
                 }
 
                 if (!hasClose) {
                     l.revert();
                 } else {
                     l.commit();
+                    auto node = new ImageNode;
+                    node->alt = altContent.str();
+                    commitContentNode(content, out);
+                    out->addChild(node);
 
-                    if (in.peek() == '(' || in.peek() == '[') {
-                        auto type = in.peek() == '(' ? LinkableNode::Type::Standard : LinkableNode::Type::Reference;
-
-                        auto close = in.peek() == '(' ? ')' : ']';
-
-                        std::ignore = in.get();
-
-                        std::stringstream url;
-                        while (in >> std::noskipws >> ch) {
-                            if (ch == close) {
-                                break;
-                            } else if (ch == '\n') {
-                                throw SyntaxError(
-                                    "Illegal linebreak in image",
-                                    in.tellg()
-                                );
-                            }
-                            url << ch;
-                        }
-
-                        auto node = new ImageNode;
-                        out->addChild(node);
-                        node->urlType = type;
-                        node->urlOrRef = url.str();
-                        node->alt = content.str();
-                    } else {
-                        throw SyntaxError(
-                            "Invalid image: a ref or URL is undefined",
-                            in.tellg()
-                        );
-                    }
+                    parseUrlContent(
+                        node,
+                        in,
+                        context,
+                        content
+                    );
                     continue;
                 }
             }
@@ -252,7 +344,7 @@ void Markdown::parseParagraphContent(
             if (out->type == NodeType::Anchor
                 || out->type == NodeType::Footnote) {
                 throw SyntaxError(
-                    "Unescaped [ inside anchor",
+                    "Unescaped [ inside anchor! This is only legal for images, which this does not appear to be",
                     in.tellg()
                 );
             }
@@ -285,95 +377,17 @@ void Markdown::parseParagraphContent(
                 out->addChild(urlNode);
                 parseParagraphContent(in, urlNode, context);
             }
-        } else if (out->type == NodeType::Anchor && ch == ']') {
-            auto node = static_cast<URLNode*>(out);
-            if (in.peek() == '[') {
-                // [text][ref]
-                std::ignore /* open bracket */ = in.get();
+        } else if (auto node = dynamic_cast<LinkableNode*>(out); ch == ']' && node != nullptr) {
 
-                std::stringstream ref;
-                while (in >> std::noskipws >> ch) {
-                    if (ch == ']') {
-                        break;
-                    } else if (ch == '\n') {
-                        throw SyntaxError(
-                            "Unclosed url",
-                            in.tellg()
-                        );
-                    }
-                    ref << ch;
-                }
-                node->urlType  = URLNode::Type::Reference;
-                node->urlOrRef = ref.str();
-            } else if (in.peek() == '(') {
-                // [text](url)
-                std::ignore /* open paren */ = in.get();
-                size_t start = in.tellg();
-                // This starts at 1 so we know whether the initial open has been closed or not
-                size_t internalParens = 1;
-
-                bool literalMode = false; // TODO: better name
-                char close = ')';
-                if (in.peek() == '<') { // [](<>)-style URLs
-                    in.get();
-                    close = '>';
-                    literalMode = true;
-                }
-
-                if (!in) {
-                    throw SyntaxError(
-                        "Unexpected end of file while parsing URL",
-                        start
-                    );
-                }
-
-                std::stringstream urlOrRef;
-                while (in >> std::noskipws >> ch) {
-                    if (ch == close) {
-                        --internalParens;
-                        if (literalMode) {
-                            auto ch = in.get();
-                            if (ch != ')') {
-                                throw SyntaxError(
-                                    "Invalid escaped URL: failed to find ')' after '>'.",
-                                    in.tellg()
-                                );
-                            }
-                        }
-                        if (internalParens == 0) {
-                            break;
-                        }
-                    } else if (ch == '(' && !literalMode) {
-                        ++internalParens;
-                    } else if (ch == '\n') {
-                        if (internalParens == 0) {
-                            throw SyntaxError(
-                                "Unclosed URL",
-                                start
-                            );
-                        } else {
-                            // It's deceptively difficult to tell if the next character is EOF for whatever fucking reason
-                            break;
-                        }
-                    }
-                    urlOrRef << ch;
-                }
-                if (internalParens != 0) {
-                    throw SyntaxError(
-                        "Unclosed URL. Hint: if your URL contains unbalanced parentheses and it's meant to "
-                        "be unbalanced, use an escaped link (`[text](<https://en.wikipedia.org/wiki/Violet_(color>)`). Otherwise, make "
-                        "sure you actually closed this URL correctly.",
-                        start
-                    );
-                }
-                node->urlType  = URLNode::Type::Standard;
-                node->urlOrRef = context.linkTranslator(urlOrRef.str());
-            } else {
-                node->urlType = URLNode::Type::Reference;
-                node->urlOrRef = content.str();
-            }
+            parseUrlContent(
+                node,
+                in,
+                context,
+                content
+            );
 
             commitContentNode(content, out);
+
             // We just finished parsing the contents of an anchor, so break and return to the parent paragraph or
             // whatever to let it consume the rest of the line
             break;

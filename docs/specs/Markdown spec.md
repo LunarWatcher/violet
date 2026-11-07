@@ -513,6 +513,37 @@ Location:
 Site generation failed. See error log
 ````
 
+## Images
+
+Standard image syntax is supported, with the same features as standard links:
+
+```markdown
+# Without link
+![alt text](https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png)
+# With link
+[![alt text](https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png)](https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png)
+# With references
+[![alt text][eepyfox]][eepyfox]
+[eepyfox]:  https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png
+
+# Escaped
+![alt text](<https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png>)
+
+```
+
+Rendered:
+
+> Without link: ![alt text](https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png)
+
+> With link: [![alt text](https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png)](https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png)
+
+
+> With references: [![alt text][eepyfox]][eepyfox]
+
+[eepyfox]:  https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png
+
+> Escaped: ![alt text](<https://codeberg.org/LunarWatcher/dotfiles/raw/branch/master/assets/eepyfox.png>)
+
 ## Horizontal rules
 
 The standard markdown `---` is used to create horizontal rules (rendered as `<hr/>`).

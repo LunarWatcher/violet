@@ -32,8 +32,8 @@ int WatchRebuildHandler::watch() {
             "Initial site generation failed. Please correct violet.json and try again"
         );
     } else {
-        // we can safely ignore the result here
-        generate();
+        auto result = generate();
+        this->notify->store(result);
     }
     watcher.block([this](auto type, const auto &path) -> bool {
         if (

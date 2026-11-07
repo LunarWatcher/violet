@@ -23,7 +23,6 @@ add_executable(tests
     src/parsing/ListTests.cpp
     src/parsing/MarkdownTests.cpp
     src/parsing/QuoteTests.cpp
-    src/parsing/UrlTests.cpp
     src/parsing/UrlTranslationTests.cpp
 
     src/parsing/ext/SafeCastEnumTests.cpp
@@ -37,6 +36,7 @@ add_executable(tests
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp
     src/parsing/markdown/LinkTests.cpp
+    src/parsing/markdown/LinkableTests.cpp
     src/parsing/markdown/StrikeTests.cpp
     src/parsing/markdown/TemplateParsing.cpp
     src/parsing/markdown/ToCGenerationTests.cpp

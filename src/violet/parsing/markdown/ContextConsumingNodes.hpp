@@ -45,6 +45,10 @@ struct LinkableNode : public DOMTree {
         }
         std::unreachable();
     }
+    /**
+     * Whether or not the linkable node supports the [link] syntax  
+     */
+    virtual bool requireTerminate() const { return false; }
 };
 
 struct URLNode : public LinkableNode {
@@ -54,6 +58,8 @@ struct URLNode : public LinkableNode {
 struct ImageNode : public LinkableNode {
     std::string alt;
     ImageNode() : LinkableNode(NodeType::Image) {}
+
+    virtual bool requireTerminate() const override { return true; }
 };
 
 }

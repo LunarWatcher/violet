@@ -55,12 +55,6 @@ extern void parseAnchorDef(
     DocumentContext& context
 );
 
-extern void parseImage(
-    std::stringstream& in,
-    DOMTree* out,
-    DocumentContext& context
-);
-
 extern void parseFootnoteDef(
     std::stringstream& in,
     DOMTree* out,

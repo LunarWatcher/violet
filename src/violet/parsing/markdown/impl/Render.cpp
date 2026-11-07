@@ -101,7 +101,7 @@ static void stringifyTreeImpl(
            << " src=\"" << imgNode->getUrl(context) << "\""
             // TODO: HTML escape? Has this been done already?
            << " alt=\"" << imgNode->alt << "\""
-           << " />";
+           << "/>";
     } break;
     case Markdown::NodeType::HorizontalRule: {
         ss << "<hr/>";

@@ -93,10 +93,10 @@ void violet::urlEncode(
         }
     }
 
-    target << std::hex
-           << "%"
-           << (int) ch
-           << std::dec;
+    target << std::format(
+        "%{:x}",
+        (unsigned int) (unsigned char) ch
+    );
 }
 
 void violet::urlEncode(

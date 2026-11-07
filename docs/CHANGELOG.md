@@ -18,6 +18,22 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.19.2] (2026-11-07)
+
+### Fixed
+
+* Image and URL syntax are on feature parity again.
+  * Images now support escaped links, which were added to links in 0.17.0.
+  * Images now support balanced parentheses in URLs, which was also added to links in 0.17.0
+  * Note: Images intentionally do not support the `[link-ref-only]` syntax, i.e. `![link-ref]` is an invalid image URL and will throw a syntax error. Alt texts are too important to sacrifice.
+  * Internal: a new test type has been added that allows the same tests to be run on both images and links. This should avoid drift in the future
+  * There's also documentation for image syntax now; image syntax has been supported for _many_ versions, but apparently not documented.
+* Fixed a typo that prevented URL encoding of internal URLs from taking effect
+  * A URL to a file that doesn't get filename translated, for example `Some file with spaces.png` was incorrectly inserted literally into the URL rather than as `Some%20file%20with%20spaces.png`
+* Fixed a bug that prevented URL encoding from dealing with some extended ASCII characters
+  * Unicode characters with UTF-32 values >256 do not currently appear to URL-encode or HTML-encode properly. This will be addressed in a future release (I have a _lot_ of libraries to rewrite first).
+* Fixed a bug where the first render on `violet serve` failed to correctly signal that the initial build completed successfully
+
 ## [v0.19.1] (2026-11-07)
 
 ### Fixed
@@ -432,7 +448,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.1...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.2...master
+[v0.19.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.1...v0.19.2
 [v0.19.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...v0.19.1
 [v0.19.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...v0.19.0
 [v0.18.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...v0.18.0

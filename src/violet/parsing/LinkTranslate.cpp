@@ -236,10 +236,10 @@ std::string violet::projectBasedTranslator(
     // This is terrible, but the URL shit has infuriated me all night and I just want to get this shit over with
     // The performance this drops is negligible for my use
     auto newPath = pathPrefix;
-    if (newPath.ends_with('/') && parsedPath.str().starts_with('/')) {
-        newPath += parsedPath.str().substr(1);
+    if (newPath.ends_with('/') && escapedUrl.str().starts_with('/')) {
+        newPath += escapedUrl.str().substr(1);
     } else {
-        newPath += parsedPath.str();
+        newPath += escapedUrl.str();
     }
 
     newPath += rest.str();
