@@ -4,13 +4,15 @@ add_executable(violet
 set_source_files_properties(violet/data/GitVersion.cpp PROPERTIES COMPILE_DEFINITIONS -DVIOLET_VERSION="${VIOLET_VERSION}")
 add_library(violetgitdata STATIC
     violet/data/GitVersion.cpp
+    violet/data/GitVersion.hpp
 )
 
 set(VIOLET_SERVE_FILES
     violet/serve/SiteServer.cpp
+    violet/serve/SiteServer.hpp
 )
 
-add_library(violetsrc STATIC
+set(VIOLET_SRCS
     violet/CommandLine.cpp
 
     violet/conf/ToJsonImpl.cpp
@@ -54,7 +56,67 @@ add_library(violetsrc STATIC
     violet/parsing/markdown/impl/Render.cpp
 
     violet/util/ErrorHandling.cpp
+)
 
+set(VIOLET_HDRS
+    violet/CommandLine.hpp
+
+    violet/conf/Config.hpp
+    violet/conf/Frontmatter.hpp
+    violet/conf/ThemeConfig.hpp
+
+    violet/data/Constants.hpp
+    violet/data/GenerateOpts.hpp
+    violet/data/InitOpts.hpp
+    violet/data/RenderResult.hpp
+    violet/data/VioletGlobal.hpp
+
+    violet/generate/FileManager.hpp
+    violet/generate/ProcessedFileType.hpp
+    violet/generate/SiteGenerator.hpp
+
+    violet/generate/buildmeta/BuildMeta.hpp
+    violet/generate/buildmeta/BuildMetaJson.hpp
+
+    violet/generate/templates/IrisManager.hpp
+    violet/generate/templates/DateTimeFunctions.hpp
+    violet/generate/templates/FileFunctions.hpp
+    violet/generate/templates/EscapingFunctions.hpp
+    violet/generate/templates/LangFunctions.hpp
+
+    violet/generate/templates/ext/SafeCastEnum.hpp
+
+    violet/generate/templates/types/RenderContext.hpp
+    violet/generate/templates/types/TreePagesData.hpp
+
+    violet/generate/watch/AutoRebuildHandler.hpp
+    violet/generate/watch/OneShotRebuildHandler.hpp
+    violet/generate/watch/WatchRebuildHandler.hpp
+
+    violet/init/InitModule.hpp
+
+    violet/paginator/Paginator.hpp
+    violet/paginator/SortPredicates.hpp
+
+    violet/parsing/DateTimeParsing.hpp
+    violet/parsing/Escaping.hpp
+    violet/parsing/LinkTranslate.hpp
+    violet/parsing/Markdown.hpp
+
+    violet/parsing/markdown/CommonDefs.hpp
+    violet/parsing/markdown/ContextConsumingNodes.hpp
+    violet/parsing/markdown/ContextProvidingNodes.hpp
+    violet/parsing/markdown/DocumentContext.hpp
+    violet/parsing/markdown/DOMTree.hpp
+    violet/parsing/markdown/ElementaryNodes.hpp
+
+    violet/util/ErrorHandling.hpp
+    violet/util/LockStreamPos.hpp
+)
+
+add_library(violetsrc STATIC
+    ${VIOLET_SRCS}
+    ${VIOLET_HDRS}
     $<$<BOOL:${VIOLET_ENABLE_SERVER}>:${VIOLET_SERVE_FILES}>
 )
 
