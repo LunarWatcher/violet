@@ -18,6 +18,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.19.0] (2026-11-07)
+
 ### Added
 
 * Added `violet serve`
@@ -27,6 +29,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Changed
 
 * The markdown URL converter should now support additional schemes and URL formats, though the underlying URI parser is relatively untested at scale. If you experience link conversion errors after upgrading, please open an issue with the link you used  that caused problems.
+  * Dev note: It's been tested against my site, violet's docs, and a fair few tests both here and upstream in stc (my utility library for various shit I need in a bunch of projects), but when run more broadly, I wouldn't be surprised if there are unaccounted-for edge-cases.
 * Added caching to `treePages` and `listPages`
   * The introduction of sort methods to these have slowed page generation a bit just on account of sorting taking time
 
@@ -422,8 +425,9 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...master
-[v0.18.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...v0.18
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...master
+[v0.19.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...v0.19.0
+[v0.18.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...v0.18.0
 [v0.17.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.1...v0.17.0
 [v0.16.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...v0.16.0
