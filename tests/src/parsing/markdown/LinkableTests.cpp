@@ -202,16 +202,15 @@ LINKABLE_FEATURE_PARITY_TEST_CASE("Link translation and renaming") {
                 getHtmlForLinkable("Link", "/My%20image.png")
             )
         );
-        // This is not UTF8-encoded, so leaving it out for now
-        // REQUIRE(
-        //     render(
-        //         getMarkdown("Link", "/My æøåimage.html")
-        //     )
-        //     ==
-        //     paragraph(
-        //         getHtmlForLinkable("Link", "/My%20%c3%a6%c3%b8%c3%a5image.html")
-        //     )
-        // );
+        REQUIRE(
+            render(
+                getMarkdown("Link", "/My æøåimage.html")
+            )
+            ==
+            paragraph(
+                getHtmlForLinkable("Link", "/My%20%c3%a6%c3%b8%c3%a5image.html")
+            )
+        );
     }
 
     SECTION(".md TLD should be untouched") {
