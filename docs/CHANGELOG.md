@@ -30,8 +30,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
   * There's also documentation for image syntax now; image syntax has been supported for _many_ versions, but apparently not documented.
 * Fixed a typo that prevented URL encoding of internal URLs from taking effect
   * A URL to a file that doesn't get filename translated, for example `Some file with spaces.png` was incorrectly inserted literally into the URL rather than as `Some%20file%20with%20spaces.png`
-* Fixed a bug that prevented URL encoding from dealing with some extended ASCII characters
-  * Unicode characters with UTF-32 values >256 do not currently appear to URL-encode or HTML-encode properly. This will be addressed in a future release (I have a _lot_ of libraries to rewrite first).
+* Fixed a bug that prevented URL encoding from dealing with unicode characters
 * Fixed a bug where the first render on `violet serve` failed to correctly signal that the initial build completed successfully
 
 ## [v0.19.1] (2026-11-07)
