@@ -13,7 +13,7 @@ This guide is for building violet from source entirely without any of the utilit
 * g++16 or newer (or possibly slightly older; must support C++23)
 * Linux (possibly windows)
 * Optional: Git (used for resolving the version; see [building without git context](#building-without-git-context) for an alternative)
-* For serving: `zlib` and `openssl` (debian: `zlib-dev libssl-dev`)
+* For serving: `openssl zlib` (debian: `libssl-dev zlib-dev`)
   * Unused if `-DVIOLET_ENABLE_SERVER=OFF` at compile time (defaults to being on)
 
 FetchContent is used to source all other dependencies at this time.

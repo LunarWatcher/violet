@@ -37,8 +37,7 @@ Violet has a built-in server for local previews based on [magpie](https://codebe
 
 Due to limitations of the underlying socket library at the time of writing, magpie and by extension the `serve` command are Linux-only, and therefore require linux to work. In addition, the following system libraries are required:
 
-* `openssl` (debian: `libssl-dev`)
-* `zlib` (debian: `zlib-dev`)
+* `openssl zlib` (debian: `libssl-dev zlib-dev`)
 
 ## Documentation
 

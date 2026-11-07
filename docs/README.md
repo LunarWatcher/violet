@@ -28,6 +28,7 @@
   * Beyond converting `.md` to `.html`, and converting to a more URL-friendly format (spaces become -, letters are lower-cased, and non-ascii chars are stripped), no major changes are made. If you want a specific path structure, you need to provide that in the source medium.
   * Your folder format affects the templates, but because you're in control of most of the methods for handling the file tree, this doesn't violently break violet.
   * Non-automated Atom and RSS feeds that can be arbitrarily composed, so you don't have to wonder if/where violet put the feed. Means more manual setup the first time you make an RSS or atom feed, but means you also get to control precisely what goes into the feed, and what feeds you want to exist.
+* Has a basic preview server, and offers several ways of developing a site that doesn't rely on a server, but still comes with the QoL of auto-rebuilding
 
 ### Goals
 

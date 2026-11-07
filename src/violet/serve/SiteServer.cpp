@@ -156,12 +156,6 @@ void SiteServer::initLogger() {
         }
     };
     minilog::warn(
-        "Meow :3 You're using an early preview of violet's serving functionality. It's currently only a "
-        "server, and it does not yet have site generation built in. To see what it'll look like when it works, run "
-        "`violet generate -p /`. The server reads straight from the filesystem and does not need to be stopped "
-        "for changes to be reflected."
-    );
-    minilog::warn(
         "Note: `violet serve` must not be used in production. Instead, use `violet generate` and point "
         "your favourite reverse proxy at the folder with the generated output. This is exclusively a preview "
         "server, and must be treated as such."
