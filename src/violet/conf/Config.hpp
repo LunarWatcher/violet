@@ -38,13 +38,13 @@ struct Config {
     void setPrefix(const std::string& newPrefix) {
         if (newPrefix == "/") {
             prefix = "";
-        } else if (!newPrefix.empty() && !newPrefix.starts_with("/")) {
+        } else if (!newPrefix.empty() && !newPrefix.starts_with('/')) {
             minilog::error(
                 "The prefix must start with a /, or be an empty string, but found \"{}\"",
                 newPrefix
             );
             throw std::runtime_error("Illegal prefix");
-        } else if (!newPrefix.empty() && newPrefix.ends_with("/")) {
+        } else if (!newPrefix.empty() && newPrefix.ends_with('/')) {
             minilog::error(
                 "The prefix must not end with a / (unless the entire prefix is \"/\"), but found \"{}\"",
                 newPrefix
