@@ -18,6 +18,17 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Added
+
+* Config now supports `markdown.footnoteHeaders` to disable the automatic headers in the footnote section. The default is `true` to preserve existing behaviour. Example:
+  ```json
+  {
+    "markdown": {
+      "footnoteHeaders": true
+    }
+  }
+  ```
+
 ## [v0.19.2] (2026-11-07)
 
 ### Fixed
