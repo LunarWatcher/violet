@@ -73,12 +73,18 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
             );
         }
     }
+    if (auto it = src.find("markdown"); it != src.end() && !it->is_null()) {
+        dest.markdown = src.at("markdown").get<MarkdownConfig>();
+    }
 
     // We manually assemble `raw` to force custom fields into `data`.
     dest.raw = iris::Object {
         {"name", iris::DataObject(dest.name)},
         {"data", iris::DataObject(dest.data)},
         {"exclude", iris::DataObject(dest.exclude)}
+    };
+    dest.raw["markdown"] = iris::DataObject {
+        {"footnoteHeaders", dest.markdown.footnoteHeaders},
     };
 
     if (dest.description) {
@@ -233,4 +239,11 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
     dest["data"] = transitional::convertDataObject(
         src.data
     );
+}
+
+void violet::from_json(const nlohmann::json& dest, MarkdownConfig& src) {
+    src.footnoteHeaders = dest.value("footnoteHeaders", true);
+}
+void violet::to_json(nlohmann::json& dest, const MarkdownConfig& src) {
+    dest["footnoteHeaders"] = src.footnoteHeaders;
 }

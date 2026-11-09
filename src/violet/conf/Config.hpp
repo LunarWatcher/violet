@@ -2,6 +2,7 @@
 
 #include "iris/data/DataObject.hpp"
 #include "minilog/minilog.hpp"
+#include "violet/conf/MarkdownConfig.hpp"
 #include "violet/data/Constants.hpp"
 #include "violet/parsing/Escaping.hpp"
 #include <optional>
@@ -30,6 +31,8 @@ struct Config {
     bool metadata = false;
 
     iris::Object raw = {};
+
+    MarkdownConfig markdown = {};
 
     void imbueRoot(const std::filesystem::path& root) {
         raw[violet::constants::InternalPathRef] = root.string();

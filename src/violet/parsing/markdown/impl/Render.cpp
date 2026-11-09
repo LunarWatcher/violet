@@ -232,7 +232,12 @@ std::string Markdown::stringifyTree(
         context.footnoteHeader = id;
 
         ss << "<div id=\"" << id << "\">";
-        ss << "<h2>Footnotes</h2>";
+        // https://codeberg.org/LunarWatcher/violet/issues/48
+        // We don't currently have a way to provide translations within the markdown parser, and designing a translation
+        // system is going to be a whole thing:tm:, 5 years:tm:, and a research team:tm:.
+        if (context.config.footnoteHeaders) {
+            ss << "<h2>Footnotes</h2>";
+        }
         ss << "<ol>";
         for (size_t i = 0; i < context.usedFootnotes.size(); ++i) {
             auto& footnote = context.usedFootnotes.at(i);
@@ -242,7 +247,12 @@ std::string Markdown::stringifyTree(
                 ss,
                 context
             );
-            ss << "<span class=\"footnote-backref\">Usages: ";
+            ss << "<span class=\"footnote-backref\">";
+            if (context.config.footnoteHeaders) {
+                ss << "Usages: ";
+            } else {
+                ss << "↩ ";
+            }
 
             for (size_t usageRef = 0; usageRef < context.footnoteUsageCounts.at(footnote); ++usageRef) {
                 ss << std::format(
@@ -334,8 +344,12 @@ std::string Markdown::serializeHeaders(
         }
     }
     for (unsigned short i = 0; i < lastLevel; ++i) {
-        // Inject footnote header
-        if (i == lastLevel - 1 && ctx.footnoteHeader.has_value()) {
+        // Inject footnote header (if enabled)
+        if (
+            ctx.config.footnoteHeaders
+            && i == lastLevel - 1
+            && ctx.footnoteHeader.has_value()
+        ) {
             URLNode virtualURLNode;
             virtualURLNode.urlType = URLNode::Type::Standard;
             virtualURLNode.urlOrRef = std::format("#{}", *ctx.footnoteHeader);

@@ -39,10 +39,11 @@ static void delegateParse(
 
 std::string Markdown::parse(
     std::stringstream& in,
-    const LinkTranslator& linkTranslator
+    const LinkTranslator& linkTranslator,
+    const MarkdownConfig& config
 ) {
     DOMTree rootTree(NodeType::DocumentRoot);
-    DocumentContext context(linkTranslator);
+    DocumentContext context(linkTranslator, config);
 
     delegateParse(in, &rootTree, context);
 
@@ -52,10 +53,11 @@ std::string Markdown::parse(
 Markdown::ContentDeclaration Markdown::parseWithContentPostprocessing(
     std::stringstream& in,
     const LinkTranslator& linkTranslator,
-    unsigned short minToCLevel
+    unsigned short minToCLevel,
+    const MarkdownConfig& config
 ) {
     DOMTree rootTree(NodeType::DocumentRoot);
-    DocumentContext context(linkTranslator);
+    DocumentContext context(linkTranslator, config);
 
     delegateParse(in, &rootTree, context);
 

@@ -216,7 +216,8 @@ bool SiteGenerator::processFile(
                         this->opts.root,
                         std::placeholders::_1
                     ),
-                    this->cfg.tocStartLevel
+                    this->cfg.tocStartLevel,
+                    this->cfg.markdown
                 );
 
                 minilog::debug("Markdown parsing complete");

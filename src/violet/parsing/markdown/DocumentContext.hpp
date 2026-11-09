@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/conf/MarkdownConfig.hpp"
 #include "violet/parsing/markdown/CommonDefs.hpp"
 #include "violet/parsing/markdown/ContextProvidingNodes.hpp"
 #include <optional>
@@ -20,10 +21,12 @@ struct DocumentContext {
     std::optional<std::string> footnoteHeader;
 
     LinkTranslator linkTranslator;
+    MarkdownConfig config;
 
     DocumentContext(
-        const LinkTranslator& linkTranslator
-    ) : linkTranslator(linkTranslator) {}
+        const LinkTranslator& linkTranslator,
+        const MarkdownConfig& config = {}
+    ) : linkTranslator(linkTranslator), config(config) {}
 
     ~DocumentContext() {
         for (auto& [_, node] : footnotes) {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "violet/conf/MarkdownConfig.hpp"
 #include "violet/parsing/markdown/CommonDefs.hpp"
 #include "violet/parsing/markdown/DOMTree.hpp"
 #include "violet/parsing/markdown/DocumentContext.hpp"
@@ -26,13 +27,15 @@ extern std::string parse(
     std::stringstream& in,
     const LinkTranslator& linkTranslator = [](const std::string& in) {
         return in;
-    }
+    },
+    const MarkdownConfig& config = {}
 );
 
 extern ContentDeclaration parseWithContentPostprocessing(
     std::stringstream& in,
     const LinkTranslator& linkTranslator = defaultTranslator,
-    unsigned short minToCLevel = 1
+    unsigned short minToCLevel = 1,
+    const MarkdownConfig& config = {}
 );
 
 }

@@ -35,6 +35,14 @@ This may be, but doesn't have to be the content root for a git repository. As an
     // Though this can be set to any of the legal header values, this is in practice only useful with the values 1 and 2,
     // but the full spectrum is supported because it doesn't affect the code.
     "toc-start-level": 2,
+    // Markdown config. Omitting this if you just want the defaults is strongly recommended.
+    "markdown": {
+        // Whether or not to include <h2>Footnotes</h2> in the rendered output for the footnote section.
+        // If false, the footnote section renders without words added to the output.
+        // The automated sections currently cannot be changed by config or for localization, so if your site isn't english,
+        // or has non-english sections, set this to false.
+        "footnoteHeaders": true
+    },
     // Defines a set of folders to not include in the build. This list, by default, includes
     // all files and folders that start with ".git" in the root folder (incuding .git/, .gitignore, .gitmodules, etc) through a separate exclusion mechanic.
     "exclude": [

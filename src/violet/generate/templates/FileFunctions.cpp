@@ -471,7 +471,9 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                     fm.internalPath,
                     this->man.opts.root,
                     std::placeholders::_1
-                )
+                ),
+                this->man.cfg.tocStartLevel,
+                this->man.cfg.markdown
             );
             rawContent = page.parsedContents;
             safeFm.tableOfContents = page.tableOfContents;

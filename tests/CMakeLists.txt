@@ -19,7 +19,6 @@ add_executable(tests
     src/integration/monolith/ListPagesTests.cpp
     src/integration/monolith/TreePagesTests.cpp
 
-    src/parsing/FootnoteTests.cpp
     src/parsing/ListTests.cpp
     src/parsing/MarkdownTests.cpp
     src/parsing/QuoteTests.cpp
@@ -32,6 +31,7 @@ add_executable(tests
     src/parsing/markdown/AngleBracketLinkTests.cpp
     src/parsing/markdown/ChecklistTests.cpp
     src/parsing/markdown/EscapingTests.cpp
+    src/parsing/markdown/FootnoteTests.cpp
     src/parsing/markdown/HorizontalRuleTests.cpp
     src/parsing/markdown/IDifyTests.cpp
     src/parsing/markdown/ImageTests.cpp
