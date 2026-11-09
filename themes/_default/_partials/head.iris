@@ -4,16 +4,16 @@
 <meta name="generator" content="LunarWatcher/violet" />
 
 {% if existsIn(site.data, "language") %}
-    <meta http-equiv="Content-language" content = "{{ site.data.language }}" />
+    <meta http-equiv="Content-language" content="{{ site.data.language }}" />
 {% endif %}
 {% if existsIn(page, "summary") %}
     <meta name="description" content="{{ htmlEscape(page.summary) }}" />
 {% endif %}
 
-<link rel="stylesheet" href="{{ site.prefix }}/assets/_default_style.css" />
-<link rel="stylesheet" href="{{ site.prefix }}/assets/style.css" />
+<link rel="stylesheet" href="{{ abspath("/assets/_default_style.css") }}" />
+<link rel="stylesheet" href="{{ abspath("/assets/style.css") }}" />
 
 <title>{{ page.title }}</title>
 
-<script src="{{ site.prefix }}/assets/vendor/_default-highlightjs.js"></script>
-<script src="{{ site.prefix }}/assets/_default_page.js"></script>
+<script src="{{ abspath("/assets/vendor/_default-highlightjs.js") }}"></script>
+<script src="{{ abspath("/assets/_default_page.js") }}"></script>

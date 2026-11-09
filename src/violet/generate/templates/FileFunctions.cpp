@@ -11,7 +11,9 @@
 #include "violet/generate/templates/types/RenderContext.hpp"
 #include "violet/generate/templates/types/TreePagesData.hpp"
 #include "violet/paginator/SortPredicates.hpp"
+#include "violet/parsing/LinkTranslate.hpp"
 #include "violet/parsing/Markdown.hpp"
+#include "violet/path/path.hpp"
 #include "violet/transitional/JsonToDataObject.hpp"
 #include "violet/util/ErrorHandling.hpp"
 #include <filesystem>
@@ -36,6 +38,9 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     });
     man.env.add_callback("loadJson", 1, [this](auto& args, void* udata) {
         return loadJson(args, (RenderContext*) udata);
+    });
+    man.env.add_callback("abspath", [this](auto& args, void* udata) {
+        return abspath(args, (RenderContext*) udata);
     });
     man.env.add_callback("render", 1, [this](auto& args) {
         return render(args);
@@ -334,6 +339,40 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
 
     ss << "page/" << page << "/index.html";
     return ss.str();
+}
+iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ctx)
+{
+    const auto& fm = ctx->fm;
+    const auto& conf = this->man.cfg;
+
+    const auto& path = args.at(0)->get<iris::String>();
+
+    violet::path rootPath = path.starts_with('/') ? "/" : fm.internalPath;
+
+    auto rawResult = rootPath.parent_path()
+        .join(path);
+
+    bool transform;
+    if (args.size() ==  2) {
+        transform = args.at(1)->get<bool>();
+    } else {
+        transform = path.find('%') == std::string::npos;
+    }
+
+    if (transform) {
+        // TODO: refactor projectBasedTranslator to use violet::path so we don't do all of this here (and to use
+        // stc::uri, it does most of the heavy lifting on # and ? parsing that's still left in there manually)
+        // We could in theory delegate both these scenarios to the translator for somewhat more consistent code
+        return projectBasedTranslator(
+            conf.prefix,
+            fm.internalPath,
+            this->man.opts.root,
+            rawResult.to_string()
+        );
+    } else {
+        return rawResult
+            .concatPrefix(conf.prefix);
+    }
 }
 
 iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, RenderContext* ctx) {

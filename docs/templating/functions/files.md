@@ -215,3 +215,29 @@ A path to the file.
 * If the path is absolute: the path is relative to the site root (the folder containing `violet.json`)
 * If relative: the path is relative to the page being rendered
 
+## `abspath(path[, translate = true])`
+
+Converts a path to an absolute path. Relative paths are relative to the page being rendered, while absolute paths are treated as relative to the site root.
+
+This SHOULD be used for all non-relative paths, as this function also respects and prepends `prefix`. If you use an absolute path on a site with a `prefix` without using this function, or otherwise prepending `prefix`, the path will render incorrectly.
+
+In addition, when `translate = true`, this function provides the same benefits that markdown links get with existence checks; if you `abspath("/some/file.md")` and the file later gets deleted, the `abspath` call produces a warning that you can use to trace the source[^abspath-limitation-source].
+
+[^abspath-limitation-source]: Technically, it currently only gets you the page context and not necessarily the template context. This will be changed in a future version of violet.
+
+### Arguments
+
+#### `path`
+
+The path to make absolute
+
+#### `translate`
+
+Whether or not to translate `.md` paths. This is set to conditionally true by default; if `%` appears in the provided path, `translate` is true, and false if it doesn't appear. You can override this behaviour by explicitly supplying `true` or `false`.
+
+When true, `path` is additionally URL escaped and potentially altered outright with regard to current URL translation rules. Examples:
+
+* `some folder/Some file.md` -\> `some%20folder/some-file.html`
+* `some folder/Some file.png` -\> `some%20folder/Some%20file.png`
+
+

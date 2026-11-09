@@ -55,6 +55,8 @@ public:
 
     iris::DataObject paginatedUrl(iris::Arguments& args);
 
+    iris::DataObject abspath(iris::Arguments& args, RenderContext* ctx);
+
     iris::DataObject loadJson(iris::Arguments& args, RenderContext* ctx);
     iris::DataObject render(iris::Arguments& args);
 

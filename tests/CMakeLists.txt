@@ -14,6 +14,7 @@ add_executable(tests
     src/integration/BasicSiteGenerationTests.cpp
     src/integration/BlogIntegrationTests.cpp
 
+    src/integration/monolith/AbsPathTests.cpp
     src/integration/monolith/JsonLoadingTests.cpp
     src/integration/monolith/ListPagesPaginatedTests.cpp
     src/integration/monolith/ListPagesTests.cpp
@@ -47,6 +48,8 @@ add_executable(tests
     src/parsing/markdown/regression/35-RelativeURLs.cpp
 
     src/parsing/urls/UrlValidityTests.cpp
+
+    src/path/PathTests.cpp
 
     src/utils/FileReader.cpp
 )

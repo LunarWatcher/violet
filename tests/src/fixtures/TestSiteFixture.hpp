@@ -47,6 +47,7 @@ FixedString(const char (&str)[N]) -> FixedString<N - 1>;
 template <
     SiteVariant Site,
     bool AutoGen = false,
+    FixedString prefix = "",
     FixedString BuildDir = "pages"
 >
 struct TestSiteFixture : public DebugMarkerFixture {
@@ -56,12 +57,15 @@ struct TestSiteFixture : public DebugMarkerFixture {
 
     TestSiteFixture()
         : workspace(Site, BuildDir.string()),
-          opts({
-              .watch = false,
-              .outputFolder = workspace.rootDirectory / BuildDir.string(),
-              .overridePrefixForLocalUse = true,
-              .root = workspace.rootDirectory,
-          })
+          opts(
+              {
+                  .watch = false,
+                  .outputFolder = workspace.rootDirectory / BuildDir.string(),
+                  .overridePrefixForLocalUse = prefix.string() == "",
+                  .root = workspace.rootDirectory,
+                  .overridePrefix = prefix.string() == "" ? std::nullopt : std::optional(prefix.string()),
+              }
+          )
     {
         std::cout << "Now initializing test site at "
                   << workspace.rootDirectory
@@ -107,5 +111,7 @@ struct TestSiteFixture : public DebugMarkerFixture {
         return buildPath();
     }
 };
+
+using MonolithRealPrefix = tests::TestSiteFixture<tests::SiteVariant::TestMonolith, true, "/prefix", "pages-prefix">;
 
 }
