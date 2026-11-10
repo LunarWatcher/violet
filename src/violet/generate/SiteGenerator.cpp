@@ -314,6 +314,7 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
 bool SiteGenerator::generate() {
     CacheBuster cacheBuster(this);
     const auto& rootDir = this->cfg.root();
+    this->buildMeta.start();
 
     minilog::info(
         "Using {} as the project root",

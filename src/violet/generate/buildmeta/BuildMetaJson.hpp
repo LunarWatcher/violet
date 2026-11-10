@@ -22,7 +22,7 @@ struct Output {
 
 struct Build {
     uint64_t buildMillis;
-    const std::chrono::system_clock::time_point startTimestamp = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point startTimestamp = std::chrono::system_clock::now();
     // This is a const, but it makes sense to include it in the struct for readability wrt. the serialization
     // process. Otherwise, this would just be hidden in MetadataJson.cpp
     const static inline std::string_view version = GitVersion();

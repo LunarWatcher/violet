@@ -18,9 +18,11 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
-### Recommended migration steps
+### Migration guide
 
-This release has changes that are _technically_ breaking, but not _practically_ breaking. `page.url` being made absolute makes it compatible with the new `abspath()` function, but means many URLs end up with a redundant `//`. `{{ site.prefix }}/{{ page.url }}` will now render as `//page.html`, given `{project root}/page.md` and `prefix = ""`. This will still work in most browsers, but may break under certain usecases.
+This release unfortunately also has breaking changes. `page.url` being made absolute makes it compatible with the new `abspath()` function, but means many URLs end up with a redundant `//`. `{{ site.prefix }}/{{ page.url }}` will now render as `//page.html`, given `{project root}/page.md` and `prefix = ""`. This will still work in most browsers, but may break under certain usecases.
+
+The reason this is breaking is that it causes `{{ site.prefix }}/{{ page.url }}` to render as `//[url contents]`, which is an external path on the same protocol, and all such URLs break.
 
 Even if your use isn't breaking, this pattern is no longer recommended. It's recommended to switch to the `abspath` function. The `abspath` function also lets you provide project URLs if you wish, so `abspath("/README.md")` will render equivalently to `{{ site.prefix }}/index.html` in the old template setup.
 
@@ -41,13 +43,14 @@ To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-p
 
 ### Changed
 
-* BREAKING (technically): Made `page.url` an absolute path
+* BREAKING: Made `page.url` an absolute path
 * Markdown URLs (alongside URLs converted by `abspath()`) no longer end with a trailing slash. This means that `/path/` is converted to `/path`.
   * This should be functionally identical, since `/path` and `/path/` cannot coexist in the filesystem (see: `touch path && mkdir path`), and both Codeberg Pages and GitHub pages handles these rewrites fine, so shouldn't affect anything.
   
 ### Fixed
 
 * Fixed a segfault in `violet generate -w` caused by 0.19.2
+* Fixed a bug where `serve` and `generate -w` failed to reset the start time used for telling how long it took to build the site, and instead counting the time since the `generate -w` or `serve` session started.
 
 ## [v0.19.2] (2026-11-07)
 

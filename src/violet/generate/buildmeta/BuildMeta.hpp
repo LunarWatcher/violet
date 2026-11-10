@@ -21,6 +21,9 @@ public:
     void registerInputFile();
     void registerInputPage();
     void registerOutputPage(uint64_t batchSize = 1);
+    void start() {
+        data = {};
+    }
 
     void commit();
 };
