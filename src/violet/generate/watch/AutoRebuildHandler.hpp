@@ -2,12 +2,15 @@
 
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/SiteGenerator.hpp"
+#include <mutex>
+#include <shared_mutex>
 namespace violet {
 
 class AutoRebuildHandler {
 protected:
     GenerateOpts opts;
 
+    std::shared_mutex m;
     std::shared_ptr<SiteGenerator> generator;
 
     bool refreshGenerator() {
@@ -41,6 +44,9 @@ public:
     virtual ~AutoRebuildHandler() = default;
 
     virtual int watch() = 0;
+
+    std::shared_mutex& getMutex() { return m; }
+    std::shared_ptr<SiteGenerator> getGenerator() { return generator; }
 };
 
 }

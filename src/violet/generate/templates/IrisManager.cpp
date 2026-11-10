@@ -11,13 +11,10 @@
 namespace violet {
 
 IrisManager::IrisManager(
-    GenerateOpts& opts,
     Config& cfg,
     FileManager& fileManager,
     MetadataCache& metaCache
-) :
-    opts(opts),
-    cfg(cfg),
+) : cfg(cfg),
     fileManager(fileManager),
     metaCache(metaCache),
     dateTimeFuncs(*this),

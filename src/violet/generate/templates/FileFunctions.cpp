@@ -48,7 +48,7 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
 }
 
 iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
-    auto& root = man.fileManager.getRootFolder();
+    auto& root = man.cfg.root();
     auto taxonomy = args.at(0)->get<iris::String>();
     auto value = args.at(1)->get<iris::String>();
 
@@ -69,7 +69,7 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
             // return from loadMetadata
             auto filePath = std::filesystem::relative(
                 entryPath,
-                man.fileManager.getRootFolder()
+                man.cfg.root()
             );
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
@@ -119,7 +119,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
     // TODO: error handling
     bool isAbsPath = scope.starts_with('/');
 
-    auto path = man.fileManager.getRootFolder();
+    auto path = man.cfg.root();
     if (!isAbsPath) {
         path /= ctx->fm.internalPath;
     }
@@ -162,7 +162,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
             // return from loadMetadata
             auto filePath = std::filesystem::relative(
                 entryPath,
-                man.fileManager.getRootFolder()
+                man.cfg.root()
             );
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
@@ -221,7 +221,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
     bool isAbsPath = scope.starts_with('/');
 
     // TODO: error handling
-    auto path = man.fileManager.getRootFolder();
+    auto path = man.cfg.root();
     if (!isAbsPath) {
         path /= ctx->fm.internalPath;
     }
@@ -250,7 +250,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
 
     TreePagesData root;
 
-    if (std::filesystem::weakly_canonical(man.fileManager.getRootFolder()) != path) {
+    if (std::filesystem::weakly_canonical(man.cfg.root()) != path) {
         root.folder_name = path.filename();
     }
 
@@ -270,7 +270,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
             // This path must only be used for accessing the frontmatter
             auto filePath = std::filesystem::relative(
                 entryPath,
-                man.fileManager.getRootFolder()
+                man.cfg.root()
             );
             // This past must only be used for deriving the relative path to the frontmatter, i.e. determining where
             // things go in the output object
@@ -366,7 +366,7 @@ iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ct
         return projectBasedTranslator(
             conf.prefix,
             fm.internalPath,
-            this->man.opts.root,
+            this->man.cfg.root(),
             rawResult.to_string()
         );
     } else {
@@ -434,10 +434,10 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
         if (fn.starts_with("//")) {
             throw iris::CallbackError("Absolute paths cannot start with two slashes!");
         }
-        p = this->man.opts.root / fn.substr(1);
+        p = this->man.cfg.root() / fn.substr(1);
     } else {
         p = std::filesystem::path {
-            this->man.opts.root / frontmatter.internalPath
+            this->man.cfg.root() / frontmatter.internalPath
         };
         if (!std::filesystem::is_directory(p)) {
             p = p.parent_path();
@@ -449,7 +449,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
     // Should probably turn this into a standard function somewhere
     p = std::filesystem::weakly_canonical(p);
     if (!p.string().starts_with(
-            this->man.opts.root.string()
+            this->man.cfg.root().string()
     )) {
         minilog::error(
             "loadJson found possible root escaping: fn = {}, resolved path = {}",
@@ -508,7 +508,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                     projectBasedTranslator,
                     this->man.cfg.prefix,
                     fm.internalPath,
-                    this->man.opts.root,
+                    this->man.cfg.root(),
                     std::placeholders::_1
                 ),
                 this->man.cfg.tocStartLevel,

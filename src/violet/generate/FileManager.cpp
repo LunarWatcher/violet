@@ -13,9 +13,8 @@ void FileManager::copyRaw(
     const std::filesystem::path& relPath,
     const std::filesystem::path& destName
 ) {
-    assertReady();
     auto fullSource = root / relPath;
-    auto fullDest = opts.output() / destName;
+    auto fullDest = cfg.output() / destName;
 
     std::filesystem::create_directories(
         fullDest.parent_path()
@@ -32,14 +31,15 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(
     const std::string& type,
     const std::string& layout
 ) {
-    assertReady();
 
     // Temporary; used to cehck both .iris and .iris extensions. This is temporary until we can do the breaking change
     // of dropping .iris files
     std::vector<std::string> extensions{".iris"};
-    if (opts.allowLegacyInjaExtensions) {
+    if (cfg.env.allowLegacyInjaExtensions) {
         extensions.push_back(".inja");
     }
+
+    const auto& root = cfg.root();
     for (auto& ext : extensions) {
         auto file = layout + ext;
 
@@ -68,7 +68,6 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(
 }
 
 void FileManager::copyThemeFiles() {
-    assertReady();
     if (!cfg.theme) {
         minilog::info("No theme set");
         return;
@@ -119,7 +118,7 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
     auto fn = path.filename().string();
     if (!fn.ends_with(".inja") && !fn.ends_with(".iris")) {
         auto result = resolvePartial(path.string() + ".iris");
-        if (result || !opts.allowLegacyInjaExtensions) {
+        if (result || !cfg.env.allowLegacyInjaExtensions) {
             return result;
         }
         minilog::warn("No .iris files found. Trying lookup with the deprecated .inja extension");
@@ -128,7 +127,7 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
         minilog::warn("the .inja extension is deprecated. Please switch to .iris");
     }
 
-    if (auto p = this->root / "_partials" / fn;
+    if (auto p = cfg.root() / "_partials" / fn;
         std::filesystem::is_regular_file(p)
     ) {
         return p;
@@ -156,7 +155,7 @@ void FileManager::recursivelyIterateFiles(
     auto it = std::filesystem::recursive_directory_iterator(root);
     auto end = std::filesystem::recursive_directory_iterator();
 
-    std::filesystem::path realOutputPath = opts.output();
+    std::filesystem::path realOutputPath = cfg.output();
 
     // Subfolder of output path (avoids scopes set to {output_dir}/**)
     // The implementation is shit because there is no trivial way to check if a path is a subpath of another

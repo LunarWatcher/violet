@@ -244,9 +244,7 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
         dest["theme"] = *src.theme;
     }
 
-    if (src.destination) {
-        dest["destination"] = *src.destination;
-    }
+    dest["destination"] = src.destination;
 
     dest["data"] = transitional::convertDataObject(
         src.data

@@ -11,12 +11,10 @@ namespace violet::meta {
  */
 class BuildMeta {
 private:
-    GenerateOpts& opts;
     Config& conf;
     meta::MetadataJson data;
 public:
     BuildMeta(
-        GenerateOpts& opts,
         Config& conf
     );
 

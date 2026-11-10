@@ -18,10 +18,13 @@ WatchRebuildHandler::WatchRebuildHandler(
             .minimumDelay = std::chrono::milliseconds(1000)
         },
         [this](const auto &path) {
-            auto &opts = this->opts;
+            if (!this->generator) {
+                return true;
+            }
+            const auto& cfg = this->generator->getConfig();
             return !std::filesystem::weakly_canonical(path).string()
                 .starts_with(
-                    std::filesystem::weakly_canonical(opts.root / opts.outputFolder).string()
+                    std::filesystem::weakly_canonical(cfg.root()).string()
                 );
         }
     ), notify(notify) {}
@@ -37,12 +40,15 @@ int WatchRebuildHandler::watch() {
     }
     watcher.block([this](auto type, const auto &path) -> bool {
         if (
-            (type == stc::watcher::FileWatcherEventKind::DirectoryAdded
+            this->generator != nullptr
+            && (type == stc::watcher::FileWatcherEventKind::DirectoryAdded
                 || type == stc::watcher::FileWatcherEventKind::DirectoryRemoved
             )
             && std::filesystem::weakly_canonical(path).string()
                 .starts_with(
-                    std::filesystem::weakly_canonical(opts.root / opts.outputFolder).string()
+                    std::filesystem::weakly_canonical(
+                        this->generator->getConfig().root()
+                    ).string()
                 )
         ) {
             // Avoid weird shit when running the update script
@@ -70,6 +76,7 @@ int WatchRebuildHandler::watch() {
                 minilog::info("violet.json has been fixed. Rebuilding...");
             }
         }
+        std::unique_lock l(this->m);
         // TODO: it would be nice if we could serve the error message directly on the website, but this is currently not
         // possible due to how the error handling is managed. Maybe if like `lastError` is stored as a string or
         // something?

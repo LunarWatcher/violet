@@ -7,11 +7,8 @@
 namespace violet::meta {
 
 BuildMeta::BuildMeta(
-    GenerateOpts& opts,
     Config& conf
-)
-    : opts(opts),
-      conf(conf) {}
+) : conf(conf) {}
 
 void BuildMeta::registerInputFile() {
     data.input.files += 1;
@@ -30,7 +27,7 @@ void BuildMeta::commit() {
     // terms of performance might be better than null/empty checks everywhere. Not actually sure about that, but /shrug
     if (this->conf.metadata) {
         nlohmann::json j = data;
-        auto metaPath = opts.root / opts.outputFolder / "_violet-meta.json";
+        auto metaPath = conf.output() / "_violet-meta.json";
         std::ofstream f(metaPath);
 
         if (!f) {

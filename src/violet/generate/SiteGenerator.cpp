@@ -34,29 +34,24 @@ SiteGenerator::SiteGenerator(
 ) : opts(opts),
     cfg(std::move(workspaceConf)),
     fileManager(
-        this->opts,
         this->cfg
     ),
     metadataCache(
         this->fileManager
     ),
     irisManager(
-        this->opts,
         this->cfg,
         this->fileManager,
         this->metadataCache
     ),
     buildMeta(
-        this->opts,
         this->cfg
     )
 {
-    if(this->cfg.destination) {
-        this->opts.outputFolder = *cfg.destination;
+    if(this->opts.overrideOutputFolder) {
+        this->cfg.destination = *this->opts.overrideOutputFolder;
     }
-    this->opts.postParse();
 }
-
 
 std::filesystem::path SiteGenerator::resolvePagination(
     const std::filesystem::path& contentRoot,
@@ -108,7 +103,7 @@ void SiteGenerator::handleTemplatesAndSave(
     const Frontmatter& frontmatter
 ) {
     minilog::debug("Rendering templates of {}", relPath.string());
-    auto target = this->opts.root / this->opts.outputFolder / relPath;
+    auto target = cfg.output() / relPath;
     std::filesystem::create_directories(
         target.parent_path()
     );
@@ -318,34 +313,12 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
 
 bool SiteGenerator::generate() {
     CacheBuster cacheBuster(this);
-    const auto& rootDir = this->opts.root;
+    const auto& rootDir = this->cfg.root();
 
     minilog::info(
         "Using {} as the project root",
         rootDir.string()
     );
-    this->fileManager.imbueRoot(rootDir);
-    this->cfg.imbueRoot(rootDir);
-
-    std::filesystem::path realOutputPath = opts.outputFolder;
-    if (!realOutputPath.is_absolute()) {
-        realOutputPath = rootDir / opts.outputFolder;
-    }
-    if (opts.overridePrefixForLocalUse) {
-        minilog::info(
-            "Overriding site prefix to {}",
-            realOutputPath.string()
-        );
-        cfg.raw["prefix"] = realOutputPath.string();
-        cfg.prefix = realOutputPath.string();
-    } else if (opts.overridePrefix) {
-        minilog::info(
-            "User requested site prefix override to {}",
-            *opts.overridePrefix
-        );
-        cfg.setPrefix(*opts.overridePrefix);
-    }
-
 
     fileManager.copyThemeFiles();
 
@@ -427,6 +400,7 @@ std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::l
     // Might be more doable with C++26 and reflection?
     // This will currently throw
     Config cfg = rawConf;
+    cfg.merge(opts);
 
     // Can't use the other signature, as it'll try to invoke a private constructor from a different class
     // TODO: use friend? Not sure it matters enough to bother

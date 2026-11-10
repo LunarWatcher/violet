@@ -60,8 +60,8 @@ struct TestSiteFixture : public DebugMarkerFixture {
           opts(
               {
                   .watch = false,
-                  .outputFolder = workspace.rootDirectory / BuildDir.string(),
                   .overridePrefixForLocalUse = prefix.string() == "",
+                  .overrideOutputFolder = workspace.rootDirectory / BuildDir.string(),
                   .root = workspace.rootDirectory,
                   .overridePrefix = prefix.string() == "" ? std::nullopt : std::optional(prefix.string()),
               }

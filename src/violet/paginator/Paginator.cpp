@@ -45,7 +45,7 @@ Paginator::Paginator(
     // }
 
     // TODO: error handling
-    auto path = fileMan.getRootFolder();
+    auto path = fileMan.root();
 
     bool isAbsPath = prefix.string().starts_with('/');
     
@@ -70,11 +70,11 @@ Paginator::Paginator(
             }
             auto filePath = std::filesystem::relative(
                 entryPath,
-                fileMan.getRootFolder()
+                fileMan.root()
             );
             // Don't include the owning file. This is necessary to allow non-hidden `index.md`s elsewhere to work
             // properly.
-            if (filePath == std::filesystem::relative(owningFilePath, fileMan.getRootFolder())) {
+            if (filePath == std::filesystem::relative(owningFilePath, fileMan.root())) {
                 return true;
             }
             auto& metadata = metaCache.loadMetadata(

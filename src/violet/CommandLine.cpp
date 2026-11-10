@@ -181,12 +181,10 @@ int violet::cliMain(int argc, char** argv) {
     if (cmdVersion->parsed()) {
         std::cout << "violet " << violet::GitVersion() << std::endl;
     } else if (cmdGenerate->parsed()) {
-        generateOpts.postParse();
         return generateMain(
             generateOpts
         );
     } else if (cmdServe->parsed()) {
-        generateServeOpts.postParse();
         return serveMain(
             generateServeOpts
         );

@@ -11,7 +11,13 @@
 namespace violet {
 
 SiteServer::SiteServer(const GenerateOpts &generateOpts)
-    : context(std::make_shared<ServerContext>(generateOpts)),
+    : isBuildValid(false),
+      context(
+        std::make_shared<ServerContext>(
+            generateOpts,
+            std::make_shared<WatchRebuildHandler>(generateOpts, &isBuildValid)
+        )
+    ),
       app(
           std::make_shared<magpie::App<ServerContext>>(
               context,
@@ -26,9 +32,7 @@ SiteServer::SiteServer(const GenerateOpts &generateOpts)
                   magpie::Http11AdapterFactory>()
               }
           )
-      ),
-      isBuildValid(false),
-      watcher(std::make_shared<WatchRebuildHandler>(generateOpts, &isBuildValid))
+      )
 {
     initLogger();
     initRoutes();
@@ -87,7 +91,10 @@ void SiteServer::initRoutes() {
             magpie::Response &res,
             std::string_view path
         ) {
-            if (!this->isBuildValid.load()) {
+            std::shared_lock l(ctx->watcher->getMutex());
+            auto ptr = ctx->watcher->getGenerator();
+
+            if (!this->isBuildValid.load() || ptr == nullptr) {
                 res = magpie::Response(
                     magpie::Status::InternalServerError,
                     "<html><body>"
@@ -98,6 +105,7 @@ void SiteServer::initRoutes() {
                 );
                 return;
             }
+            
             // Proper path normalization is an stc TODO
             if (path.contains("../") || path.contains("/..") || path.starts_with('/')) {
                 res = magpie::Response(magpie::Status::BadRequest, "Bad");
@@ -105,7 +113,7 @@ void SiteServer::initRoutes() {
             }
 
             auto absOutputFolder = std::filesystem::canonical(
-                std::filesystem::absolute(ctx->generateOpts.root) / ctx->generateOpts.outputFolder
+                ptr->getConfig().output()
             );
             if (!std::filesystem::exists(absOutputFolder)) {
                 handleNotFound(absOutputFolder, res);
@@ -164,7 +172,7 @@ void SiteServer::initLogger() {
 void SiteServer::watchRoot() {
     while (true) {
         try {
-            if (!this->watcher->watch()) {
+            if (!this->context->watcher->watch()) {
                 minilog::error("Watch thread shut down unexpectedly!");
                 abort();
             }
