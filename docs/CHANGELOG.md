@@ -31,6 +31,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Config now supports optional key `destination` to control output directory relative to project root. The default is `"pages"` to preserve existing behaviour.
 * Added `abspath(path)`, which can be used to make absolute URLs in a more sane way
 
+### Changed
+
+* BREAKING (technically): Made `page.url` an absolute path
+
 ## [v0.19.2] (2026-11-07)
 
 ### Fixed

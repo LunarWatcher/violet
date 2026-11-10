@@ -221,9 +221,9 @@ Converts a path to an absolute path. Relative paths are relative to the page bei
 
 This SHOULD be used for all non-relative paths, as this function also respects and prepends `prefix`. If you use an absolute path on a site with a `prefix` without using this function, or otherwise prepending `prefix`, the path will render incorrectly.
 
-In addition, when `translate = true`, this function provides the same benefits that markdown links get with existence checks; if you `abspath("/some/file.md")` and the file later gets deleted, the `abspath` call produces a warning that you can use to trace the source[^abspath-limitation-source].
-
-[^abspath-limitation-source]: Technically, it currently only gets you the page context and not necessarily the template context. This will be changed in a future version of violet.
+> [!info]
+>
+> In the future, when `translate = true`, this function will possibly warn about non-existent URLs in a way similar to the markdown URL warning. This is not implemented at this time, however.
 
 ### Arguments
 
