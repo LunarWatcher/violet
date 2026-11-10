@@ -36,7 +36,9 @@ int WatchRebuildHandler::watch() {
         );
     } else {
         auto result = generate();
-        this->notify->store(result);
+        if (this->notify) {
+            this->notify->store(result);
+        }
     }
     watcher.block([this](auto type, const auto &path) -> bool {
         if (
