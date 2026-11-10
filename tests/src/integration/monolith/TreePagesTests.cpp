@@ -14,7 +14,7 @@ TEST_CASE_PERSISTENT_FIXTURE(
         REQUIRE(
             data.at("treePages")
             ==
-            R"({"index":{"data":{},"taxonomies":{},"violet_internals.path":"treePages/README.md","table_of_contents":"","hidden":false,"layout":"single_page","type":"_default","violet_internals.type":2,"url":"treePages/index.html","title":"Root"},"subfolders":[{"index":{"data":{},"taxonomies":{},"violet_internals.path":"treePages/folder/index.md","table_of_contents":"","hidden":false,"layout":"single_page","type":"_default","violet_internals.type":2,"url":"treePages/folder/index.html","title":"index"},"subfolders":[],"items":[],"folder_name":"folder"}],"items":[],"folder_name":"treePages"})"
+            R"({"index":{"data":{},"taxonomies":{},"violet_internals.path":"/treePages/README.md","table_of_contents":"","hidden":false,"layout":"single_page","type":"_default","violet_internals.type":2,"url":"/treePages/index.html","title":"Root"},"subfolders":[{"index":{"data":{},"taxonomies":{},"violet_internals.path":"/treePages/folder/index.md","table_of_contents":"","hidden":false,"layout":"single_page","type":"_default","violet_internals.type":2,"url":"/treePages/folder/index.html","title":"index"},"subfolders":[],"items":[],"folder_name":"folder"}],"items":[],"folder_name":"treePages"})"
         );
     }
     SECTION("Verify rendered treePages/folder/index.html output") {

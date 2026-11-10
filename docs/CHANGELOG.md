@@ -18,6 +18,16 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Migration guide
+
+This release unfortunately also has breaking changes. `page.url` being made absolute makes it compatible with the new `abspath()` function, but means many URLs end up with a redundant `//`. `{{ site.prefix }}/{{ page.url }}` will now render as `//page.html`, given `{project root}/page.md` and `prefix = ""`. This will still work in most browsers, but may break under certain usecases.
+
+The reason this is breaking is that it causes `{{ site.prefix }}/{{ page.url }}` to render as `//[url contents]`, which is an external path on the same protocol, and all such URLs break.
+
+Even if your use isn't breaking, this pattern is no longer recommended. It's recommended to switch to the `abspath` function. The `abspath` function also lets you provide project URLs if you wish, so `abspath("/README.md")` will render equivalently to `{{ site.prefix }}/index.html` in the old template setup.
+
+To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-path")`. Relative paths can also be passed to this function, in which case they're relative to the page being rendered.
+
 ### Added
 
 * Config now supports `markdown.footnoteHeaders` to disable the automatic headers in the footnote section. The default is `true` to preserve existing behaviour. Example:
@@ -29,6 +39,18 @@ This page contains the changelog for violet. Please note that you'll encounter t
   }
   ```
 * Config now supports optional key `destination` to control output directory relative to project root. The default is `"pages"` to preserve existing behaviour.
+* Added `abspath(path)`, which can be used to make absolute URLs in a more sane way
+
+### Changed
+
+* BREAKING: Made `page.url` an absolute path
+* Markdown URLs (alongside URLs converted by `abspath()`) no longer end with a trailing slash. This means that `/path/` is converted to `/path`.
+  * This should be functionally identical, since `/path` and `/path/` cannot coexist in the filesystem (see: `touch path && mkdir path`), and both Codeberg Pages and GitHub pages handles these rewrites fine, so shouldn't affect anything.
+  
+### Fixed
+
+* Fixed a segfault in `violet generate -w` caused by 0.19.2
+* Fixed a bug where `serve` and `generate -w` failed to reset the start time used for telling how long it took to build the site, and instead counting the time since the `generate -w` or `serve` session started.
 
 ## [v0.19.2] (2026-11-07)
 

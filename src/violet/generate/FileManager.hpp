@@ -10,19 +10,23 @@ namespace violet {
 
 class FileManager {
 private:
-    GenerateOpts& opts;
     Config& cfg;
-    std::filesystem::path root;
     std::filesystem::path themeDir;
-
-    bool ready = false;
 public:
     FileManager(
-        GenerateOpts& opts,
         Config& cfg
-    ) : opts(opts),
-        cfg(cfg)
-    {}
+    ) : cfg(cfg) {
+        // TODO: error `stc::executablePath` should probably be cached statically to better support rebuilds
+        if (this->cfg.theme && (*cfg.theme)[0] == '_') {
+            this->themeDir = std::filesystem::path(
+                stc::executablePath()
+            ).parent_path()
+                / "../share/violet/themes"
+                / *cfg.theme;
+        } else if (this->cfg.theme) {
+            this->themeDir = cfg.root() / "_themes" / *cfg.theme;
+        }
+    }
 
     std::optional<std::filesystem::path> resolveTemplate(
         const std::string& type,
@@ -41,37 +45,13 @@ public:
 
     void copyThemeFiles();
 
-    void imbueRoot(
-        const std::filesystem::path& root
-    ) {
-        this->root = root;
-
-        if (this->cfg.theme && (*cfg.theme)[0] == '_') {
-            this->themeDir = std::filesystem::path(
-                stc::executablePath()
-            ).parent_path()
-                / "../share/violet/themes"
-                / *cfg.theme;
-        } else if (this->cfg.theme) {
-            this->themeDir = root / "_themes" / *cfg.theme;
-        }
-        ready = true;
-    }
-
     void recursivelyIterateFiles(
         const std::filesystem::path& root,
         const std::function<bool(const std::filesystem::directory_entry& entry)>& processor
     );
 
-    void assertReady() {
-        if (!ready) {
-            [[unlikely]]
-            throw std::runtime_error("Programmer error: filemanager functions invoked before imbueRoot");
-        }
-    }
-
-    const std::filesystem::path& getRootFolder() {
-        return root;
+    const std::filesystem::path& root() const {
+        return cfg.root();
     }
 };
 

@@ -9,8 +9,8 @@ TestSiteGenerator::TestSiteGenerator(
     workspace(site, buildDirectoryName),
     opts({
         .watch = false,
-        .outputFolder = workspace.rootDirectory / buildDirectoryName,
         .overridePrefixForLocalUse = true,
+        .overrideOutputFolder = workspace.rootDirectory / buildDirectoryName,
         .root = workspace.rootDirectory,
     })
 {

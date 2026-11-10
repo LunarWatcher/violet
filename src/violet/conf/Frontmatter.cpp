@@ -13,9 +13,9 @@ Frontmatter::operator iris::DataObject() const {
         {"layout", getLayout()},
         {"hidden", hidden},
         {"data", data},
-        {"url", internalUrl},
+        {"url", internalUrl.to_string()},
         {"table_of_contents", tableOfContents},
-        {violet::constants::InternalPathRef, internalPath},
+        {violet::constants::InternalPathRef, internalPath.to_string()},
         {violet::constants::InternalFileTypeRef, static_cast<int>(internalFileType)},
     };
     if (date) {

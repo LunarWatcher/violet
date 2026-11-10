@@ -6,7 +6,7 @@ function help() {
     echo "Commands:"
     echo -e "\tgen-docs\tGenerate violet's doc page (Firefox local mapping-compatible)"
     echo -e "\tgen-docs-local\tGenerate violet's doc page (-l passed to open raw files)"
-    echo -e "\tserve\t\tRuns `violet serve` on the docs"
+    echo -e "\tserve\t\tRuns violet serve on the docs"
     echo -e "\tpublish\t\tMAINTAINER ONLY: Publish the docs to codeberg"
     echo -e "\tgenpkg\t\tGenerate a new PKGBUILD. Should only be used while a tag is checked out."
 }
@@ -31,8 +31,9 @@ function gen-docs-local() {
     fi
 
     pushd "${git_root}/docs"
+    # Required to support interrupts
+    trap popd 0
     "${violet_root}/bin/violet" generate -d -l
-    popd
 }
 
 function serve() {

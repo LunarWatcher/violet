@@ -14,11 +14,10 @@ namespace violet {
 
 class SiteServer {
 private:
+    std::atomic<bool> isBuildValid;
+
     std::shared_ptr<ServerContext> context;
     std::shared_ptr<magpie::App<ServerContext>> app;
-
-    std::atomic<bool> isBuildValid;
-    std::shared_ptr<WatchRebuildHandler> watcher;
     
     std::thread watchThread;
 

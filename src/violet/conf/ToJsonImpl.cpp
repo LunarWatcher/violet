@@ -160,10 +160,6 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
         }
         dest.data = transitional::convertJson(*it).get<iris::Object>();
     }
-    // TODO: not sure if we want this
-    if (auto it = src.find(violet::constants::InternalPathRef); it != src.end()) {
-        dest.internalPath = *it;
-    }
     if (auto it = src.find("summary"); it != src.end() && !it->is_null()) {
         dest.summary = it->get<std::string>();
     }
@@ -244,9 +240,7 @@ void violet::to_json(nlohmann::json& dest, const Config& src) {
         dest["theme"] = *src.theme;
     }
 
-    if (src.destination) {
-        dest["destination"] = *src.destination;
-    }
+    dest["destination"] = src.destination;
 
     dest["data"] = transitional::convertDataObject(
         src.data

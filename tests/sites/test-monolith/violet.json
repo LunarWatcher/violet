@@ -5,6 +5,7 @@
   "exclude": [
     "secrets"
   ],
+  "metadata": true,
   "data": {
     "m_key": 69420
   }

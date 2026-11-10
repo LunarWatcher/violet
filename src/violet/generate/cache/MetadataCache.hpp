@@ -44,7 +44,7 @@ public:
     OpenData openFile(
         const std::filesystem::path& relPath
     ) {
-        std::ifstream f(fileManager.getRootFolder() / relPath);
+        std::ifstream f(fileManager.root() / relPath);
         if (!f) {
             throw std::runtime_error(
                 "Failed to open " + relPath.string()

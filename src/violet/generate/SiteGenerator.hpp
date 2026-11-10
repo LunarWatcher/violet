@@ -94,6 +94,10 @@ public:
     IrisManager& getIrisManager() { return irisManager; }
 
     void resetCaches();
+
+    const Config& getConfig() const {
+        return cfg;
+    }
 };
 
 }

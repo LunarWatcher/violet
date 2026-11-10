@@ -11,18 +11,19 @@ namespace violet::meta {
  */
 class BuildMeta {
 private:
-    GenerateOpts& opts;
     Config& conf;
     meta::MetadataJson data;
 public:
     BuildMeta(
-        GenerateOpts& opts,
         Config& conf
     );
 
     void registerInputFile();
     void registerInputPage();
     void registerOutputPage(uint64_t batchSize = 1);
+    void start() {
+        data = {};
+    }
 
     void commit();
 };

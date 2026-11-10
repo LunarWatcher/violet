@@ -17,7 +17,6 @@ namespace violet {
 
 class IrisManager {
 public:
-    GenerateOpts& opts;
     Config& cfg;
     FileManager& fileManager;
     MetadataCache& metaCache;
@@ -31,7 +30,6 @@ public:
     EscapingFunctions escapingFuncs;
 
     IrisManager(
-        GenerateOpts& opts,
         Config& cfg,
         FileManager& fileManager,
         MetadataCache& metaCache

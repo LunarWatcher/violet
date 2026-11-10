@@ -4,6 +4,7 @@
 #include "minilog/minilog.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
+#include "violet/path/path.hpp"
 #include <filesystem>
 
 #include <nlohmann/json.hpp>
@@ -36,8 +37,8 @@ struct Frontmatter {
 
     std::string tableOfContents = "";
 
-    std::string internalUrl = "";
-    std::string internalPath = "";
+    violet::path internalUrl;
+    violet::path internalPath;
 
     ProcessedFileType internalFileType = ProcessedFileType::Uninitialized;
     bool isAsset = false;
@@ -47,6 +48,7 @@ struct Frontmatter {
     ) {
         internalPath = source.string();
         internalUrl = source.string();
+
         auto ext = source.extension().string();
         if (ext == ".js" || ext == ".mjs" || ext == ".css") {
             isAsset = true;
@@ -72,7 +74,8 @@ struct Frontmatter {
             } else {
                 newPath.replace_filename("index.html");
             }
-            internalUrl = newPath;
+            // TODO: avoid strong conversion and std::filesystem::path
+            internalUrl = newPath.string();
         } else if (ext == ".in") {
             internalFileType = ProcessedFileType::InFile;
             std::filesystem::path newPath = source;
@@ -80,7 +83,7 @@ struct Frontmatter {
             if (newPath.string() == "") {
                 throw std::runtime_error("`.in` is an illegal filename");
             }
-            internalUrl = newPath;
+            internalUrl = newPath.string();
 
             if (!layout) {
                 layout = "none";
@@ -98,9 +101,9 @@ struct Frontmatter {
         }
         minilog::debug(
             "Page (path: {}, title: {}) has been assigned output URL {}",
-            internalPath,
+            internalPath.to_string(true),
             *title,
-            internalUrl
+            internalUrl.to_string(true)
         );
     }
 

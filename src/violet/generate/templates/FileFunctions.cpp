@@ -11,7 +11,9 @@
 #include "violet/generate/templates/types/RenderContext.hpp"
 #include "violet/generate/templates/types/TreePagesData.hpp"
 #include "violet/paginator/SortPredicates.hpp"
+#include "violet/parsing/LinkTranslate.hpp"
 #include "violet/parsing/Markdown.hpp"
+#include "violet/path/path.hpp"
 #include "violet/transitional/JsonToDataObject.hpp"
 #include "violet/util/ErrorHandling.hpp"
 #include <filesystem>
@@ -37,13 +39,16 @@ FileFunctions::FileFunctions(IrisManager& man) : man(man) {
     man.env.add_callback("loadJson", 1, [this](auto& args, void* udata) {
         return loadJson(args, (RenderContext*) udata);
     });
+    man.env.add_callback("abspath", [this](auto& args, void* udata) {
+        return abspath(args, (RenderContext*) udata);
+    });
     man.env.add_callback("render", 1, [this](auto& args) {
         return render(args);
     });
 }
 
 iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
-    auto& root = man.fileManager.getRootFolder();
+    auto& root = man.cfg.root();
     auto taxonomy = args.at(0)->get<iris::String>();
     auto value = args.at(1)->get<iris::String>();
 
@@ -64,7 +69,7 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
             // return from loadMetadata
             auto filePath = std::filesystem::relative(
                 entryPath,
-                man.fileManager.getRootFolder()
+                man.cfg.root()
             );
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
@@ -114,7 +119,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
     // TODO: error handling
     bool isAbsPath = scope.starts_with('/');
 
-    auto path = man.fileManager.getRootFolder();
+    auto path = man.cfg.root();
     if (!isAbsPath) {
         path /= ctx->fm.internalPath;
     }
@@ -157,7 +162,7 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
             // return from loadMetadata
             auto filePath = std::filesystem::relative(
                 entryPath,
-                man.fileManager.getRootFolder()
+                man.cfg.root()
             );
             auto& metadata = man.metaCache.loadMetadata(
                 filePath
@@ -216,7 +221,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
     bool isAbsPath = scope.starts_with('/');
 
     // TODO: error handling
-    auto path = man.fileManager.getRootFolder();
+    auto path = man.cfg.root();
     if (!isAbsPath) {
         path /= ctx->fm.internalPath;
     }
@@ -245,7 +250,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
 
     TreePagesData root;
 
-    if (std::filesystem::weakly_canonical(man.fileManager.getRootFolder()) != path) {
+    if (std::filesystem::weakly_canonical(man.cfg.root()) != path) {
         root.folder_name = path.filename();
     }
 
@@ -265,7 +270,7 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
             // This path must only be used for accessing the frontmatter
             auto filePath = std::filesystem::relative(
                 entryPath,
-                man.fileManager.getRootFolder()
+                man.cfg.root()
             );
             // This past must only be used for deriving the relative path to the frontmatter, i.e. determining where
             // things go in the output object
@@ -335,6 +340,40 @@ iris::DataObject FileFunctions::paginatedUrl(iris::Arguments& args) {
     ss << "page/" << page << "/index.html";
     return ss.str();
 }
+iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ctx)
+{
+    const auto& fm = ctx->fm;
+    const auto& conf = this->man.cfg;
+
+    const auto& path = args.at(0)->get<iris::String>();
+
+    bool transform;
+    if (args.size() ==  2) {
+        transform = args.at(1)->get<bool>();
+    } else {
+        transform = path.find('%') == std::string::npos;
+    }
+
+    if (transform) {
+        // TODO: refactor projectBasedTranslator to use violet::path so we don't do all of this here (and to use
+        // stc::uri, it does most of the heavy lifting on # and ? parsing that's still left in there manually)
+        // We could in theory delegate both these scenarios to the translator for somewhat more consistent code
+        return projectBasedTranslator(
+            conf.prefix,
+            fm.internalPath,
+            // Silence warnings about non-existent links until we sort URL -> filesystem path conversion
+            std::nullopt,
+            path
+        );
+    } else {
+        violet::path rootPath = path.starts_with('/') ? "/" : fm.internalPath;
+
+        auto rawResult = rootPath.parent_path();
+        rawResult.join(path);
+        return rawResult
+            .concatPrefix(conf.prefix);
+    }
+}
 
 iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, RenderContext* ctx) {
     const auto& frontmatter = ctx->fm;
@@ -361,7 +400,7 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, Render
 
 
     Paginator pag {
-        frontmatter.internalPath,
+        frontmatter.internalPath.as_fs_relative_path(),
         this->man.fileManager,
         this->man.metaCache,
         pageSize,
@@ -388,18 +427,16 @@ iris::DataObject FileFunctions::listPagesPaginated(iris::Arguments& args, Render
 
 iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* ctx) {
     std::string fn = args.at(0)->get<iris::String>();
-    auto& frontmatter = ctx->fm;
+    auto& fm = ctx->fm;
 
     std::filesystem::path p;
     if (fn.starts_with('/')) {
         if (fn.starts_with("//")) {
             throw iris::CallbackError("Absolute paths cannot start with two slashes!");
         }
-        p = this->man.opts.root / fn.substr(1);
+        p = this->man.cfg.root() / fn.substr(1);
     } else {
-        p = std::filesystem::path {
-            this->man.opts.root / frontmatter.internalPath
-        };
+        p = violet::path(fm.internalPath).as_fs_path(this->man.cfg.root());
         if (!std::filesystem::is_directory(p)) {
             p = p.parent_path();
         }
@@ -410,7 +447,7 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
     // Should probably turn this into a standard function somewhere
     p = std::filesystem::weakly_canonical(p);
     if (!p.string().starts_with(
-            this->man.opts.root.string()
+            this->man.cfg.root().string()
     )) {
         minilog::error(
             "loadJson found possible root escaping: fn = {}, resolved path = {}",
@@ -443,12 +480,8 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
     auto fmObj = args.at(0)->get<iris::Object>();
     auto fm = Frontmatter::fromDataObject(fmObj);
 
-    // TODO: desperately need better out of bounds path checking
-    if (fm.internalPath.starts_with('/') || fm.internalPath.contains("..")) {
-        throw iris::CallbackError("Path passed to render breaks project containment");
-    }
-
-    auto path = std::filesystem::path(fm.internalPath);
+    auto path = violet::path(fm.internalPath)
+        .as_fs_path(this->man.cfg.root());
     auto [ metadata, in ] = this->man.metaCache.openFile(
         path
     );
@@ -469,7 +502,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                     projectBasedTranslator,
                     this->man.cfg.prefix,
                     fm.internalPath,
-                    this->man.opts.root,
+                    this->man.cfg.root(),
                     std::placeholders::_1
                 ),
                 this->man.cfg.tocStartLevel,
@@ -486,7 +519,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
             throw iris::CallbackError(
                 std::format(
                     "Template API error: A nested markdown rendering error occurred while rendering {}",
-                    fm.internalPath
+                    fm.internalPath.to_string()
                 )
             );
         }
