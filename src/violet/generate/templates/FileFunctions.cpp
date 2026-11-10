@@ -347,11 +347,6 @@ iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ct
 
     const auto& path = args.at(0)->get<iris::String>();
 
-    violet::path rootPath = path.starts_with('/') ? "/" : fm.internalPath;
-
-    auto rawResult = rootPath.parent_path()
-        .join(path);
-
     bool transform;
     if (args.size() ==  2) {
         transform = args.at(1)->get<bool>();
@@ -368,9 +363,13 @@ iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ct
             fm.internalPath,
             // Silence warnings about non-existent links until we sort URL -> filesystem path conversion
             std::nullopt,
-            rawResult.to_string()
+            path
         );
     } else {
+        violet::path rootPath = path.starts_with('/') ? "/" : fm.internalPath;
+
+        auto rawResult = rootPath.parent_path();
+        rawResult.join(path);
         return rawResult
             .concatPrefix(conf.prefix);
     }

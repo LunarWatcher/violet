@@ -51,7 +51,7 @@ TEST_CASE_METHOD(tests::E2EFixture, "Relative URLs should not be butchered", "[e
             debug.at("relativeUrl") == url("webp url", "/prefix/sub/path/file.webp")
         );
         REQUIRE(
-            debug.at("absoluteUrl") == url("absolute", "/prefix/")
+            debug.at("absoluteUrl") == url("absolute", "/prefix")
         );
     }
 }

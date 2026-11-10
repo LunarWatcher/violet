@@ -121,6 +121,12 @@ TEST_CASE("Path concat") {
     );
 }
 
+TEST_CASE("Path joining") {
+    violet::path p("/usr/bin");
+    p.join(std::string("bash"));
+    REQUIRE(p.getSegments() == std::vector<std::string> { "usr", "bin", "bash" });
+}
+
 TEST_CASE("Path edge-cases", "[path]") {
     REQUIRE(
         violet::path("").getSegments()

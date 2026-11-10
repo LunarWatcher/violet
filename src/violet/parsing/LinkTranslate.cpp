@@ -3,9 +3,9 @@
 #include "violet/parsing/Escaping.hpp"
 
 #include "stc/uri.hpp"
+#include "violet/path/path.hpp"
 
 #include <filesystem>
-#include <vector>
 #include <minilog/minilog.hpp>
 
 bool violet::checkPathValidity(
@@ -120,129 +120,39 @@ std::string violet::projectBasedTranslator(
         );
     }
 
-    std::stringstream ss;
-    std::stringstream segmentAccumulator;
-    ss << in;
-    std::vector<std::string> segments;
+    auto path = *uri.components().path;
+    violet::path p(in.starts_with('/') ? path : relSourceFilePath.parent_path().string());
 
-    if (!in.starts_with('/') && relSourceFilePath.string().contains('/')) {
-        auto preSegments = relSourceFilePath.parent_path();
+    if (!in.starts_with('/')) {
+        p.join(path);
+    }
 
-        // prepopulate segments with the path components
-        // This is based on the source file's path, so this is safe
-        while (preSegments.has_filename()) {
-            segments.insert(segments.begin(), preSegments.filename());
-            if (!preSegments.has_parent_path()) {
-                break;
-            }
-            preSegments = preSegments.parent_path();
-        }
-
-        if (segments.empty()) {
-            [[unlikely]]
-            throw FatalError(
-                std::format(
-                    "URL translation got suspicious results: segments is empty, but source path has slashes.\n"
-                    "URL attempted translated: \"{}\"\n"
-                    "relSourceFilePath being parsed: {}\n",
-                    in,
-                    relSourceFilePath.string()
+    if (p.filename().ends_with(".md")) {
+        if (p.filename() == "README.md") {
+            p.replace_filename("index.html");
+        } else {
+            p.replace_filename(
+                renameFile(
+                    p.filename()
                 )
             );
         }
     }
 
-    char ch;
-
-    bool hasPath = false;
-    while (ss >> std::noskipws >> ch) {
-        if (ch == '/') {
-            if (segmentAccumulator.tellp() > 0) {
-                segments.push_back(segmentAccumulator.str());
-                segmentAccumulator = {};
-            }
-            hasPath = false;
-            continue;
-        } else if (ch == '.' && !hasPath) {
-            if (ss.peek() == '/') {
-                // Dunce /./
-                std::ignore = ss.get();
-                hasPath = false;
-                continue;
-            } else if (ss.peek() == '.') {
-                size_t curr = ss.tellg();
-                std::ignore = ss.get();
-
-                if (ss.peek() == '/') {
-                    std::ignore = ss.get();
-                    if (segments.size() > 0) {
-                        segments.pop_back();
-                    }
-                    continue;
-                }
-
-                ss.seekg(curr);
-            }
-        } else if (ch == '?' || ch == '#') {
-            ss.seekg(size_t(ss.tellg()) - (size_t) 1);
-            break;
-        }
-
-        hasPath = true;
-        segmentAccumulator << ch;
-    }
-    if (segmentAccumulator.tellp() > 0) {
-        segments.push_back(segmentAccumulator.str());
-        segmentAccumulator = {};
-    }
-
-    std::stringstream rest;
-    while (ss && ss >> std::noskipws >> ch) {
-        rest << ch;
-    }
-
-    if (segments.size() == 0 && rest.tellp() > 0) {
-        // No segments but has rest; since no file specified, only return rest (in)
-        return in;
-    } else if (segments.size() == 0 && rest.tellp() == 0) {
-        // Failsafe: force a / when a / is provided
-        segments.push_back("");
-    }
-
-    std::stringstream parsedPath;
-    for (size_t i = 0; i < segments.size(); ++i) {
-        auto& segment = segments.at(i);
-
-        parsedPath << "/";
-        if (i == segments.size() - 1 && segment.ends_with(".md")) {
-            if (segment == "README.md") {
-                parsedPath << "index.html";
-            } else {
-                auto fn = segment.substr(0, segment.rfind('.'));
-                parsedPath << renameFile(fn) << ".html";
-            }
-        } else {
-            parsedPath << segment;
-        }
-    }
-
+    std::string rawPath = p.concatPrefix(pathPrefix);
     std::stringstream escapedUrl;
     urlEncode(
-        parsedPath.str(),
+        rawPath,
         escapedUrl,
         false
     );
 
-    // This is terrible, but the URL shit has infuriated me all night and I just want to get this shit over with
-    // The performance this drops is negligible for my use
-    auto newPath = pathPrefix;
-    if (newPath.ends_with('/') && escapedUrl.str().starts_with('/')) {
-        newPath += escapedUrl.str().substr(1);
-    } else {
-        newPath += escapedUrl.str();
+    if (uri.components().query) {
+        escapedUrl << "?" << *uri.components().query;
     }
-
-    newPath += rest.str();
+    if (uri.components().fragment) {
+        escapedUrl << "#" << *uri.components().fragment;
+    }
 
     // 0.20.0: redisabled because of \abspath`: lots and lots of things pass through this now, so this adds so much
     // output
@@ -252,7 +162,7 @@ std::string violet::projectBasedTranslator(
     //     newPath,
     //     relSourceFilePath.string()
     // );
-    return newPath;
+    return escapedUrl.str();
 }
 
 std::string violet::stringifyAndTranslateUrl(
@@ -277,9 +187,20 @@ std::string violet::stringifyAndTranslateUrl(
     return out;
 }
 
-std::string violet::renameFile(const std::string& sourceFileName) {
+std::string violet::renameFile(std::string_view sourceFileName) {
+    auto dot = sourceFileName.rfind('.');
+    if (dot == std::string::npos) {
+        [[unlikely]]
+        throw FatalError(
+            std::format(
+                "{} is not a markdown file, but was passed to renameFile anyway",
+                sourceFileName
+            )
+        );
+    }
     std::stringstream ss;
-    for (auto& ch : sourceFileName) {
+    for (size_t i = 0; i < dot; ++i) {
+        auto ch = sourceFileName.at(i);
         if (
             (ch >= 'a' && ch <= 'z')
             || (ch >= '0' && ch <= '9')
@@ -305,5 +226,6 @@ std::string violet::renameFile(const std::string& sourceFileName) {
             )
         );
     }
+    ss << ".html";
     return ss.str();
 }

@@ -110,6 +110,10 @@ struct TestSiteFixture : public DebugMarkerFixture {
     std::filesystem::path output() const override {
         return buildPath();
     }
+
+    constexpr std::string outputDir() const {
+        return BuildDir.string();
+    }
 };
 
 using MonolithRealPrefix = tests::TestSiteFixture<tests::SiteVariant::TestMonolith, true, "/prefix", "pages-prefix">;

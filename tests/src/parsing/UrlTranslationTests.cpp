@@ -18,7 +18,7 @@ std::function<std::string(const std::string&)> genCall(
 
 TEST_CASE("renameFile") {
     SECTION("Space words") {
-        REQUIRE(violet::renameFile("Project structure.md") == "project-structure.md");
+        REQUIRE(violet::renameFile("Project structure.md") == "project-structure.html");
     }
 }
 
@@ -152,7 +152,7 @@ TEST_CASE("projectBasedTranslator - prefix, subpath") {
         REQUIRE(
             call("/")
             ==
-            "/violet/"
+            "/violet"
         );
     }
 }
@@ -226,7 +226,7 @@ TEST_CASE("projectBasedTranslator - prefix (proper), subpath") {
         REQUIRE(
             call("/")
             ==
-            "/violet/"
+            "/violet"
         );
     }
 }
@@ -289,4 +289,24 @@ TEST_CASE("projectBasedTranslator should return non-HTTP non-site-relative URIs 
 
     // Magnet URL for https://academictorrents.com/details/82075af82e83b99e9a4c6ef17e564947efe65a66
     REQUIRE_CALL_EQUALS("magnet:?xt=urn:btih:82075af82e83b99e9a4c6ef17e564947efe65a66&tr=https%3A%2F%2Facademictorrents.com%2Fannounce.php&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce");
+}
+
+TEST_CASE("projectBasedTranslator should handle different fragments and queries") {
+    auto call = genCall("/violet", "subpath/subsubpath/subsubsubpath/file.md");
+
+    REQUIRE_CALL_EQUALS(
+        "#fragment"
+    );
+    REQUIRE_CALL_EQUALS(
+        "?trans-rights=human-rights#fragment"
+    );
+    REQUIRE(
+        call("./#fragment") == "/violet/subpath/subsubpath/subsubsubpath#fragment"
+    );
+    REQUIRE(
+        call("..#fragment") == "/violet/subpath/subsubpath#fragment"
+    );
+    REQUIRE(
+        call("/../#fragment") == "/violet#fragment"
+    );
 }

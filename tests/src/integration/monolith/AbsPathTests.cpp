@@ -9,7 +9,7 @@ TEST_CASE_PERSISTENT_FIXTURE(
     auto data = getDebug("abspath.html");
 
     std::unordered_map<std::string, std::string> expected = {
-        {"abspath-1", "/prefix/"},
+        {"abspath-1", "/prefix"},
         {"abspath-transform", "/prefix/treePages/index.html"},
         {"abspath-notransform", "/prefix/treePages/README.md"},
         {"abspath-escape", "/prefix/etc/passwd"},
@@ -33,7 +33,7 @@ TEST_CASE_PERSISTENT_FIXTURE(
     auto data = getDebug("misc/nested/abspath.html");
 
     std::unordered_map<std::string, std::string> expected = {
-        {"abspath-1", "/prefix/"},
+        {"abspath-1", "/prefix"},
         {"relpath", "/prefix/misc/nested"},
         {"abspath-transform", "/prefix/treePages/index.html"},
         {"abspath-notransform", "/prefix/treePages/README.md"},

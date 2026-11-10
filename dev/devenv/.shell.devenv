@@ -31,8 +31,9 @@ function gen-docs-local() {
     fi
 
     pushd "${git_root}/docs"
+    # Required to support interrupts
+    trap popd 0
     "${violet_root}/bin/violet" generate -d -l
-    popd
 }
 
 function serve() {

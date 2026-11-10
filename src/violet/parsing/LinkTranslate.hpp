@@ -7,7 +7,7 @@
 
 namespace violet {
 
-extern std::string renameFile(const std::string& sourceFileName);
+extern std::string renameFile(std::string_view sourceFileName);
 
 /**
  * Checks whether or not a path \in in the file \p relSourceFilePath is valid. This is only defined for relative URLs,

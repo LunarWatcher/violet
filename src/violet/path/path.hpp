@@ -70,6 +70,9 @@ public:
     path(const std::string& src) {
         parse(src);
     }
+    path(const std::filesystem::path& src) {
+        parse(src.string());
+    }
     path(const std::vector<std::string>& src) {
         this->segments = src;
     }
@@ -113,10 +116,27 @@ public:
     }
 
     path& join(const path& value) {
+        // if (segments.size() == 0) {
+        //     push("");
+        // }
         for (auto& segment : value.segments) {
             push(segment);
         }
         return *this;
+    }
+
+    path& replace_filename(const std::string& newFilename) {
+        if (segments.size() > 0) {
+            segments.pop_back();
+        }
+        push(newFilename);
+        return *this;
+    }
+    std::string_view filename() {
+        if (empty()) {
+            return "";
+        }
+        return segments.back();
     }
 
     path parent_path() const {
@@ -143,6 +163,10 @@ public:
     path& operator=(const path& other) {
         this->segments = other.segments;
         return *this;
+    }
+
+    bool empty() const {
+        return this->segments.empty();
     }
 };
 
