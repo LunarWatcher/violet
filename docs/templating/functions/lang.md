@@ -46,7 +46,7 @@ Example use:
 <ul>
     {% for i in createPaginatedList(listing.page, listing.total_pages) %}
         <li title="Go to page {{ i }}">
-            <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, i) }}"
+            <a href="{{ abspath(paginatedUrl(listing.base_path, i)) }}"
                 id="next-page"
                 aria-label="Next page"
                 {% if listing.page == i %}class="current"{% endif %}

@@ -171,17 +171,17 @@ The CSS file does not exist yet, but that'll just be a 404 in the browser, so we
 {# We just set the title to the page title. This will always be defined #}
 <title>{{ page.title }}</title>
 
-{# Note the use of `site.prefix` here; this is good practice even if your site 
+{# Note the use of `abspath` here; this is good practice even if your site 
    will live directly at `https://example.com/`, and is required for `generate -l`
   to work properly. Otherwise, an absolute path in local file mode would try to look
   for the CSS file under your root directory!
 #}
-<link rel="stylesheet" href="{{ site.prefix }}/assets/style.css" />
+<link rel="stylesheet" href="{{ abspath("/assets/style.css") }}" />
 ```
 
 ![Screenshot showing the page rendering in Firefox with a title and a stylesheet](writing-2-with-head-metadata.png)
 
-In my case, it renders with `<link rel="stylesheet" href="/home/olivia/build/violet-test/pages/assets/style.css">`, which is the complete path to the build directory where I sanity-checked this documentation. Without `{{ site.prefix }}`, it would've tried to link to `file:///assets/style.css`, which naturally does not exist.
+In my case, it renders with `<link rel="stylesheet" href="/home/olivia/build/violet-test/pages/assets/style.css">`, which is the complete path to the build directory where I sanity-checked this documentation. Without `{{ abspath(...) }}`, it would've tried to link to `file:///assets/style.css`, which naturally does not exist.
 
 Finally, we can add some CSS! Open `assets/style.css` in your editor. If you're following along with a theme, make sure to place it under the theme folder and not the root folder. You can add any CSS you want to the file, or just copy this:
 
@@ -271,7 +271,7 @@ Similarly to `single_page.iris`, you'll now create `_templates/_default/page_lis
 
     {% if exists("listing") %}
         {% for it in listing.pages %}
-            <h2><a href="{{ site.prefix }}/{{ it.url }}">{{ it.title }}</a></h2>
+            <h2><a href="{{ abspath(it.url) }}">{{ it.title }}</a></h2>
         {% endfor %}
 
         <p>You are on page {{ listing.page }} out of {{ listing.total_pages }}</p>
@@ -314,7 +314,7 @@ Consequently, actually writing the full controls is left as an exercise to the r
 <ul>
     {% for i in createPaginatedList(listing.page, listing.total_pages) %}
         <li title="Go to page {{ i }}">
-            <a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, i) }}"
+            <a href="{{ abspath(paginatedUrl(listing.base_path, i)) }}"
                 id="next-page"
                 aria-label="Next page"
             >{{ i }}</a>

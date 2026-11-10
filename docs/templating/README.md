@@ -41,14 +41,18 @@ Additionally, there are two that may be available depending on the page context:
 
 As currently implemented, there are a fair few things you need to keep track of yourself while writing templates.
 
-### `{{ site.prefix }}` must be present on all absolute internal URLs in templates and non-markdown files
+### `abspath()` must be present on all absolute internal URLs in templates and non-markdown files
+
+`{{ site.prefix }}` is also allowed, but `abspath` is strongly recommended.
 
 This does not apply to links in markdown, it exclusively applies to links in the iris templates.
 
-When writing an absolute link, you must specify `{{ site.prefix }}`. Even if your deployment lies on `/`, `-l` for local development overwrites the site prefix to be the full path to the build directory, so all your local things work.
+When writing an absolute link, you must put it inside an `abspath()` call. Even if your deployment lies on `/`, `-l` for local development overwrites the site prefix to be the full path to the build directory, so all your local things work.
 
-Prefixing all absolute URLs with `{{ site.prefix }}` lets `violet generate -l` builds work, and lets browsers render the page properly, and is noop if you do deploy at `/`.
+Converting all absolute URLs with `{{ abspath("/whatever") }}` lets `violet generate -l` builds work, and lets browsers render the page properly, and is noop if you do deploy at `/`.
 
-**DO:** `<a href="{{ site.prefix }}/absolute/url">text</a>`
+**DO:** `<a href="{{ abspath("/absolute/url") }}">text</a>`
+
+**Acceptable** (but discouraged): `<a href="{{ site.prefix }}/absolute/url">text</a>`
 
 **DON'T:** `<a href="/absolute/url">text</a>` - will not link correctly when building with `violet generate -l`, and will not link properly in production if `site.prefix != "/"`

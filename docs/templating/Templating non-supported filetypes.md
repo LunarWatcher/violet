@@ -12,7 +12,7 @@ If you need to load any [unsupported filetype](/templating/README.md#filetypes-a
     {% for page in listPages(".") %}
         {
             "title": "{{ replace(page.title, "\"", "\\\"" }}",
-            "url": "{{ site.prefix }}/{{ page.url }}"
+            "url": "{{ abspath(page.url) }}"
         }{% if not loop.is_last %},{% endif %}
     {% endfor %}
 ]

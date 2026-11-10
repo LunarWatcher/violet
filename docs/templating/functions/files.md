@@ -156,9 +156,9 @@ Output:
 >
 > Valid anywhere: /blog/posts/page/69
 
-Standard practice in URLs is to chain it with `site.prefix` (this will change in the future):
+Standard practice in URLs is to chain it with `abspath()`
 ```html
-<a href="{{ site.prefix }}/{{ paginatedUrl(listing.base_path, 69) }}>Text</a>"
+<a href="{{ abspath(paginatedUrl(listing.base_path, 69)) }}>Text</a>"
 ```
 
 ## `listPagesPaginated(location, sortMethod[, pageSize[, pageNumber]])`
