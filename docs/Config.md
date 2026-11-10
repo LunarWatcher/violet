@@ -19,7 +19,11 @@ This may be, but doesn't have to be the content root for a git repository. As an
     // Otherwise, a folder in _themes/{value of theme} must exist and be not empty.
     // Themes are not required; if you're unsure, I suggest not defining this config option and letting it _default
     "theme": "_default",
-    // A path prefix for the site. This must not be a full domain. 
+    // Destination is an optional key which controls where violet generates the output.
+    // Rendered pages and copied assets are generated in `{project root}/{value of destination}`
+    // If the key is missing, it defaults to the value: "pages"
+    "destination": "pages",
+    // A path prefix for the site. This must not be a full domain.
     // For example, if you want your site rendered at https://username.codeberg.page/repo, the site prefix would be /repo
     "prefix": null | str,
     // The site's timezone. Defaults to "Etc/GMT". This must be a valid timezone string,
