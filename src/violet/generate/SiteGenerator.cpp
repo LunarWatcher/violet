@@ -51,6 +51,9 @@ SiteGenerator::SiteGenerator(
         this->cfg
     )
 {
+    if(this->cfg.destination) {
+        this->opts.outputFolder = *cfg.destination;
+    }
     this->opts.postParse();
 }
 

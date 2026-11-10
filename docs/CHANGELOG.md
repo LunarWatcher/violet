@@ -28,6 +28,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
     }
   }
   ```
+* Config now supports optional key `destination` to control output directory relative to project root. The default is `"pages"` to preserve existing behaviour.
 
 ## [v0.19.2] (2026-11-07)
 
@@ -246,17 +247,17 @@ No functional changes have been made in iris relative to inja, so no other migra
   527
   Location:
     Note that for setting up editors not in this list, the usually only step necessary is to associate `.iris` with a syntax renderer for jinja templates. inja templates are similar enough in implementation to jinja templates that it'll mostly be correct.
-  
+
     [link](
     ~~~~~~^
-  
+
     ## Emacs
-  
+
     `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.iris` extension to web-mode with the `jinja` engine allows templates to be rendered:
   ```
   * Note that the position highlight does not actually show a start position, only an end position. The `~` are just to make the `^` more obvious. Start positions may be handled in a future release
 * CLI (init): Auto-generate a `.gitignore`
-  
+
 ### Changed
 
 * BREAKING (ish): Migrated from inja to [iris](https://codeberg.org/LunarWatcher/iris) (an inja fork with the same anti-AI guarantees as violet - no functional changes have been made in the fork yet, so it should not be noticeable)
@@ -291,7 +292,7 @@ No functional changes have been made in iris relative to inja, so no other migra
   * Specifically, the URLs rendered as being part of the header took precedence over the URL pointing to the associated header
 * Markdown: Add new config option (`toc-start-level`) to allow skipping earlier header levels. This allows first level headers to be excluded from the ToC if you follow semantically correct HTML, and only have one h1 on a page.
   * This is largely to avoid including the main header on the page in the ToC. This can already be done if the header is moved into a template, but this isn't always going to be the case.
-  * The default value is 2, so h1 headers will not be included in the ToC anymore. To restore the previous behaviour, set `"toc-start-level": 1`. 
+  * The default value is 2, so h1 headers will not be included in the ToC anymore. To restore the previous behaviour, set `"toc-start-level": 1`.
   * The value can be set to any of the 6 legal header levels - it's only going to be useful when set to 1 (include h1) and 2 (exclude h1), but you can in theory exclusively include `<h6>`es if you have a particularly cursed site where this is useful.
     * (Supporting this does not add any complexity to the code or config, so might as well support it)
 
