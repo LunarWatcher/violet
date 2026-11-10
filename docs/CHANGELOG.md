@@ -18,6 +18,14 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Recommended migration steps
+
+This release has changes that are _technically_ breaking, but not _practically_ breaking. `page.url` being made absolute makes it compatible with the new `abspath()` function, but means many URLs end up with a redundant `//`. `{{ site.prefix }}/{{ page.url }}` will now render as `//page.html`, given `{project root}/page.md` and `prefix = ""`. This will still work in most browsers, but may break under certain usecases.
+
+Even if your use isn't breaking, this pattern is no longer recommended. It's recommended to switch to the `abspath` function. The `abspath` function also lets you provide project URLs if you wish, so `abspath("/README.md")` will render equivalently to `{{ site.prefix }}/index.html` in the old template setup.
+
+To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-path")`. Relative paths can also be passed to this function, in which case they're relative to the page being rendered.
+
 ### Added
 
 * Config now supports `markdown.footnoteHeaders` to disable the automatic headers in the footnote section. The default is `true` to preserve existing behaviour. Example:
