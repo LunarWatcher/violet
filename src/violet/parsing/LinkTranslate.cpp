@@ -147,11 +147,22 @@ std::string violet::projectBasedTranslator(
         false
     );
 
+    // Not sure if we really want to do this, 
     if (uri.components().query) {
-        escapedUrl << "?" << *uri.components().query;
+        escapedUrl << "?";
+        urlEncode(
+            *uri.components().query,
+            escapedUrl,
+            false
+        );
     }
     if (uri.components().fragment) {
-        escapedUrl << "#" << *uri.components().fragment;
+        escapedUrl << "#";
+        urlEncode(
+            *uri.components().fragment,
+            escapedUrl,
+            false
+        );
     }
 
     // 0.20.0: redisabled because of \abspath`: lots and lots of things pass through this now, so this adds so much

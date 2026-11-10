@@ -127,3 +127,4 @@ void violet::urlEncode(
         );
     }
 }
+

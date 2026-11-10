@@ -310,3 +310,16 @@ TEST_CASE("projectBasedTranslator should handle different fragments and queries"
         call("/../#fragment") == "/violet#fragment"
     );
 }
+
+TEST_CASE("projectBasedTranslator should handle quotes in the string") {
+    auto call = genCall("/violet", "subpath/subsubpath/subsubsubpath/file.md");
+
+    REQUIRE(
+        call("\"?query=\"test\"#frag\"ment") == "/violet/subpath/subsubpath/subsubsubpath/%22?query=%22test%22#frag%22ment"
+    );
+    REQUIRE(
+        call("/subpath/subsubpath/subsubsubpath/%22?query=%22test%22#frag%22ment")
+        ==
+        "/violet/subpath/subsubpath/subsubsubpath/%22?query=%22test%22#frag%22ment"
+    );
+}
