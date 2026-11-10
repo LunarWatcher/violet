@@ -3,7 +3,6 @@
 #include "minilog/minilog.hpp"
 #include "violet/data/GenerateOpts.hpp"
 #include "violet/data/GitVersion.hpp"
-#include "violet/generate/SiteGenerator.hpp"
 #include "violet/generate/watch/AutoRebuildHandler.hpp"
 #include "violet/generate/watch/OneShotRebuildHandler.hpp"
 #include "violet/generate/watch/WatchRebuildHandler.hpp"
@@ -20,7 +19,6 @@ void commonGenerateFlags(
     CLI::App* cmd,
     violet::GenerateOpts& generateOpts
 ) {
-    
     cmd->add_option(
         "-r,--root",
         generateOpts.root,

@@ -2,6 +2,7 @@
 // Note: This file is a candidate for being merged into stc: https://codeberg.org/LunarWatcher/stc
 // It must NOT contain includes to other parts of violet.
 
+#include <filesystem>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -64,6 +65,7 @@ private:
         }
     }
 public:
+    path() = default;
     path(const char* v) : path(std::string(v)) {}
     path(const std::string& src) {
         parse(src);
@@ -95,6 +97,10 @@ public:
         return ss.str();
     }
 
+    operator std::filesystem::path() const {
+        return to_string(true);
+    }
+
     std::string concatPrefix(const std::string& prefix) {
         path p {prefix};
         p.join(*this);
@@ -113,7 +119,7 @@ public:
         return *this;
     }
 
-    path parent_path() {
+    path parent_path() const {
         if (segments.size() == 0) {
             return *this;
         }
@@ -122,7 +128,17 @@ public:
         return path { segments };
     }
 
-    const std::vector<std::string>& getSegments() { return segments; }
+    const std::vector<std::string>& getSegments() const { return segments; }
+
+    std::filesystem::path as_fs_path(const std::filesystem::path& root = "/") const {
+        // TODO: is there a better way than routing this to and from a string?
+        path p = root.string();
+        p.join(*this);
+        return p.to_string();
+    }
+    std::filesystem::path as_fs_relative_path() const {
+        return to_string(true);
+    }
 
     path& operator=(const path& other) {
         this->segments = other.segments;

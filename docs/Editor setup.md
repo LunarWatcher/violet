@@ -6,6 +6,8 @@ Violet does not include an LSP, so autocompletions are out of scope for this pag
 
 Note that for setting up editors not in this list, the usually only step necessary is to associate `.iris` with a syntax renderer for jinja templates. iris templates are similar enough in implementation to jinja templates that it'll mostly be correct.
 
+At this time, there are no syntax highlighters that support specifically iris templates, so jinja highlighting is as close as its gets.
+
 ## Emacs
 
 `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.iris` extension to web-mode with the `jinja` engine allows templates to be rendered:

@@ -1,7 +1,7 @@
 #include "Markdown.hpp"
 #include "violet/parsing/markdown/ParseAPI.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
-#include "violet/exceptions/TracedException.hpp"
+#include "violet/exceptions/FatalError.hpp"
 #include "violet/parsing/Escaping.hpp"
 #include "violet/parsing/LinkTranslate.hpp"
 #include <ios>
@@ -390,7 +390,7 @@ void Markdown::parseCallout(
     char ch;
 
     if (!prepareStream(in, out)) {
-        throw TracedException(
+        throw FatalError(
             "prepareStream failed on leading callout line"
         );
     }
@@ -404,12 +404,12 @@ void Markdown::parseCallout(
 
     if (in.peek() != '[') {
         [[unlikely]]
-        throw TracedException("Failed to parse callout");
+        throw SyntaxError("Failed to parse callout", in.tellg());
     }
     std::ignore = in.get();
     if (in.peek() != '!') {
         [[unlikely]]
-        throw TracedException("Failed to parse callout");
+        throw SyntaxError("Failed to parse callout", in.tellg());
     }
     std::ignore = in.get();
     while (in >> std::noskipws >> ch) {

@@ -244,12 +244,14 @@ std::string violet::projectBasedTranslator(
 
     newPath += rest.str();
 
-    minilog::debug(
-        "Rewrote URL {} to {} in file {}",
-        in,
-        newPath,
-        relSourceFilePath.string()
-    );
+    // 0.20.0: redisabled because of \abspath`: lots and lots of things pass through this now, so this adds so much
+    // output
+    // minilog::debug(
+    //     "Rewrote URL {} to {} in file {}",
+    //     in,
+    //     newPath,
+    //     relSourceFilePath.string()
+    // );
     return newPath;
 }
 
