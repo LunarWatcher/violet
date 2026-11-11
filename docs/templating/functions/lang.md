@@ -11,8 +11,6 @@ This category of functions describes extension functions to the iris language, t
 
 ## `recurseInclude(templateName, context)`
 
-TODO: rename to `includeContext`
-
 This function can be used to include a template and provide the context object directly. Example usage:
 ```jinja
 {% set context = {
@@ -64,7 +62,7 @@ Example use:
 ### Return value
 
 A list of integer indices that can be used to construct a page. Assuming enough pages, the list returned is:
-```
+```javascript
 [
     1, 2, 3,
     listing.page - 1, listing.page, listing.page + 1,

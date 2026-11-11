@@ -57,6 +57,7 @@ set(VIOLET_SRCS
     violet/parsing/markdown/impl/Render.cpp
 
     violet/util/ErrorHandling.cpp
+    violet/util/FileHelper.cpp
 )
 
 set(VIOLET_HDRS
@@ -112,6 +113,7 @@ set(VIOLET_HDRS
     violet/parsing/markdown/ElementaryNodes.hpp
 
     violet/util/ErrorHandling.hpp
+    violet/util/FileHelper.hpp
     violet/util/LockStreamPos.hpp
 )
 

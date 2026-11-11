@@ -18,6 +18,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.20.0] (2026-11-11)
+
 ### Migration guide
 
 This release unfortunately also has breaking changes. `page.url` being made absolute makes it compatible with the new `abspath()` function, but means many URLs end up with a redundant `//`. `{{ site.prefix }}/{{ page.url }}` will now render as `//page.html`, given `{project root}/page.md` and `prefix = ""`. This will still work in most browsers, but may break under certain usecases.
@@ -39,7 +41,10 @@ To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-p
   }
   ```
 * Config now supports optional key `destination` to control output directory relative to project root. The default is `"pages"` to preserve existing behaviour.
-* Added `abspath(path)`, which can be used to make absolute URLs in a more sane way
+* CLI: `generate` and `serve` now support the extra `-o`/`--destination` flag that lets you generate the site into different directories. **Note:** Previous build directories are not automatically excluded, and will be copied into your new build dir if you aren't careful. Make sure you add your extra build dirs to `exclude` in `violet.json` if you plan to use them regularly, or potentially to separate debug and production builds or whatever.
+* Added `abspath(path)`, which can be used to make absolute URLs in a more sane way ([#8](https://codeberg.org/LunarWatcher/violet/issues/8)).
+  * This results in the old strategy of manually hard-coding `{{ site.prefix }}` to make absolute paths discouraged. You can still continue to do this if you wish (though beware of `page.url` being absolute; see the changed section), but using `abspath()` is strongly recommended as it avoids malformed URLs and other join artefacts.
+* Added some logging to requests against `violet serve` to help debug `--root` and other related issues on the server
 
 ### Changed
 
@@ -52,6 +57,8 @@ To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-p
 
 * Fixed a segfault in `violet generate -w` caused by 0.19.2
 * Fixed a bug where `serve` and `generate -w` failed to reset the start time used for telling how long it took to build the site, and instead counting the time since the `generate -w` or `serve` session started.
+* Made `violet serve` respect directories and files listed in `exclude`
+* Fixed a bug where `serve` and `generate -w` failed to reload `violet.json` when using `--root`
 
 ### Removed
 
@@ -486,7 +493,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.2...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.20.0...master
+[v0.20.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.2...v0.20.0
 [v0.19.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.1...v0.19.2
 [v0.19.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...v0.19.1
 [v0.19.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...v0.19.0

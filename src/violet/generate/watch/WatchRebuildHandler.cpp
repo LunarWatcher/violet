@@ -1,5 +1,6 @@
 #include "WatchRebuildHandler.hpp"
 #include "stc/filewatcher/FileWatcherCommon.hpp"
+#include "violet/util/FileHelper.hpp"
 
 #ifdef ENABLE_WATCH_HANDLER
 
@@ -22,6 +23,11 @@ WatchRebuildHandler::WatchRebuildHandler(
                 return true;
             }
             const auto& cfg = this->generator->getConfig();
+
+            if (util::shouldExclude(path, cfg)) {
+                return false;
+            }
+
             return !std::filesystem::weakly_canonical(path).string()
                 .starts_with(
                     std::filesystem::weakly_canonical(cfg.root()).string()
@@ -60,9 +66,17 @@ int WatchRebuildHandler::watch() {
             );
             return true;
         }
-        
-        minilog::info("Changes detected in {}", path.string());
-        if (path == opts.root / "violet.json") {
+
+
+        if (generator) {
+            const auto& cfg = this->generator->getConfig();
+            if (util::shouldExclude(path, cfg)) {
+                // TODO: .block() needs more granularity to allow individual files to be ignored and not reset the timer
+                return true;
+            }
+        }
+
+        if (path == std::filesystem::canonical(opts.root / "violet.json")) {
             if (!this->refreshGenerator()) {
                 minilog::error("Invalid violet.json.");
                 return true;

@@ -91,6 +91,9 @@ void SiteServer::initRoutes() {
             magpie::Response &res,
             std::string_view path
         ) {
+            minilog::debug(
+                "GET {}", path
+            );
             std::shared_lock l(ctx->watcher->getMutex());
             auto ptr = ctx->watcher->getGenerator();
 
@@ -130,6 +133,7 @@ void SiteServer::initRoutes() {
                         minilog::error("Failed to open {}", file.string());
                         handleNotFound(absOutputFolder, res);
                     } else {
+                        minilog::debug("GET {} 200 OK from {}", path, file.string());
                         std::stringstream ss;
                         ss << f.rdbuf();
 

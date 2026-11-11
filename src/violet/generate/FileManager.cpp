@@ -1,6 +1,7 @@
 #include "FileManager.hpp"
 #include "stc/Environment.hpp"
 #include "violet/conf/ThemeConfig.hpp"
+#include "violet/util/FileHelper.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -176,7 +177,6 @@ void FileManager::recursivelyIterateFiles(
         return;
     }
 
-    const auto& excludes = cfg.getExcludes();
     do {
         auto& f = *it;
         // Required to deal with "." as the scope in treePages and listPages
@@ -189,14 +189,7 @@ void FileManager::recursivelyIterateFiles(
         );
         if (f.is_directory()) {
             if (
-                // Ignore git
-                p.filename().string().starts_with(".git")
-                // Ignore user excludes
-                || std::find(
-                    excludes.cbegin(),
-                    excludes.cend(),
-                    relPath.string()
-                ) != excludes.cend()
+                util::shouldExclude(relPath, cfg)
                 // Inline output directory
                 || p == realOutputPath
             ) {
@@ -213,17 +206,10 @@ void FileManager::recursivelyIterateFiles(
             }
         } else if (f.is_regular_file()) {
             if (
-                // Ignore git
-                p.filename().string().starts_with(".git")
+                util::shouldExclude(relPath, cfg)
                 // Ignore violet config files
                 || relPath.string() == "violet.json"
                 || relPath.string() == "violet.theme.json"
-                // Ignore user excludes
-                || std::find(
-                    excludes.cbegin(),
-                    excludes.cend(),
-                    relPath.string()
-                ) != excludes.cend()
             ) {
                 continue;
             }

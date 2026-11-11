@@ -4,7 +4,6 @@
 
 #include "magpie/App.hpp"
 #include "violet/data/GenerateOpts.hpp"
-#include "violet/generate/watch/WatchRebuildHandler.hpp"
 #include "violet/serve/ServerContext.hpp"
 
 #include <filesystem>

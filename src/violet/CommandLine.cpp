@@ -25,6 +25,11 @@ void commonGenerateFlags(
         "Override the root. This defaults to the current working directory, and must be an absolute path"
     )
         ->default_val(std::filesystem::current_path());
+    cmd->add_option(
+        "-o,--destination",
+        generateOpts.overrideOutputFolder,
+        "Override the folder that the generated site is added to."
+    );
 }
 
 }
