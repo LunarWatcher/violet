@@ -1,8 +1,8 @@
 #pragma once
 // Must always be first
-#include "violet/generate/SiteGenerator.hpp"
-#include "violet/generate/watch/WatchRebuildHandler.hpp"
 #include "violet/serve/meta/include-guard.hpp"
+
+#include "violet/generate/watch/WatchRebuildHandler.hpp"
 
 #include "violet/data/GenerateOpts.hpp"
 
