@@ -388,3 +388,28 @@ do in a rawdogged SVG
 .hljs-strong {
     font-weight: bold;
 }
+
+pre > code {
+    counter-reset: line 0;
+}
+.hljs-line-shim::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    min-width: 3ch;
+
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-right: 1ch;
+    border-right: 2px solid var(--violet-theme-default-lavender);
+    color: var(--violet-theme-default-dark-violet);
+}
+
+code[data-language]::before {
+    text-align: right;
+    content: attr(data-language) '\A';
+    background: unset;
+    padding: 4px;
+    display: block;
+    color: #666666;
+}

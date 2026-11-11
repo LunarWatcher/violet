@@ -46,7 +46,8 @@ To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-p
 * BREAKING: Made `page.url` an absolute path
 * Markdown URLs (alongside URLs converted by `abspath()`) no longer end with a trailing slash. This means that `/path/` is converted to `/path`.
   * This should be functionally identical, since `/path` and `/path/` cannot coexist in the filesystem (see: `touch path && mkdir path`), and both Codeberg Pages and GitHub pages handles these rewrites fine, so shouldn't affect anything.
-  
+* Theme (_default): Include line numbers and code block types
+
 ### Fixed
 
 * Fixed a segfault in `violet generate -w` caused by 0.19.2
