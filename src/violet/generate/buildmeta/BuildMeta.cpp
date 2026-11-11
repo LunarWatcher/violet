@@ -25,7 +25,7 @@ void BuildMeta::commit() {
 
     // We only write the file if metadata is enabled. If it isn't, all we're doing is incrementing some ints, which in
     // terms of performance might be better than null/empty checks everywhere. Not actually sure about that, but /shrug
-    if (this->conf.metadata) {
+    if (this->conf.getGenerateMetadata()) {
         nlohmann::json j = data;
         auto metaPath = conf.output() / "_violet-meta.json";
         std::ofstream f(metaPath);

@@ -15,6 +15,7 @@ set(VIOLET_SERVE_FILES
 set(VIOLET_SRCS
     violet/CommandLine.cpp
 
+    violet/conf/Config.cpp
     violet/conf/ToJsonImpl.cpp
     violet/conf/Frontmatter.cpp
 

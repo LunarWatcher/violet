@@ -15,7 +15,7 @@ struct E2EFixture : public MarkdownFixture {
     const std::filesystem::path dir = std::filesystem::temp_directory_path() / "violet-tests";
     stc::testutil::TestDirectory dirLock{ dir, true };
 
-    violet::Config conf {
+    violet::Config conf {{
         .name = "E2E test site",
         .description = "Description content",
         .prefix = "/prefix",
@@ -24,7 +24,7 @@ struct E2EFixture : public MarkdownFixture {
         },
         .data = iris::Object(),
         .metadata = true,
-    };
+    }};
 
     static inline std::regex extract {
         R"(\[\[violet-test\(([^)]+)\):(.*?)\]\])",

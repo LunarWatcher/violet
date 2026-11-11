@@ -359,7 +359,7 @@ iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ct
         // stc::uri, it does most of the heavy lifting on # and ? parsing that's still left in there manually)
         // We could in theory delegate both these scenarios to the translator for somewhat more consistent code
         return projectBasedTranslator(
-            conf.prefix,
+            conf.getPrefix(),
             fm.internalPath,
             // Silence warnings about non-existent links until we sort URL -> filesystem path conversion
             std::nullopt,
@@ -371,7 +371,7 @@ iris::DataObject FileFunctions::abspath(iris::Arguments& args, RenderContext* ct
         auto rawResult = rootPath.parent_path();
         rawResult.join(path);
         return rawResult
-            .concatPrefix(conf.prefix);
+            .concatPrefix(conf.getPrefix());
     }
 }
 
@@ -500,13 +500,13 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                 fileContent,
                 std::bind(
                     projectBasedTranslator,
-                    this->man.cfg.prefix,
+                    this->man.cfg.getPrefix(),
                     fm.internalPath,
                     this->man.cfg.root(),
                     std::placeholders::_1
                 ),
-                this->man.cfg.tocStartLevel,
-                this->man.cfg.markdown
+                this->man.cfg.getToCStartLevel(),
+                this->man.cfg.getMarkdownConfig()
             );
             rawContent = page.parsedContents;
             safeFm.tableOfContents = page.tableOfContents;

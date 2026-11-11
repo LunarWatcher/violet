@@ -1,4 +1,5 @@
 #include "FileManager.hpp"
+#include "stc/Environment.hpp"
 #include "violet/conf/ThemeConfig.hpp"
 
 #include <filesystem>
@@ -27,15 +28,25 @@ void FileManager::copyRaw(
     );
 }
 
-std::optional<std::filesystem::path> FileManager::resolveTemplate(
-    const std::string& type,
-    const std::string& layout
-) {
+FileManager::FileManager(Config& cfg) : cfg(cfg)
+{
+    // TODO: error `stc::executablePath` should probably be cached statically to better support rebuilds
+    if (this->cfg.getTheme() && (*cfg.getTheme())[0] == '_') {
+        this->themeDir
+            = std::filesystem::path(
+                stc::executablePath()
+            ).parent_path() / "../share/violet/themes" / *cfg.getTheme();
+    } else if (this->cfg.getTheme()) {
+        this->themeDir = cfg.root() / "_themes" / *cfg.getTheme();
+    }
+}
+std::optional<std::filesystem::path> FileManager::resolveTemplate(const std::string& type, const std::string& layout)
+{
 
     // Temporary; used to cehck both .iris and .iris extensions. This is temporary until we can do the breaking change
     // of dropping .iris files
     std::vector<std::string> extensions{".iris"};
-    if (cfg.env.allowLegacyInjaExtensions) {
+    if (cfg.allowLegacyInjaExtensions()) {
         extensions.push_back(".inja");
     }
 
@@ -48,12 +59,12 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(
         // std::cout << file << std::endl;
 
         paths.push_back(root / "_templates" / type);
-        if (cfg.theme) {
+        if (cfg.getTheme()) {
             paths.push_back(themeDir / "_templates" / type);
         }
 
         paths.push_back(root / "_templates" / "_default");
-        if (cfg.theme) {
+        if (cfg.getTheme()) {
             paths.push_back(themeDir / "_templates" / "_default");
         }
         auto result = stc::FileUtil::findFile(
@@ -68,8 +79,8 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(
 }
 
 void FileManager::copyThemeFiles() {
-    if (!cfg.theme) {
-        minilog::info("No theme set");
+    if (!cfg.getTheme()) {
+        minilog::info("No theme set, so no theme files to copy.");
         return;
     }
     std::ifstream confFile(themeDir / "violet.theme.json");
@@ -118,7 +129,7 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
     auto fn = path.filename().string();
     if (!fn.ends_with(".inja") && !fn.ends_with(".iris")) {
         auto result = resolvePartial(path.string() + ".iris");
-        if (result || !cfg.env.allowLegacyInjaExtensions) {
+        if (result || !cfg.allowLegacyInjaExtensions()) {
             return result;
         }
         minilog::warn("No .iris files found. Trying lookup with the deprecated .inja extension");
@@ -133,7 +144,7 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
         return p;
     }
 
-    if (cfg.theme) {
+    if (cfg.getTheme()) {
         if (auto p = this->themeDir / "_partials" / fn;
             std::filesystem::is_regular_file(p)
         ) {
@@ -165,6 +176,7 @@ void FileManager::recursivelyIterateFiles(
         return;
     }
 
+    const auto& excludes = cfg.getExcludes();
     do {
         auto& f = *it;
         // Required to deal with "." as the scope in treePages and listPages
@@ -181,10 +193,10 @@ void FileManager::recursivelyIterateFiles(
                 p.filename().string().starts_with(".git")
                 // Ignore user excludes
                 || std::find(
-                    cfg.exclude.cbegin(),
-                    cfg.exclude.cend(),
+                    excludes.cbegin(),
+                    excludes.cend(),
                     relPath.string()
-                ) != cfg.exclude.cend()
+                ) != excludes.cend()
                 // Inline output directory
                 || p == realOutputPath
             ) {
@@ -208,10 +220,10 @@ void FileManager::recursivelyIterateFiles(
                 || relPath.string() == "violet.theme.json"
                 // Ignore user excludes
                 || std::find(
-                    cfg.exclude.cbegin(),
-                    cfg.exclude.cend(),
+                    excludes.cbegin(),
+                    excludes.cend(),
                     relPath.string()
-                ) != cfg.exclude.cend()
+                ) != excludes.cend()
             ) {
                 continue;
             }

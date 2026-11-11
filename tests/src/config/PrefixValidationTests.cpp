@@ -11,20 +11,20 @@ TEST_CASE("Prefix /-ness should be validated") {
 
     SECTION("Standard paths should not throw") {
         REQUIRE_NOTHROW(dummy.setPrefix("/test"));
-        REQUIRE(dummy.prefix == "/test");
+        REQUIRE(dummy.getPrefix() == "/test");
 
         REQUIRE_NOTHROW(dummy.setPrefix("/test/more"));
-        REQUIRE(dummy.prefix == "/test/more");
+        REQUIRE(dummy.getPrefix() == "/test/more");
     }
 
     SECTION("Empty prefixes are legal") {
         REQUIRE_NOTHROW(dummy.setPrefix(""));
-        REQUIRE(dummy.prefix == "");
+        REQUIRE(dummy.getPrefix() == "");
     }
 
     SECTION("/ prefixes should be equivalent to the empty prefix") {
         REQUIRE_NOTHROW(dummy.setPrefix("/"));
-        REQUIRE(dummy.prefix == "");
+        REQUIRE(dummy.getPrefix() == "");
     }
 
     SECTION("Double slashes are not allowed") {

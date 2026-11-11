@@ -1,9 +1,6 @@
 #pragma once
 
-#include "stc/Environment.hpp"
-#include "minilog/minilog.hpp"
 #include "violet/conf/Config.hpp"
-#include "violet/data/GenerateOpts.hpp"
 #include <filesystem>
 
 namespace violet {
@@ -13,20 +10,7 @@ private:
     Config& cfg;
     std::filesystem::path themeDir;
 public:
-    FileManager(
-        Config& cfg
-    ) : cfg(cfg) {
-        // TODO: error `stc::executablePath` should probably be cached statically to better support rebuilds
-        if (this->cfg.theme && (*cfg.theme)[0] == '_') {
-            this->themeDir = std::filesystem::path(
-                stc::executablePath()
-            ).parent_path()
-                / "../share/violet/themes"
-                / *cfg.theme;
-        } else if (this->cfg.theme) {
-            this->themeDir = cfg.root() / "_themes" / *cfg.theme;
-        }
-    }
+    FileManager(Config& cfg);
 
     std::optional<std::filesystem::path> resolveTemplate(
         const std::string& type,

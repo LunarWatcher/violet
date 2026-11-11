@@ -23,9 +23,8 @@ struct EnvConfig {
     bool allowLegacyInjaExtensions = false;
 };
 
-// TODO: this entire struct is in desperate need of being rewritten to better reflect what's programmatically used
-// vs. what isn't
-struct Config {
+// TODO: This is a shit name, but I don't have any better suggestions
+struct ConfigFileData {
     std::string name = "";
     std::optional<std::string> description = std::nullopt;
 
@@ -47,78 +46,55 @@ struct Config {
     MarkdownConfig markdown = {};
 
     std::string destination = "pages";
+};
+
+class Config {
+private:
+    ConfigFileData confFileData;
+
+    EnvConfig env = {};
+public:
+    Config() = default;
+    Config(const ConfigFileData& config);
+
+    const std::filesystem::path& root() const;
+
+    std::filesystem::path output() const;
+
+    Config& merge(const GenerateOpts& opts);
+
+    void setPrefix(const std::string& newPrefix);
+
+    bool allowLegacyInjaExtensions() const;
+
+    int getToCStartLevel() const;
+
+    const iris::Object& asIrisObject() const;
+
+    const MarkdownConfig& getMarkdownConfig() const;
+
+    const std::string& getDestination() const;
+
+    bool getGenerateMetadata() const;
 
     /**
-     * Not exposed via JSON, but stored internally.  
+     * This function should be used over `ConfigFileData::timezone` anywhere that's physically capable of getting a
+     * Config instance.
      */
-    EnvConfig env = {};
+    const std::string& getTimezone() const;
 
-    const std::filesystem::path& root() const {
-        return env.root;
-    }
+    const std::optional<std::string>& getTheme() const;
 
-    std::filesystem::path output() const {
-        return std::filesystem::weakly_canonical(
-            env.root / destination
-        );
-    }
+    const std::vector<std::string>& getExcludes() const;
 
-    Config& merge(const GenerateOpts& opts) {
-        this->env.allowLegacyInjaExtensions = opts.allowLegacyInjaExtensions;
-        this->env.root = std::filesystem::canonical(opts.root);
-        raw[violet::constants::InternalPathRef] = env.root.string();
+    const std::string& getPrefix() const;
 
-        // Handle alternate prefixes
-        if (opts.overridePrefixForLocalUse) {
-            const auto realOutputPath = output();
-            minilog::info(
-                "Overriding site prefix for local use to {}",
-                realOutputPath.string()
-            );
-            setPrefix(realOutputPath.string());
-        } else if (opts.overridePrefix) {
-            minilog::info(
-                "User requested site prefix override to {}",
-                *opts.overridePrefix
-            );
-            setPrefix(*opts.overridePrefix);
-        }
-        return *this;
-    }
+    const std::string& getName() const;
 
-    void setPrefix(const std::string& newPrefix) {
-        if (newPrefix == "/") {
-            prefix = "";
-        } else if (!newPrefix.empty() && !newPrefix.starts_with('/')) {
-            minilog::error(
-                "The prefix must start with a /, or be an empty string, but found \"{}\"",
-                newPrefix
-            );
-            throw std::runtime_error("Illegal prefix");
-        } else if (!newPrefix.empty() && newPrefix.ends_with('/')) {
-            minilog::error(
-                "The prefix must not end with a / (unless the entire prefix is \"/\"), but found \"{}\"",
-                newPrefix
-            );
-            throw std::runtime_error("Illegal prefix");
-        } else if (newPrefix.contains("//")) {
-            minilog::error("// is not allowed in the prefix");
-            throw std::runtime_error("Illegal prefix");
-        } else if (newPrefix.contains("/../") || newPrefix.ends_with("/..")) {
-            minilog::error("Path traversal is not allowed in the prefix");
-            throw std::runtime_error("Illegal prefix");
-        } else {
-            prefix = newPrefix;
-        }
+    const std::optional<std::string> getDescription() const;
 
-
-        std::stringstream ss;
-        // TODO: false, false? Not sure if I want includeReserved set to true here, since # in a 
-        urlEncode(prefix, ss, true, false);
-        prefix = ss.str();
-
-        raw["prefix"] = prefix;
-    }
+    friend void from_json(const nlohmann::json& src, Config& dest);
+    friend void to_json(nlohmann::json& dest, const Config& src);
 };
 
 extern void from_json(const nlohmann::json& src, Config& dest);

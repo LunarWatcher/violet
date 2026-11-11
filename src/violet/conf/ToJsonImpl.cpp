@@ -7,12 +7,13 @@
 #include "violet/parsing/DateTimeParsing.hpp"
 #include "violet/transitional/JsonToDataObject.hpp"
 
-void violet::from_json(const nlohmann::json& src, Config& dest) {
+void violet::from_json(const nlohmann::json& src, Config& conf) {
+    auto& dest = conf.confFileData;
     src.at("name").get_to(dest.name);
     if (auto it = src.find("description"); it != src.end() && !it->is_null()) {
         dest.description = it->get<std::string>();
     }
-    dest.setPrefix(
+    conf.setPrefix(
         src.value("prefix", "")
     );
     if (auto it = src.find("exclude"); it != src.end()) {
@@ -31,7 +32,7 @@ void violet::from_json(const nlohmann::json& src, Config& dest) {
         dest.data = transitional::convertJson(*it).get<iris::Object>();
     }
     if (auto it = src.find("theme"); it != src.end()) {
-        if (!it->is_null()) {
+        if (!it->is_null() && it->get<std::string>() != "") {
             dest.theme = it->get<std::string>();
         }
     } else {
@@ -225,7 +226,8 @@ void violet::from_json(const nlohmann::json& src, ThemeConfig& dest) {
     };
 }
 
-void violet::to_json(nlohmann::json& dest, const Config& src) {
+void violet::to_json(nlohmann::json& dest, const Config& raw) {
+    const auto& src = raw.confFileData;
     dest["name"] = src.name;
     if (src.description) {
         dest["description"] = *src.description;

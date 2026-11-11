@@ -8,13 +8,13 @@ namespace tests {
 struct WithTimezone {
     const std::string oldTimezone;
     WithTimezone(const std::string& timezone = "Etc/GMT")
-        : oldTimezone(violet::Config::timezone)
+        : oldTimezone(violet::ConfigFileData::timezone)
     {
-        violet::Config::timezone = timezone;
+        violet::ConfigFileData::timezone = timezone;
     }
 
     ~WithTimezone() {
-        violet::Config::timezone = oldTimezone;
+        violet::ConfigFileData::timezone = oldTimezone;
     }
 };
 

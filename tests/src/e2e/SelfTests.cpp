@@ -5,7 +5,7 @@
 namespace {
 
 TEST_CASE_METHOD(tests::E2EFixture, "Self-test the E2E fixture", "[e2e]") {
-    conf.prefix = "/prefix";
+    conf.setPrefix("/prefix");
     loadSite();
     run({
         "generate"
@@ -15,7 +15,7 @@ TEST_CASE_METHOD(tests::E2EFixture, "Self-test the E2E fixture", "[e2e]") {
 
     auto debug = getDebug();
     REQUIRE(debug.contains("prefix"));
-    REQUIRE(debug.at("prefix") == conf.prefix);
+    REQUIRE(debug.at("prefix") == conf.getPrefix());
 }
 
 }

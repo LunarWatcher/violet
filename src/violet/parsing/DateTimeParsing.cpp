@@ -38,7 +38,7 @@ int64_t violet::parseDate(
             );
         }
 
-        std::chrono::zoned_time t { Config::timezone, timestamp };
+        std::chrono::zoned_time t { ConfigFileData::timezone, timestamp };
         return std::chrono::duration_cast<std::chrono::seconds>(
             t.get_sys_time().time_since_epoch()
         ).count();

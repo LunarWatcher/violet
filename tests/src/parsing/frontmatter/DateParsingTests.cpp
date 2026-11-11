@@ -113,7 +113,7 @@ TEST_CASE_METHOD(tests::FrontmatterFixture, "ISO-8601 dates with a non-GMT timez
             );
             REQUIRE((utcBaseline - val) == (expectedDiff * 60 * 60));
             auto formatted = violet::formatDate(
-                val, violet::DateFormatISO, violet::Config::timezone
+                val, violet::DateFormatISO, violet::ConfigFileData::timezone
             );
             auto formattedUtc = violet::formatDate(
                 val, violet::DateFormatISO, "Etc/GMT"

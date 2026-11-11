@@ -48,9 +48,6 @@ SiteGenerator::SiteGenerator(
         this->cfg
     )
 {
-    if(this->opts.overrideOutputFolder) {
-        this->cfg.destination = *this->opts.overrideOutputFolder;
-    }
 }
 
 std::filesystem::path SiteGenerator::resolvePagination(
@@ -209,13 +206,13 @@ bool SiteGenerator::processFile(
                     std::bind(
                         projectBasedTranslator,
                         // args
-                        this->cfg.prefix,
+                        this->cfg.getPrefix(),
                         relPath,
                         this->opts.root,
                         std::placeholders::_1
                     ),
-                    this->cfg.tocStartLevel,
-                    this->cfg.markdown
+                    this->cfg.getToCStartLevel(),
+                    this->cfg.getMarkdownConfig()
                 );
 
                 minilog::debug("Markdown parsing complete");

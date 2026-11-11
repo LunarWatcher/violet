@@ -26,7 +26,7 @@ TEST_CASE_METHOD(tests::E2EFixture, "Relative URLs should not be butchered", "[e
 
     const static std::string outputPath = "sub/path/webp-url.html";
     SECTION("Empty prefix") {
-        conf.prefix = "";
+        conf.setPrefix("");
         before();
         autoBuild();
         requireOutputFileExists(outputPath);
@@ -40,7 +40,7 @@ TEST_CASE_METHOD(tests::E2EFixture, "Relative URLs should not be butchered", "[e
         );
     }
     SECTION("Non-empty prefix") {
-        conf.prefix = "/prefix";
+        conf.setPrefix("/prefix");
         before();
         autoBuild();
         requireOutputFileExists("toplevel.html");

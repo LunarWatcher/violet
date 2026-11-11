@@ -4,7 +4,6 @@
 #include "violet/conf/Frontmatter.hpp"
 #include "violet/generate/FileManager.hpp"
 #include "violet/conf/Config.hpp"
-#include "violet/data/GenerateOpts.hpp"
 #include "violet/generate/cache/MetadataCache.hpp"
 #include "violet/generate/templates/DateTimeFunctions.hpp"
 #include "violet/generate/templates/FileFunctions.hpp"

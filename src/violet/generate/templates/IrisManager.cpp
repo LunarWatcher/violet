@@ -45,7 +45,7 @@ IrisManager::IrisManager(
 RenderContext IrisManager::buildCommonContext(const Frontmatter& pageFm) {
     return RenderContext {
         .fm = pageFm,
-        .site = cfg.raw,
+        .site = cfg.asIrisObject(),
     };
 }
 

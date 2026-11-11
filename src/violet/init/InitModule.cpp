@@ -25,16 +25,18 @@ bool setupConfigFile(std::filesystem::path& resolvedTargetPath, const violet::In
     // grows, it's much better to defer this to manual editing, which will happen anyway. The template is basically just
     // the quickstart so it doesn't need to be looked up more than anything else.
     violet::Config conf {
-        .name = "Placeholder name",
-        .description = "Placeholder description",
-        .prefix = "/",
-        .exclude = {
-            "LICENSE",
-            "scripts",
-        },
-        .theme = "_default",
-        .data = iris::Object {},
-        .metadata = false,
+        {
+            .name = "Placeholder name",
+            .description = "Placeholder description",
+            .prefix = "/",
+            .exclude = {
+                "LICENSE",
+                "scripts",
+            },
+            .theme = "_default",
+            .data = iris::Object {},
+            .metadata = false,
+        }
     };
 
     try {

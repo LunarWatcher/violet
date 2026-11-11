@@ -42,7 +42,7 @@ iris::DataObject DateTimeFunctions::formatDate(iris::Arguments& args) {
     }
     auto timestamp = args.at(0)->get<iris::Int>();
     auto fmt = args.at(1)->get<iris::String>();
-    std::string timezone = man.cfg.timezone;
+    std::string timezone = man.cfg.getTimezone();
     if (args.size() == 3) {
         timezone = args.at(2)->get<iris::String>();
     } else if (args.size() > 3) {
