@@ -179,7 +179,6 @@ void violet::from_json(const nlohmann::json& src, Frontmatter& dest) {
 }
 
 void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
-    dest.recursive = src.value("recursive", false);
     dest.pageSize = src.value("page_size", 50);
     if (dest.pageSize == 0) {
         // TODO: should have a separate exception type for these
@@ -188,8 +187,7 @@ void violet::from_json(const nlohmann::json& src, ListingFrontmatter& dest) {
 }
 
 void violet::to_json(nlohmann::json& dest, const Frontmatter& src) {
-    // NOLINTNEXTLINE(bugprone-unchecked-optional-access): it's forced true by the time this is called.
-    dest["title"] = *src.title;
+    dest["title"] = src.title;
     dest["type"] = src.type;
     dest["layout"] = src.getLayout();
     if (src.date) {

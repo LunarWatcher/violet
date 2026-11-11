@@ -7,8 +7,7 @@ namespace violet {
 
 Frontmatter::operator iris::DataObject() const {
     auto obj = iris::Object {
-        {"title", *title}, // NOLINT(bugprone-unchecked-optional-access): this is guaranteed populated by the time this
-                           // is called
+        {"title", title},
         {"type", type},
         {"layout", getLayout()},
         {"hidden", hidden},

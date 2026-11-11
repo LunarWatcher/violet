@@ -13,13 +13,11 @@
 namespace violet {
 
 struct ListingFrontmatter {
-    std::optional<std::string> rss;
-    bool recursive;
     uint64_t pageSize;
 };
 
 struct Frontmatter {
-    std::optional<std::string> title = std::nullopt;
+    std::string title = "";
     std::string type = "_default";
     std::optional<std::string> layout = std::nullopt;
 
@@ -96,13 +94,13 @@ struct Frontmatter {
                 )
             );
         }
-        if (!title) {
+        if (title.empty()) {
             title = source.filename().replace_extension();
         }
         minilog::debug(
             "Page (path: {}, title: {}) has been assigned output URL {}",
             internalPath.to_string(true),
-            *title,
+            title,
             internalUrl.to_string(true)
         );
     }

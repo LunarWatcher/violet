@@ -54,7 +54,7 @@ bool sort::byTitle(
     // - 1
     // - 2
     // - 11
-    return *a->title < *b->title;
+    return a->title < b->title;
 }
 
 bool sort::byCreationDateRef(

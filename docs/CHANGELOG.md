@@ -52,6 +52,10 @@ To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-p
 * Fixed a segfault in `violet generate -w` caused by 0.19.2
 * Fixed a bug where `serve` and `generate -w` failed to reset the start time used for telling how long it took to build the site, and instead counting the time since the `generate -w` or `serve` session started.
 
+### Removed
+
+* In frontmatter definitions, `listing.recursive` is no longer valid. `listing.recursive` was an undocumented, unused field that was going to be used, but never was. It may be reintroduced in the future if it becomes necessary. All paginated page lists are, and always have been, recursive by default, and this has not changed.
+
 ## [v0.19.2] (2026-11-07)
 
 ### Fixed
