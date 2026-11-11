@@ -43,7 +43,7 @@ To migrate, replace `{{ site.prefix }}/whatever-path` with `abspath("/whatever-p
 * Config now supports optional key `destination` to control output directory relative to project root. The default is `"pages"` to preserve existing behaviour.
 * CLI: `generate` and `serve` now support the extra `-o`/`--destination` flag that lets you generate the site into different directories. **Note:** Previous build directories are not automatically excluded, and will be copied into your new build dir if you aren't careful. Make sure you add your extra build dirs to `exclude` in `violet.json` if you plan to use them regularly, or potentially to separate debug and production builds or whatever.
 * Added `abspath(path)`, which can be used to make absolute URLs in a more sane way ([#8](https://codeberg.org/LunarWatcher/violet/issues/8)).
-  * This results in the old strategy of manually hard-coding `{{ site.prefix }}` to make absolute paths discouraged. You can still continue to do this if you wish (though beware of `page.url` being absolute; see the changed section), but using `abspath()` is strongly recommended as it avoids malformed URLs and other join artefacts.
+  * This results in the old strategy of manually hard-coding `{{ site.prefix }}` to make absolute paths being discouraged. You can still continue to do this if you wish (though beware of `page.url` being absolute; see the changed section), but using `abspath()` is strongly recommended as it avoids malformed URLs and other join artefacts.
 * Added some logging to requests against `violet serve` to help debug `--root` and other related issues on the server
 
 ### Changed
