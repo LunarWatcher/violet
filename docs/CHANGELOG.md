@@ -21,6 +21,9 @@ This page contains the changelog for violet. Please note that you'll encounter t
 ### Fixed
 
 * Fixed a bug that caused `"theme": null` to incorrectly use the default theme, copying a couple extra files to the output directory for pages without a theme.
+* Fixed incorrect SVG mimetype causing render errors
+* Fixed a bug in the default theme caused by the `abspath` migration
+* BREAKING: Made `listing.base_path` absolute to be compatible with `abspath`.
 
 ## [v0.20.0] (2026-11-11)
 

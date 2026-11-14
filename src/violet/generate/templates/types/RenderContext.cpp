@@ -8,7 +8,7 @@ ListingRenderContext::operator iris::DataObject() const {
         {"page", page},
         {"total_pages", total_pages},
         {"pages", pages},
-        {"base_path", base_path.string()},
+        {"base_path", base_path.to_string()},
     };
 }
 

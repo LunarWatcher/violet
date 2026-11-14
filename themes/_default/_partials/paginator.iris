@@ -35,7 +35,7 @@
             </li>
     </ul>
     <form class="flex-horizontal" id="skip-to-page"
-          onsubmit="event.preventDefault(); window.location.href = '{{ abspath(listing.base_path) }}/page/' + this.page.value + '/index.html'; return false;"
+          onsubmit="event.preventDefault(); window.location.href = '{{ abspath("page") }}/' + this.page.value + '/index.html'; return false;"
     >
         <input type="number" min="1" max="{{ listing.total_pages }}" name="page" required aria-label="Page number" />
         <input type="submit" value="Go" />

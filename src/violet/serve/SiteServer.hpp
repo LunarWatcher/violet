@@ -29,7 +29,7 @@ private:
         {".jpg", "image/jpeg"},
         {".jpeg", "image/jpeg"},
         {".jfif", "image/jpeg"},
-        {".svg", "image/svg"},
+        {".svg", "image/svg+xml"},
         {".webp", "image/webp"},
         {".xml", "application/xml"},
         {".rss", "application/rss+xml"},

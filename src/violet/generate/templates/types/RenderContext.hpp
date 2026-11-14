@@ -9,7 +9,7 @@ struct ListingRenderContext {
     int64_t page;
     int64_t total_pages;
     std::vector<Frontmatter> pages;
-    std::filesystem::path base_path;
+    violet::path base_path;
 
     operator iris::DataObject() const;
 };
