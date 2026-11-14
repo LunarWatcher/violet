@@ -18,6 +18,8 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+## [v0.20.1] (2026-11-14)
+
 ### Fixed
 
 * Fixed a bug that caused `"theme": null` to incorrectly use the default theme, copying a couple extra files to the output directory for pages without a theme.
@@ -501,7 +503,8 @@ https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3
 Friends apparently let friends read an AI slop changelog instead of bothering
 writing one of the single most important human-facing documents. Hypocrites
 -->
-[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.20.0...master
+[unreleased]: https://codeberg.org/LunarWatcher/violet/compare/v0.20.1...master
+[v0.20.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.20.0...v0.20.1
 [v0.20.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.2...v0.20.0
 [v0.19.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.1...v0.19.2
 [v0.19.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...v0.19.1
