@@ -17,23 +17,28 @@ IrisManager::IrisManager(
 ) : cfg(cfg),
     fileManager(fileManager),
     metaCache(metaCache),
+    env(std::make_shared<iris::Environment>()),
     dateTimeFuncs(*this),
     fileFuncs(*this),
     langFuncs(*this),
     escapingFuncs(*this)
 {
-    env.set_include_callback([this](
+    reloadEnv();
+}
+
+void IrisManager::reloadEnv() {
+    env->set_include_callback([this](
         const std::filesystem::path& path,
         const std::string& templateName
     ) -> iris::Template {
         auto partialPath = this->fileManager.resolvePartial(templateName);
         if (partialPath) {
-            return env.parse_file(
+            return env->parse_file(
                 *partialPath
             );
         }
         if (!templateName.starts_with("partials")) {
-            return env.parse_file(
+            return env->parse_file(
                 path / templateName
             );
         } else {
@@ -80,7 +85,7 @@ std::string IrisManager::renderPage(
         );
         if (!templateLocation.has_value()) {
             if (fm.internalFileType == ProcessedFileType::Xml) {
-                return env.render(
+                return env->render(
                     fileContent,
                     context,
                     (void*) &context,
@@ -96,15 +101,15 @@ std::string IrisManager::renderPage(
                 );
             }
         }
-        iris::Template content = env.parse(fileContent, fm.internalPath);
-        env.include_template("content", content);
-        return env.render_file(
+        iris::Template content = env->parse(fileContent, fm.internalPath);
+        env->include_template("content", content);
+        return env->render_file(
             *templateLocation,
             context,
             (void*) &context
         );
     } else {
-        return env.render(
+        return env->render(
             fileContent,
             context,
             (void*) &context,

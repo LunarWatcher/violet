@@ -6,13 +6,13 @@
 namespace violet {
 
 EscapingFunctions::EscapingFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("htmlEscape", 1, [this](iris::Arguments& args) -> iris::DataObject {
+    man.getEnv().add_callback("htmlEscape", 1, [this](iris::Arguments& args) -> iris::DataObject {
         return this->htmlEscape(args);
     });
-    man.env.add_callback("urlEncode", 1, [this](iris::Arguments& args) -> iris::DataObject {
+    man.getEnv().add_callback("urlEncode", 1, [this](iris::Arguments& args) -> iris::DataObject {
         return this->urlEncode(args);
     });
-    man.env.add_callback("urlEncode", 2, [this](iris::Arguments& args) -> iris::DataObject {
+    man.getEnv().add_callback("urlEncode", 2, [this](iris::Arguments& args) -> iris::DataObject {
         return this->urlEncode(args);
     });
 }

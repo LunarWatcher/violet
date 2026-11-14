@@ -20,7 +20,9 @@ public:
     FileManager& fileManager;
     MetadataCache& metaCache;
 
-    iris::Environment env;
+    std::shared_ptr<iris::Environment> env;
+
+    void reloadEnv();
 
 public:
     DateTimeFunctions dateTimeFuncs;
@@ -47,6 +49,10 @@ public:
     );
 
     void resetCaches();
+
+    iris::Environment& getEnv() {
+        return *env;
+    }
 };
 
 }

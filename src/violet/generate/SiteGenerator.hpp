@@ -21,7 +21,7 @@ private:
 
     FileManager fileManager;
     MetadataCache metadataCache;
-    IrisManager irisManager;
+    std::shared_ptr<IrisManager> irisManager;
 
     meta::BuildMeta buildMeta;
 
@@ -63,7 +63,7 @@ private:
      *
      * \returns the success status if the file is processed, or std::nullopt if the file doesn't have frontmatter.
      *          Can also return false in the event of certain preprocessing errors even if the file doesn't have
-     *          frontmatter. This is currently limited to failures to open the file for frontmatter checking
+ resetCaches()    *          frontmatter. This is currently limited to failures to open the file for frontmatter checking
      */
     std::optional<bool> processFileIfFrontmatterIsPresent(
         const std::filesystem::path& file,
@@ -91,7 +91,7 @@ public:
     );
 
     FileManager& getFileManager() { return fileManager; }
-    IrisManager& getIrisManager() { return irisManager; }
+    IrisManager& getIrisManager() { return *irisManager; }
 
     void resetCaches();
 

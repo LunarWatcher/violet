@@ -5,10 +5,10 @@
 namespace violet {
 
 LangFunctions::LangFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("recurseInclude", 2, [this](iris::Arguments& args, void* udata) {
+    man.getEnv().add_callback("recurseInclude", 2, [this](iris::Arguments& args, void* udata) {
         return recurseInclude(args, (RenderContext*) udata);
     });
-    man.env.add_callback("createPaginatedList", 2, [this](iris::Arguments& args) {
+    man.getEnv().add_callback("createPaginatedList", 2, [this](iris::Arguments& args) {
         return createPaginatedList(args);
     });
 }
@@ -19,7 +19,7 @@ iris::DataObject LangFunctions::recurseInclude(iris::Arguments& args, RenderCont
     std::stringstream ss;
     ss << "{% include " << std::quoted(templateName) << " %}";
 
-    return this->man.env.render(
+    return this->man.getEnv().render(
         ss.str(),
         context,
         (void*) renderContext,

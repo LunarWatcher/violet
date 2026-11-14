@@ -8,13 +8,13 @@
 namespace violet {
 
 DateTimeFunctions::DateTimeFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("formatDate", [this](iris::Arguments& args) {
+    man.getEnv().add_callback("formatDate", [this](iris::Arguments& args) {
         return formatDate(args);
     });
-    man.env.add_callback("parseDate", [this](iris::Arguments& args) {
+    man.getEnv().add_callback("parseDate", [this](iris::Arguments& args) {
         return parseDate(args);
     });
-    man.env.add_callback("now", 0, [](iris::Arguments&) {
+    man.getEnv().add_callback("now", 0, [](iris::Arguments&) {
         return (int64_t) std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()
         ).count();

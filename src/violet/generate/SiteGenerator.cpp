@@ -39,11 +39,6 @@ SiteGenerator::SiteGenerator(
     metadataCache(
         this->fileManager
     ),
-    irisManager(
-        this->cfg,
-        this->fileManager,
-        this->metadataCache
-    ),
     buildMeta(
         this->cfg
     )
@@ -78,7 +73,7 @@ void SiteGenerator::renderAndWrite(
         minilog::error("Failed to open {}", file.string());
         return;
     }
-    auto renderedContent = irisManager.renderPage(
+    auto renderedContent = irisManager->renderPage(
         fileContent,
         relPath,
         frontmatter,
@@ -312,6 +307,11 @@ bool SiteGenerator::generate() {
     CacheBuster cacheBuster(this);
     const auto& rootDir = this->cfg.root();
     this->buildMeta.start();
+    this->irisManager = std::make_shared<IrisManager>(
+        cfg,
+        fileManager,
+        metadataCache
+    );
 
     minilog::info(
         "Using {} as the project root",
@@ -410,7 +410,7 @@ std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::l
 
 void SiteGenerator::resetCaches() {
     this->metadataCache.clear();
-    this->irisManager.resetCaches();
+    this->irisManager = nullptr;
 }
 
 }

@@ -21,28 +21,28 @@
 namespace violet {
 
 FileFunctions::FileFunctions(IrisManager& man) : man(man) {
-    man.env.add_callback("listPages", [this](iris::Arguments& args, void* udata) {
+    man.getEnv().add_callback("listPages", [this](iris::Arguments& args, void* udata) {
         return listPages(args, (RenderContext*) udata);
     });
-    man.env.add_callback("listPagesPaginated", [this](iris::Arguments& args, void* udata) {
+    man.getEnv().add_callback("listPagesPaginated", [this](iris::Arguments& args, void* udata) {
         return listPagesPaginated(args, (RenderContext*) udata);
     });
-    man.env.add_callback("treePages", [this](iris::Arguments& args, void* udata) {
+    man.getEnv().add_callback("treePages", [this](iris::Arguments& args, void* udata) {
         return treePages(args, (RenderContext*) udata);
     });
-    man.env.add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
+    man.getEnv().add_callback("paginatedUrl", 2, [this](iris::Arguments& args) {
         return paginatedUrl(args);
     });
-    man.env.add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
+    man.getEnv().add_callback("listPagesByTaxonomy", 2, [this](auto& args) {
         return listPagesByTaxonomy(args);
     });
-    man.env.add_callback("loadJson", 1, [this](auto& args, void* udata) {
+    man.getEnv().add_callback("loadJson", 1, [this](auto& args, void* udata) {
         return loadJson(args, (RenderContext*) udata);
     });
-    man.env.add_callback("abspath", [this](auto& args, void* udata) {
+    man.getEnv().add_callback("abspath", [this](auto& args, void* udata) {
         return abspath(args, (RenderContext*) udata);
     });
-    man.env.add_callback("render", 1, [this](auto& args) {
+    man.getEnv().add_callback("render", 1, [this](auto& args) {
         return render(args);
     });
 }
@@ -542,7 +542,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
 
     auto context = this->man.buildCommonContext(safeFm);
     try {
-        res.content = this->man.env.render(
+        res.content = this->man.getEnv().render(
             rawContent,
             context,
             &context,

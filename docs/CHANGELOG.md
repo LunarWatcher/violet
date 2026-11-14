@@ -24,6 +24,7 @@ This page contains the changelog for violet. Please note that you'll encounter t
 * Fixed incorrect SVG mimetype causing render errors
 * Fixed a bug in the default theme caused by the `abspath` migration
 * BREAKING: Made `listing.base_path` absolute to be compatible with `abspath`.
+* Made `serve` and `generate -w` reload the render context so changes to templates are picked up
 
 ## [v0.20.0] (2026-11-11)
 
