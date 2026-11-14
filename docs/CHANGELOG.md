@@ -18,6 +18,10 @@ This page contains the changelog for violet. Please note that you'll encounter t
 
 ## [unreleased]
 
+### Fixed
+
+* Fixed a bug that caused `"theme": null` to incorrectly use the default theme, copying a couple extra files to the output directory for pages without a theme.
+
 ## [v0.20.0] (2026-11-11)
 
 ### Migration guide

@@ -34,6 +34,8 @@ void violet::from_json(const nlohmann::json& src, Config& conf) {
     if (auto it = src.find("theme"); it != src.end()) {
         if (!it->is_null() && it->get<std::string>() != "") {
             dest.theme = it->get<std::string>();
+        } else {
+            dest.theme = std::nullopt;
         }
     } else {
         dest.theme = "_default";
