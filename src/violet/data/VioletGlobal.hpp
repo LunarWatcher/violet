@@ -2,7 +2,7 @@
 
 #include "iris/data/DataObject.hpp"
 #include "violet/algorithm/SortMethod.hpp"
-#include "violet/data/GitVersion.hpp"
+#include "violet/data/git/GitVersion.hpp"
 #include <nlohmann/json.hpp>
 #include <string>
 

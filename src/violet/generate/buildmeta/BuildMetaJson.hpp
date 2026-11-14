@@ -1,6 +1,6 @@
 #pragma once
 
-#include "violet/data/GitVersion.hpp"
+#include "violet/data/git/GitVersion.hpp"
 #include <cstdint>
 #include <chrono>
 #include <string_view>

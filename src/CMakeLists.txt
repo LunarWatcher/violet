@@ -1,10 +1,10 @@
 add_executable(violet
     violet/Main.cpp
 )
-set_source_files_properties(violet/data/GitVersion.cpp PROPERTIES COMPILE_DEFINITIONS -DVIOLET_VERSION="${VIOLET_VERSION}")
+set_source_files_properties(violet/data/git/GitVersion.cpp PROPERTIES COMPILE_DEFINITIONS -DVIOLET_VERSION="${VIOLET_VERSION}")
 add_library(violetgitdata STATIC
-    violet/data/GitVersion.cpp
-    violet/data/GitVersion.hpp
+    violet/data/git/GitVersion.cpp
+    violet/data/git/GitVersion.hpp
 )
 
 set(VIOLET_SERVE_FILES
