@@ -76,7 +76,7 @@ This script does not help with general setup of CMake or similar.
 The available commands are:
 
 * `gen-docs`: must be run from the build directory. Used to run violet to generate violet's docs for local preview. Note that this command uses `-p /` to be valid with [firefox local mode](https://firefox-source-docs.mozilla.org/devtools-user/local_mode/index.html)
-  * `gen-docs-local`: Alternative version of `gen-docs` that passes `-l` to generate. Useful if you don't use firefox and can't use the local 
+  * `gen-docs-local`: Alternative version of `gen-docs` that passes `-l` to generate. Useful if you don't use firefox and can't use the local
 * `publish`: **Maintainer only**. Runs `publish.sh`
 * `genpkg`: Runs `pkgbuild-gen.sh`
 
