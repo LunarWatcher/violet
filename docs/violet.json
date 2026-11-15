@@ -11,7 +11,8 @@
       "name": "LunarWatcher/violet",
       "url": "https://codeberg.org/LunarWatcher/violet",
       "license": "The documentation is licensed under CC-By-SA 4.0. Violet is licensed under the MIT license. See <a href=\"https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE\">the LICENSE file</a>"
-    }
+    },
+    "release-url": "https://codeberg.org/LunarWatcher/violet/releases/tag"
   },
   "exclude": [
     "LICENSE"

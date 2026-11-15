@@ -35,7 +35,10 @@ The default theme vendors [highlightjs](https://github.com/highlightjs/highlight
         "author": {
             "name": "Your name",
             "email": "Your email"
-        }
+        },
+        // Optional; Only used with `"type": "changelog", "layout": "single_page"`. used to build
+        // URLs to releases on code forges. Must not end with a `/`, and only URLs that end with the git tag are supported.
+        "release-url": "https://codeberg.org/LunarWatcher/violet/releases/tag"
     }
 }
 ```
@@ -65,3 +68,12 @@ The data fields are:
 > If site generation fails after adding an RSS feed, you may be missing the `domain` and/or `author` keys in your `violet.json`. See [the config options for the default theme](#config-options)
 
 RSS feeds are not part of the default theme, nor is linking to the RSS feed from the `<head>`. If you need the RSS functionality, I strongly recommend creating a new theme. Changes that automate additions to `<head>` may be added in the future, but will likely still be manual and `data`-based.
+
+## Changelogs
+
+There's support for changelogs via `"type": "changelog"`. Both a default list and a default page is provided.
+
+The changelog must be its own folder, as each version is its own file. The file name must correspond to the git tag for the release. If you ignore this, the `title` must still correspond to the git tag for the release. The title is reused with the `release-url` data property, essentially `{{ site.data.release-url}}/{{ page.title }}`, provided `site.data.release-url` is defined.
+
+Pre-release changelogs can be hidden from the list with the standard `hidden` attribute in frontmatter.
+

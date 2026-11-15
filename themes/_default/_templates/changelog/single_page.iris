@@ -1,0 +1,16 @@
+{%- extends "../_default/base.iris" -%}
+{%- block content -%}
+    <h1>{{ page.title }}</h1>
+
+    {% if exists("page.date") %}
+        <p>This release was published on {{ formatDate(page.date, "%F") }}
+            {% if exists("site.data.release-url") %}
+                (<a href="{{ site.data.release-url }}/{{ page.title }}">release</a>)
+            {% endif %}
+        </p>
+    {% else %}
+        <p>You are viewing the changelog for a pre-release that has not yet been published.</p>
+    {% endif %}
+    
+    {% include "content" %}
+{%- endblock -%}

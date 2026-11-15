@@ -1,0 +1,461 @@
+---
+{
+    "title": "Historical releases"
+}
+---
+# Historical releases
+
+This contains an archive of releases prior to v0.20.0, because that's how many releases I could be bothered moving to the new changelog format.
+
+## [v0.19.2] (2026-11-07)
+
+### Fixed
+
+* Image and URL syntax are on feature parity again.
+  * Images now support escaped links, which were added to links in 0.17.0.
+  * Images now support balanced parentheses in URLs, which was also added to links in 0.17.0
+  * Note: Images intentionally do not support the `[link-ref-only]` syntax, i.e. `![link-ref]` is an invalid image URL and will throw a syntax error. Alt texts are too important to sacrifice.
+  * Internal: a new test type has been added that allows the same tests to be run on both images and links. This should avoid drift in the future
+  * There's also documentation for image syntax now; image syntax has been supported for _many_ versions, but apparently not documented.
+* Fixed a typo that prevented URL encoding of internal URLs from taking effect
+  * A URL to a file that doesn't get filename translated, for example `Some file with spaces.png` was incorrectly inserted literally into the URL rather than as `Some%20file%20with%20spaces.png`
+* Fixed a bug that prevented URL encoding from dealing with unicode characters
+* Fixed a bug where the first render on `violet serve` failed to correctly signal that the initial build completed successfully
+
+## [v0.19.1] (2026-11-07)
+
+### Fixed
+
+* Bumped magpie (server dep) to fix possible compilation errors on systems without nghttp2 in the systems headers
+  * nghttp2 is not in use, but two files incorrectly included them. This release contains the version bump to sort that
+
+## [v0.19.0] (2026-11-07)
+
+### Added
+
+* Added `violet serve`
+* Made `violet generate --watch` actually watch (on Linux)
+* Added a warning for possibly dead internal links at compile time, so it's more obvious when a link is invalid. This does not check fragment validity, just the URL relative to the expected source file location.
+
+### Changed
+
+* The markdown URL converter should now support additional schemes and URL formats, though the underlying URI parser is relatively untested at scale. If you experience link conversion errors after upgrading, please open an issue with the link you used  that caused problems.
+  * Dev note: It's been tested against my site, violet's docs, and a fair few tests both here and upstream in stc (my utility library for various shit I need in a bunch of projects), but when run more broadly, I wouldn't be surprised if there are unaccounted-for edge-cases.
+* Added caching to `treePages` and `listPages`
+  * The introduction of sort methods to these have slowed page generation a bit just on account of sorting taking time
+
+### Fixed
+
+* Fixed a bug where a relative `--root` (i.e. `--root=../docs`) resulted in JSON loading failing on sanitization checks
+* Fixed a bug where `--root` resulted in all theme exports being copied into `{current working directory}/{output dir}` instead of `{root dir}/{output dir}`
+
+## [v0.18.0] (2026-11-01)
+
+This release has significant breaking changes:
+
+* `treePages` has a new return type
+* `treePages` has a bugfix that is breaking (intermediate folders are no longer returned if `treePages` is used on a non-root location)
+* The `{tree,list}*` and `loadJson` functions no longer take a page object (see migration guide for the migration steps and full list of affected functions.)
+
+### Migration guide
+
+For the new `treePages` return type, see the CHANGED section.
+
+#### Removed `site`/`page` argument to multiple functions
+
+This applies to `listPages`, `treePages`, `loadJson`, `listPagesPaginated`
+
+* If you pass `page`: remove the argument: `listPages(page, ".")` => `listPages(".")`
+* If you pass `site`: remove the argument and make the path absolute: `listPages(page, ".")` => `listPages("/")`. Absolute paths are now always relative to the site root.
+
+This same pattern applies to all four functions.
+
+### Added
+
+* Templates: New sort method: `violet.sort.by_title` (see the [violet global schema](/schemas/violet.md#violetsortby_title-enum-constant-value))
+* Templates: `listPages` now takes an optional second (after the breaking changes that removed the formerly first argument) argument; a sort method. The default is `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+* Templates: `treePages` now takes two new optional arguments; a sort method, and a leaf sort method. The leaf sort method defautls to the sort method if not provided, and the sort method defaults to `violet.sort.by_title`. ([#37](https://codeberg.org/LunarWatcher/violet/issues/37))
+* *Drastically* improved iris template error rendering. Example:
+  ```none
+  04:34:28.297 | error    | ErrorHandling.cpp:93     | Failed to render templates. Error message: variable 'non_existent_variable' not found
+  Error source: /home/olivia/programming/cpp/violet/build/bin/../share/violet/themes/_default/_templates/_default/base.iris line 35 column 12
+
+
+            <div class="flag end-flag"></div>
+            {% include "partials/footer.iris" %}
+            {{ non_existent_variable }}
+    ~~~~~~~~~~~^ variable 'non_existent_variable' not found
+
+        </body>
+    </html>
+
+  Imported via:
+  * /home/olivia/programming/cpp/violet/build/bin/../share/violet/themes/_default/_templates/_default/single_page.iris on line 1:12
+
+  While rendering templates for Taxonomies.md
+  ============================================================
+
+  Site generation failed. See error log
+  ```
+  * Please note that errors in markdown files do not show this much detail. Violet's markdown renderer currently lacks a way to map a location in the markdown source to the HTML source, and it's obviously the HTML source that gets rendered and therefore defines the line and column numbers for the error.
+  * Also note that absolute paths should only be rendered when using the default theme. It'll be all relative paths for non-default themes.
+
+### Changed
+
+* Templates: Bumped [iris](https://lunarwatcher.codeberg.page/iris/) from v0.2.0 to [v0.3.2](https://lunarwatcher.codeberg.page/iris/changelog.html?v=4#v031-v032)
+  * This does not have any notable changes for template writers, but has significant internal updates that enables a *lot* of stuff in this release, including not needing to pass an object to multiple functions, an drastically improved error reporting.
+* BREAKING (templates): `treePages` return type changed
+
+  The new type has a new `folder_name` variable, and `subfolders` is no longer an object. To migrate, switch `{% for subfolderName, nextTree in currTree.subfolders %}` with `{& for nextTree in currTree.subfolders %}`.
+
+  Additionally, all fields in the object are now guaranteed to be present; switch any `existsIn` checks to `!= null` checks instead. This affects all existing fields.
+
+  If you need more info, the default theme has been updated. See `tree_builder.iris` in the codeberg repo. I have also done this migration on my own website with a different usecase, which can be seen [in this patch](https://codeberg.org/LunarWatcher/pages/commit/30453fa29b26297d002eaadf9fd7f6c3f8e50c6c)
+
+  ```json
+  {
+      "folder_name": "Folder name or null",
+      "items": [ { ...frontmatter } ],
+      "subfolders": [
+          {
+              "folder_name": "subfolder",
+              "items": [ { ...frontmatter }],
+              "subfolders": [ ... ]
+          },
+          { ... }
+      ],
+      "index": { ... optional frontmatter },
+  }
+  ```
+* BREAKING: `listPages`, `treePages`, `loadJson`, and `listPagesPaginated` and no longer takes `site` or `page`. Use a relative path to list relative to the current page, and an absolute path to list relative to the site root.
+* Theme (_default): Drop margins from the first and last `<p>` tag in a list, and add a smol margin between list items to compensate
+
+### Fixed
+
+* BREAKING (templates): `treePages` no longer returns empty intermediate steps if `treePages` is used outside the site root.
+  * This is breaking if you used the three-arg `treePages` and had intermediate `.subfolders`, or if you used `treePages(page, ".")` or similar. The root object in the data is now going to be the data object you are looking for, so intermediate access steps before iteration can simply be removed.
+
+## [v0.17.0] (2026-10-29)
+
+### Added
+
+* Markdown: URLs now support the `[text](<url>)` format (escaped links). This format is more permissive with what URLs are allowed, since `<>` are reserved characters that are always URL-encoded in a valid URL. See the [markdown spec](/specs/Markdown spec.md) for more info
+* Markdown: Added syntax for `<del>` tags (`~~~text~~~`; rendered: ~~~text~~~). `~~strike~~` still renders as `<s>strike</s>`
+
+### Fixed
+
+* Fixed a bug where relative URLs were reversed ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
+* Fixed a bug where out of source use of `--root` caused relative URLs to be entirely stripped
+  * Technical: this was caused by `std::filesystem::relative` not working well with relative paths. If it gets a relative path, it treats it as relative to the current working directory, which won't be the root directory if `--root` is passed. This causes `std::filesystem::relative` to return an empty string
+* Allow markdown URLs to contain balanced parentheses
+  * This allows URLs like `https://en.wikipedia.org/wiki/Violet_(color)` to be pasted directly (render: [url](https://en.wikipedia.org/wiki/Violet_(color))) ([#35](https://codeberg.org/LunarWatcher/violet/issues/35))
+  * If the parentheses are unbalanced, violet throws a slightly more useful error message. This is because spaces are allowed inside the URLs to allow for markdown file links where the source files have spaces in the name.
+* Fixed a smol bug that caused rendered markdown syntax errors to show a slight offset in the arrow pointing to a (most of the time) relevant-ish character that's at least related to the problem
+* Timezone-less dates and timestamps are now parsed relative to `site.timezone` instead of UTC ([#31](https://codeberg.org/LunarWatcher/violet/issues/31))
+  * A frontmatter containing `"date": "2026-10-29"` and `"date": "2026-10-29T00:00:00"` would, before this change, evaluate to midnight UTC rather than midnight in `site.timezone`. You can verify this with `{{ formatDate(parseDate("2026-10-29", "%F"), violet.datetime.iso) }}`. Assuming you have a timezone set, it should render as midnight in your site's timezone rather than before midnight.
+
+    As an example with actual numbers, before this change, that date would render as `2026-10-29T01:00:00+01:00` instead of `2026-10-29:00:00:00+01:00` in `Europe/Oslo`, because midnight UTC is 01:00 in +01:00
+
+## [v0.16.1] (2026-10-26)
+
+### Added
+
+* Added license info to `violet --help`
+* Internal: added `VIOLET_BUILD_VERSION` so packaging systems don't need the full git repo to correctly version violet
+
+## [v0.16.0] (2026-10-25)
+
+### Added
+
+* `site.timezone` is now the default timezone when `formatDate` is called without a timezone argument
+* Meta: There is now a [list for third-party themes](https://lunarwatcher.codeberg.page/violet/themes/third-party-themes.html). It is currently empty, but it does exist :P
+
+### Changed
+
+* BREAKING: `loadJson`'s signature has changed from `loadJson(object, "filename.json")` to `loadJson("filename.json"[, object])`.
+  * Existing use of `loadJson` will continue to work, but will produce a warning in the logs. The old signature will be removed in v1
+* `loadJson` no longer requires a frontmatter when using absolute file paths
+* Upgraded to iris v0.2.0
+  * This includes several major upgrades to the language, including object and array literals now being allowed to contain logic
+
+### Fixed
+
+* Fixed a bug where `loadJson` failed to load paths relative to the provided `object`.
+* Fixed code blocks without a language in a list accidentally adding the indent as a literal part of the codeblock on the first line of the block
+
+## [v0.15.0] (2026-10-23)
+
+### Added
+
+* Added support for ISO dates, and ISO datetimes without timezones
+  * In examples, `2026-10-23` and `2026-10-23T00:00:00` are both supported.
+* Templates: added `formatDate()` for parsing non-builtin dates (i.e. datetimes that aren't in `page.date` or `page.last_modified`)
+* Added `site.timezone` to the config schema. This is optional and defaults to `"Etc/GMT"` if not provided. For valid names, see [the list of tz database timezones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Removed
+
+* BREAKING (on paper): Removed `page.listing`. It must still be used in frontmatter to define page lists (per [Page lists](/Page lists.md)), but the exact config object is no longer available through the `page` global.
+  * This is only breaking on paper since, to my knowledge, it has no practical use. All useful data should be exposed through the `listing` global, which is present when a paginated page list is rendered.
+  * Again, to be clear, this does not affect the config for page lists, just that `page.listing` isn't accessible when the template is rendered.
+  * As a tangent, the docs have been very unclear on the frontmatter schema vs. the `page` schema. There is now a [separate doc page for the `page` global](/schemas/page.md) with a summary of the exact data differences.
+
+## [v0.14.0] (2026-10-20)
+
+### Site and theme migration guide
+
+`.inja` is superceded by `.iris`. The following automation script can be used for most standard use-cases:
+
+```bash
+# Replace the .inja extension inside templates
+rg inja --files-with-matches | xargs -d '\n' sed -i 's/\.inja/.iris/g'
+# Mass-rename inja files
+for file in **/*.inja; do mv "$file" "${file%.inja}.iris"; done
+```
+
+No functional changes have been made in iris relative to inja, so no other migration should be necessary. Aside this change, backwards compatibility for violet consumers will be maintained. (C++ API compatibility in iris will likely break at some point, but this will not be observable by end-users of violet)
+
+### Added
+
+* Added proper error messages for markdown errors ([#9](https://codeberg.org/LunarWatcher/violet/issues/9) (partial)). Example from this doc site's [Editor setup](/Editor setup.md) with an invalid URL:
+  ```
+  21:26:42.016 | error    | SiteGenerator.cpp:231    | Markdown error in Editor setup.md
+  21:26:42.016 | error    | SiteGenerator.cpp:232    | Error: Unclosed url
+  Near byte:
+  527
+  Location:
+    Note that for setting up editors not in this list, the usually only step necessary is to associate `.iris` with a syntax renderer for jinja templates. inja templates are similar enough in implementation to jinja templates that it'll mostly be correct.
+
+    [link](
+    ~~~~~~^
+
+    ## Emacs
+
+    `web-mode` supports jinja syntax, which inja is based enough on for it to be functionally identical. Adding the `.iris` extension to web-mode with the `jinja` engine allows templates to be rendered:
+  ```
+  * Note that the position highlight does not actually show a start position, only an end position. The `~` are just to make the `^` more obvious. Start positions may be handled in a future release
+* CLI (init): Auto-generate a `.gitignore`
+
+### Changed
+
+* BREAKING (ish): Migrated from inja to [iris](https://codeberg.org/LunarWatcher/iris) (an inja fork with the same anti-AI guarantees as violet - no functional changes have been made in the fork yet, so it should not be noticeable)
+  * Violet now also supports the additional `.iris` file extension. `.iris` will be kept until v1; migrating before then is recommended.
+  * `.inja` legacy support is disabled by default. Run `violet generate --legacy-extensions` to let existing projects compile
+
+### Fixed
+
+* CLI (init): generated `publish.sh` accidentally included `$violet_exe`, which should just be `violet`. This was a copypasta oversight from copying violet's own `publish.sh`
+
+## [v0.13.1] (2026-10-19)
+
+### Fixed
+
+* Fixed a segfault caused by undefined behaviour when iterating pages for pagination ([#24 p. 2](https://codeberg.org/LunarWatcher/violet/issues/24))
+
+## [v0.13.0] (2026-10-19)
+
+### Fixed
+
+* BREAKING: Don't aggressively exclude `README.md` and `index.md` from pagination functions ([#24 p. 1](https://codeberg.org/LunarWatcher/violet/issues/24))
+  * This may require adding `"hidden": true` To READMEs with associated feeds if the page itself directly includes `{{ listing }}` variables that aren't just part of the page's associated templates. A page that includes `{{ listing.total_pages }}` must be hidden after this change.
+
+## [v0.12.0] (2026-10-18)
+
+### Added
+
+* CLI (init): Added `publish.sh` as part of the generated template site
+* Markdown: Added angle bracket link support (`<https://example.com>`)
+* Markdown: Include "Footnotes" in the ToC (Table of Contents) if present
+* Markdown: Fix bug where headers containing links breaks ToC rendering
+  * Specifically, the URLs rendered as being part of the header took precedence over the URL pointing to the associated header
+* Markdown: Add new config option (`toc-start-level`) to allow skipping earlier header levels. This allows first level headers to be excluded from the ToC if you follow semantically correct HTML, and only have one h1 on a page.
+  * This is largely to avoid including the main header on the page in the ToC. This can already be done if the header is moved into a template, but this isn't always going to be the case.
+  * The default value is 2, so h1 headers will not be included in the ToC anymore. To restore the previous behaviour, set `"toc-start-level": 1`.
+  * The value can be set to any of the 6 legal header levels - it's only going to be useful when set to 1 (include h1) and 2 (exclude h1), but you can in theory exclusively include `<h6>`es if you have a particularly cursed site where this is useful.
+    * (Supporting this does not add any complexity to the code or config, so might as well support it)
+
+### Fixed
+
+* Added missing include in `GenerateOpts` that may or may not break the build on certain compilers
+
+## [v0.11.2] (2026-09-27)
+
+### Added
+
+* CLI (init): Help/quickstart links after `violet init` runs successfully
+* Theme (default): added `<table>` lighlighting
+
+## [v0.11.1] (2026-09-26)
+
+### Added
+
+* CLI (generate): Added `--root`, largely for debug and E2E test purposes
+
+### Fixed
+
+* Fixed a bug in list parsing that caused `* 0.10.0` to trigger an infinite parsing loop ([#17](https://codeberg.org/LunarWatcher/violet/issues/17))
+* Fixed a bug where code inside an unordered list erroneously consumed the first character after the open tag ([#18](https://codeberg.org/LunarWatcher/violet/issues/18))
+
+## [v0.11.0] (2026-09-26)
+
+### Added
+
+* CLI (init): Added the `init` command for quickly setting up a template repo
+
+### Changed
+
+* `//` and path upward traversal are no longer allowed in the prefix
+
+### Fixed
+
+* 0.10.0's addition of `--prefix` broke prefixes due to a CLI12 oddity
+  * Technical summary: `add_option(...)->default_val(std::nullopt)` causes the value to be initialized to an empty string rather than an empty optional. This caused the prefix to always default to a string, and break all pages where `prefix != ""`.
+
+## [v0.10.0] (2026-09-21) (RETRACTED)
+
+> [!warning]
+>
+> Broken; do not use. Upgrade to v0.11.0
+
+### Added
+
+* CLI (generate): Added `-p,--prefix` for overriding the prefix manually. This is another alternative to `-l` meant for supplying a real path. For example, `--prefix /` can be used to override the prefix to the root level.
+
+  The standard caveats with the prefix apply as to the config, i.e. the prefix shouldn't start with an absolute path - however, `/` is especially allowed with `--prefix`, and is equivalent to `"prefix": ""` in `violet.json`.
+* Markdown: Added support for checklists (`- [ ]` and `- [x]`)
+
+### Changed
+
+* `prefix` is now URL-encoded
+* Fixed a bug where `"prefix": "/"` caused invalid local paths or paths that otherwise start with a double slash
+
+## [v0.9.0] (2026-08-08)
+
+### Added
+
+* Templates: Added `render(frontmatterRef)`, which allows pages from the various iteration functions rendered outside their normal filesystem declaration.
+  * Note: this does not replace `{% include "content" %}` due to limitations in inja. `{% include %}` is subject to context propagation, while `render()`, much like `recursiveInclude`, has to re-build the context from scratch.
+
+    In `recursiveInclude`, this is a feature, but in `render()`, that makes it a weaker alternative (or stronger, depending on your point of view). See the docs for `render` for more information
+* Theme(default): Added `render()`ed `<content>` to the default RSS feed.
+* Templates: Added `urlEncode`
+
+### Fixed
+
+* Template preservation in paragraphs no longer results in a trailing `}` after the template
+
+## [v0.8.0] (2026-08-06)
+
+### Added
+
+* Allow non-markdown, non-html, and non-asset files to be processed via the extra `.in` extension ([#14](https://codeberg.org/LunarWatcher/violet/issues/14))
+  * To process a `.txt` file for example, it would need to be called `filename.txt.in`
+* Markdown: `~~strike~~` ([#15](https://codeberg.org/LunarWatcher/violet/issues/15))
+* `"layout": "none"` can be used to fully disable layouts.
+  * This also means `none.iris` is now an illegal template filename that will never be used.
+
+### Changed
+
+* Assets (`.js`, `.css`, `.mjs`) are now allowed to have layouts, but the default layout is `none`.
+
+### Fixed
+
+* Inline templates are now skipped by the markdown renderer
+* Made inja errors better describe what file the error is from
+
+## [v0.7.0] (2026-07-26)
+
+### Added
+
+* Templates: added `loadJson()` for loading JSON files into variables.
+* Added `_violet-meta.json`
+  * This file is only generated if `"metadata": true` is set in `violet.json`, and contains metadata about the build
+  * For more information, see [the file's schema](/schemas/violet-meta.md)
+
+## [v0.6.0] (2026-07-22)
+
+### Added
+
+* Markdown: Better template parsing, as well as proper HTML block identification. Template _blocks_ and HTML blocks are now left alone. Previously, only individual lines with a template were handled.
+* Markdown: Syntax escaping in text \o/ \[writing with brackets now works again\]
+
+### Changed
+
+* BREAKING: explicit filtering that removed `404.html` has been replaced with `"hidden": true` in the frontmatter. This allows for site host-agnostic 404 pages.
+  * This largely just means `404.html` in custom themes needs to have `hidden: true` added if it's in a folder where there's a file iterator.
+
+### Fixed
+
+* Handled breaking change in CLI12
+
+## [v0.5.0] (2026-06-25)
+
+### Added
+
+* Markdown: Horizontal rules are now supported (`---` separators)
+* Allowed RSS/ATOM (`.atom`, `.rss`, `.xml`) to be passed through template rendering
+* Allowed some assets (`.css`, `.js`, `.mjs`) to be passed through template rendering. This is a weaker version where no base template is used, i.e. the templates operate directly on the asset. Mainly intended to let `{{ site.prefix }}` be used in CSS files
+* Templates: added the `now()` function for use with the time parsing functions. Example use: `{{ formatDate(now(), "%FT%T%z") }}`
+* Templates: Added the `violet` global variable.
+  * Added `violet.datetime.iso`, which is a shorthand for the `"%FT%H:%M:%OS%Oz"` date format string
+  * Added `violet.sort` with two values, which is used with the `listPagesPaginated`
+* Templates: Added `listPagesPaginated`, which is used for listing out pages of content.
+* Redesigned and implemented the RSS strategy to require manual setup of the feeds, with some modifications in the defaults for RSS and Atom feeds' templates.
+  * See [RSS and atom feeds](/RSS and atom feeds.md)
+* New command: `violet version`
+* Theme(default): added Atom feed template
+
+### Changed
+
+* Internal: Switch from stc minilog to standalone minilog (better logging, woo)
+* Internal: Moved `--debug` into a standard function to avoid duplicating logic
+
+
+## [v0.4.0]
+
+### Changed
+
+* BREAKING: `site.site_prefix` is now `site.prefix`. You can rewrite instances with:
+  ```
+  # Note: your working directory must be in your project, or this
+  # may have unintended consequences.
+  rg site_prefix --files-with-matches | xargs sed -Ei 's/site_prefix/prefix/g'
+  ```
+
+
+## [v0.3.0]
+
+Initial tracked commit. Commits prior to this were considered too unstable to bother.
+
+<!-- TODO: This fucking _sucks_ to maintain, but I largely do it because it's
+baggage from when I tried following the Keep A Changelog-standard. I don't anymore
+because it's not a great format, and I _definitely_ don't now anymore, because,
+of fucking course, it's AI slop:
+https://github.com/olivierlacan/keep-a-changelog/blob/main/AGENTS.md
+https://github.com/olivierlacan/keep-a-changelog/commit/06fff4ddc666a9751387e7e3bb02af17e03e41a0
+
+Friends apparently let friends read an AI slop changelog instead of bothering
+writing one of the single most important human-facing documents. Hypocrites
+-->
+[v0.19.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.1...v0.19.2
+[v0.19.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.19.0...v0.19.1
+[v0.19.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.18.0...v0.19.0
+[v0.18.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.17.0...v0.18.0
+[v0.17.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.1...v0.17.0
+[v0.16.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.16.0...v0.16.1
+[v0.16.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.15.0...v0.16.0
+[v0.15.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.14.0...v0.15.0
+[v0.14.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.1...v0.14.0
+[v0.13.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.13.0...v0.13.1
+[v0.13.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.12.0...v0.13.0
+[v0.12.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.2...v0.12.0
+[v0.11.2]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.1...v0.11.2
+[v0.11.1]: https://codeberg.org/LunarWatcher/violet/compare/v0.11.0...v0.11.1
+[v0.11.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.10.0...v0.11.0
+[v0.10.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.9.0...v0.10.0
+[v0.9.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.8.0...v0.9.0
+[v0.8.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.7.0...v0.8.0
+[v0.7.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.6.0...v0.7.0
+[v0.6.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.5.0...v0.6.0
+[v0.5.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.4.0...v0.5.0
+[v0.4.0]: https://codeberg.org/LunarWatcher/violet/compare/v0.3.0...v0.4.0
+[v0.3.0]: https://codeberg.org/LunarWatcher/violet/releases/tag/v0.3.0

@@ -12,6 +12,9 @@ set(ASSETS
     _default/_templates/_default/page_list.iris
     _default/_templates/_default/single_page.iris
 
+    _default/_templates/changelog/single_page.iris
+    _default/_templates/changelog/page_list.iris
+
     _default/assets/_default_page.js
     _default/assets/_default_style.css
     _default/assets/vendor/_default-highlightjs.js
