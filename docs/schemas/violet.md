@@ -34,15 +34,15 @@ In the future, I would like to replace this with more dynamic sorting, but this 
 
 Refers to the sort method that sorts by (in order):
 
-1. `created`, if present
-3. The filename (fallback)
+1. `date`, if present
+2. The filename (fallback)
 
 ### `violet.sort.by_last_modified_date` (enum constant value)
 
 Refers to the sort method that sorts by (in order):
 
 1. `last_modified`, if present
-2. `created`, if present
+2. `date`, if present
 3. The filename (fallback)
 
 ### `violet.sort.by_title` (enum constant value)
