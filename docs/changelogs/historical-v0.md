@@ -1,9 +1,9 @@
 ---
 {
-    "title": "Historical releases"
+    "title": "Historical releases (v0.x)"
 }
 ---
-# Historical releases
+# Historical releases (v0.x)
 
 This contains an archive of releases prior to v0.20.0, because that's how many releases I could be bothered moving to the new changelog format.
 
