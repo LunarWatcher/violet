@@ -237,6 +237,8 @@ std::string Markdown::stringifyTree(
         // system is going to be a whole thing:tm:, 5 years:tm:, and a research team:tm:.
         if (context.config.footnoteHeaders) {
             ss << "<h2>Footnotes</h2>";
+        } else {
+            ss << "<hr/>";
         }
         ss << "<ol>";
         for (size_t i = 0; i < context.usedFootnotes.size(); ++i) {
