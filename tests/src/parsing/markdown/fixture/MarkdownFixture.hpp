@@ -89,6 +89,8 @@ struct MarkdownFixture {
         ss << R"(<div id="violet-footnotes">)";
         if (withHeaders) {
             ss << R"(<h2>Footnotes</h2>)";
+        } else {
+            ss << "<hr/>";
         }
 
         ss << "<ol>";
