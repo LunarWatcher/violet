@@ -71,25 +71,40 @@ iris::DataObject FileFunctions::listPagesByTaxonomy(iris::Arguments& args) {
                 entryPath,
                 man.cfg.root()
             );
-            auto& metadata = man.metaCache.loadMetadata(
-                filePath
-            );
+            try {
+                auto& metadata = man.metaCache.loadMetadata(
+                    filePath
+                );
 
-            if (
-                metadata.frontmatter.isAsset
-                || metadata.frontmatter.hidden
-            ) {
-                return true;
-            }
-
-            const auto& taxonomies = metadata.frontmatter.taxonomies;
-            if (auto it = taxonomies.find(taxonomy); it != taxonomies.end()) {
-                auto& vec = it->second;
-                if (std::find(vec.begin(), vec.end(), value) != vec.end()) {
-                    pages.push_back(metadata.frontmatter);
+                if (
+                    metadata.frontmatter.isAsset
+                    || metadata.frontmatter.hidden
+                ) {
+                    return true;
                 }
+
+                const auto& taxonomies = metadata.frontmatter.taxonomies;
+                if (auto it = taxonomies.find(taxonomy); it != taxonomies.end()) {
+                    auto& vec = it->second;
+                    if (std::find(vec.begin(), vec.end(), value) != vec.end()) {
+                        pages.push_back(metadata.frontmatter);
+                    }
+                }
+                return true;
+            } catch (const nlohmann::json::exception& e) {
+                minilog::error(
+                    "Failed to parse frontmatter JSON in {}: {}",
+                    entryPath.string(),
+                    e.what()
+                );
+                throw iris::CallbackError(
+                    std::format(
+                        "Template API error: a nested frontmatter deserialization occurred in {}: {}",
+                        entryPath.string(),
+                        e.what()
+                    )
+                );
             }
-            return true;
         }
     );
     return pages;
@@ -164,13 +179,28 @@ iris::DataObject FileFunctions::listPages(iris::Arguments& args, RenderContext* 
                 entryPath,
                 man.cfg.root()
             );
-            auto& metadata = man.metaCache.loadMetadata(
-                filePath
-            );
-            if (!metadata.frontmatter.isAsset && !metadata.frontmatter.hidden) {
-                fms.push_back(metadata.frontmatter);
+            try {
+                auto& metadata = man.metaCache.loadMetadata(
+                    filePath
+                );
+                if (!metadata.frontmatter.isAsset && !metadata.frontmatter.hidden) {
+                    fms.push_back(metadata.frontmatter);
+                }
+                return true;
+            } catch (const nlohmann::json::exception& e) {
+                minilog::error(
+                    "Failed to parse frontmatter JSON in {}: {}",
+                    entryPath.string(),
+                    e.what()
+                );
+                throw iris::CallbackError(
+                    std::format(
+                        "Template API error: a nested frontmatter deserialization occurred in {}: {}",
+                        entryPath.string(),
+                        e.what()
+                    )
+                );
             }
-            return true;
         }
     );
     std::sort(
@@ -278,37 +308,52 @@ iris::DataObject FileFunctions::treePages(iris::Arguments& args, RenderContext* 
                 entryPath,
                 path
             );
-            auto& metadata = man.metaCache.loadMetadata(
-                filePath
-            );
+            try {
+                auto& metadata = man.metaCache.loadMetadata(
+                    filePath
+                );
 
-            if (
-                metadata.frontmatter.isAsset
-                || metadata.frontmatter.hidden
-            ) {
-                return true;
-            }
-
-            TreePagesData* next = &root;
-
-            if (rootRelativePath.has_parent_path()) {
-                for (auto& segment : rootRelativePath.parent_path()) {
-                    if (!next->subfolders.contains(segment)) {
-                        next->subfolders[segment] = TreePagesData{
-                            segment
-                        };
-                    }
-                    next = &((*next).subfolders[segment]);
+                if (
+                    metadata.frontmatter.isAsset
+                    || metadata.frontmatter.hidden
+                ) {
+                    return true;
                 }
-            }
 
-            if (filePath.filename() == "README.md" || filePath.filename() == "index.md") {
-                (*next).index = metadata.frontmatter;
-            } else {
-                (*next).items.push_back(metadata.frontmatter);
+                TreePagesData* next = &root;
+
+                if (rootRelativePath.has_parent_path()) {
+                    for (auto& segment : rootRelativePath.parent_path()) {
+                        if (!next->subfolders.contains(segment)) {
+                            next->subfolders[segment] = TreePagesData{
+                                segment
+                            };
+                        }
+                        next = &((*next).subfolders[segment]);
+                    }
+                }
+
+                if (filePath.filename() == "README.md" || filePath.filename() == "index.md") {
+                    (*next).index = metadata.frontmatter;
+                } else {
+                    (*next).items.push_back(metadata.frontmatter);
+                }
+                hasFiles = true;
+                return true;
+            } catch (const nlohmann::json::exception& e) {
+                minilog::error(
+                    "Failed to parse frontmatter JSON in {}: {}",
+                    entryPath.string(),
+                    e.what()
+                );
+                throw iris::CallbackError(
+                    std::format(
+                        "Template API error: a nested frontmatter deserialization occurred in {}: {}",
+                        entryPath.string(),
+                        e.what()
+                    )
+                );
             }
-            hasFiles = true;
-            return true;
         }
     );
     if (!hasFiles) {
@@ -478,9 +523,9 @@ iris::DataObject FileFunctions::loadJson(iris::Arguments& args, RenderContext* c
 
 iris::DataObject FileFunctions::render(iris::Arguments& args) {
     auto fmObj = args.at(0)->get<iris::Object>();
-    auto fm = Frontmatter::fromDataObject(fmObj);
+    auto renderTargetFm = Frontmatter::fromDataObject(fmObj);
 
-    auto path = violet::path(fm.internalPath)
+    auto path = violet::path(renderTargetFm.internalPath)
         .as_fs_path(this->man.cfg.root());
     auto [ metadata, in ] = this->man.metaCache.openFile(
         path
@@ -491,9 +536,9 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
     RenderResult res;
     std::string rawContent;
 
-    Frontmatter safeFm = metadata.frontmatter;
+    Frontmatter currentPageFm = metadata.frontmatter;
 
-    switch (safeFm.internalFileType) {
+    switch (currentPageFm.internalFileType) {
     case ProcessedFileType::Markdown: {
         try {
             auto page = violet::Markdown::parseWithContentPostprocessing(
@@ -501,7 +546,7 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                 std::bind(
                     projectBasedTranslator,
                     this->man.cfg.getPrefix(),
-                    fm.internalPath,
+                    renderTargetFm.internalPath,
                     this->man.cfg.root(),
                     std::placeholders::_1
                 ),
@@ -509,21 +554,29 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
                 this->man.cfg.getMarkdownConfig()
             );
             rawContent = page.parsedContents;
-            safeFm.tableOfContents = page.tableOfContents;
+            currentPageFm.tableOfContents = page.tableOfContents;
         } catch (const SyntaxError& synError) {
             renderSyntaxError(
-                fm.internalPath,
+                renderTargetFm.internalPath,
                 synError,
                 fileContent
             );
             throw iris::CallbackError(
                 std::format(
                     "Template API error: A nested markdown rendering error occurred while rendering {}",
-                    fm.internalPath.to_string()
+                    renderTargetFm.internalPath.to_string()
+                )
+            );
+        } catch (const FileParsingException& e) {
+            renderFileParsingException(e);
+            throw iris::CallbackError(
+                std::format(
+                    "Template API error: A nested file parsing error occurred while rendering {}",
+                    renderTargetFm.internalPath.to_string()
                 )
             );
         }
-    } break;
+   } break;
     case ProcessedFileType::Html:
     case ProcessedFileType::Xml:
     case ProcessedFileType::Asset:
@@ -540,13 +593,13 @@ iris::DataObject FileFunctions::render(iris::Arguments& args) {
         throw iris::CallbackError("Illegal value of internalFileType injected");
     }
 
-    auto context = this->man.buildCommonContext(safeFm);
+    auto context = this->man.buildCommonContext(currentPageFm);
     try {
         res.content = this->man.getEnv().render(
             rawContent,
             context,
             &context,
-            fm.internalPath
+            renderTargetFm.internalPath
         );
     } catch (const iris::IrisError& e) {
         renderIrisError(

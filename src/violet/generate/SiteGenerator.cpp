@@ -262,6 +262,9 @@ bool SiteGenerator::processFile(
             relPath
         );
         return false;
+    } catch (const nlohmann::json::exception& e) {
+        minilog::error("Failed to parse frontmatter JSON in {}: {}", relPath.string(), e.what());
+        return false;
     }
 
     return true;
