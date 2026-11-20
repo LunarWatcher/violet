@@ -12,7 +12,7 @@ Though additional themes may be added in the future, trying to maintain them all
 
 The `_default` theme is explicitly designed to be minimal, to be the bare minimum required to get a site rendered without first having to set up all the things:tm: and allow for incremental changes for existing sites off a blank site without having everything ready in advance.
 
-By all means, make a theme - but only _very_ special themes get added to the core, and only the bare minimum of features gets added to the existing built-in themes.
+By all means, make a theme - but only _very_ special themes get added to the core, and only the bare minimum of features gets added to the existing built-in themes. Additions that are planned but not yet made are listed in the [issue tracker on codeberg](https://codeberg.org/LunarWatcher/violet/issues).
 
 ### Development contributions
 

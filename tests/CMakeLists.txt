@@ -20,6 +20,7 @@ add_executable(tests
     src/integration/monolith/ListPagesPaginatedTests.cpp
     src/integration/monolith/ListPagesTests.cpp
     src/integration/monolith/PathRenderTests.cpp
+    src/integration/monolith/ThemeAssetsWithTemplatesTests.cpp
     src/integration/monolith/TreePagesTests.cpp
 
     src/parsing/ListTests.cpp

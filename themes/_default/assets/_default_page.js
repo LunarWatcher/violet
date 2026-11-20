@@ -1,3 +1,10 @@
+---
+---
+/*
+This CSS file is a part of violet's _default theme, an AI slop-free static site generator under the MIT license.
+https://codeberg.org/LunarWatcher/violet/src/branch/master/LICENSE
+Built with violet {{ violet.version }}
+ */
 
 hljs.addPlugin({
     "after:highlightElement": ({ el, result, _ }) =>  {

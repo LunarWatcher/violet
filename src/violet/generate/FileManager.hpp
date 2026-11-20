@@ -26,8 +26,6 @@ public:
         const std::filesystem::path& destName
     );
 
-    void copyThemeFiles();
-
     void recursivelyIterateFiles(
         const std::filesystem::path& root,
         const std::function<bool(const std::filesystem::directory_entry& entry)>& processor
@@ -36,6 +34,7 @@ public:
     const std::filesystem::path& root() const {
         return cfg.root();
     }
+
 };
 
 }

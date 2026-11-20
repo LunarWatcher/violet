@@ -2,6 +2,7 @@
 
 #include "ProcessedFileType.hpp"
 #include "minilog/minilog.hpp"
+#include "violet/conf/ThemeConfig.hpp"
 #include "violet/exceptions/FileParsingException.hpp"
 #include "violet/exceptions/SyntaxError.hpp"
 #include "violet/paginator/Paginator.hpp"
@@ -38,7 +39,7 @@ SiteGenerator::SiteGenerator(
         this->cfg
     ),
     metadataCache(
-        this->fileManager
+        this->cfg
     ),
     buildMeta(
         this->cfg
@@ -61,17 +62,17 @@ std::filesystem::path SiteGenerator::resolvePagination(
 }
 
 void SiteGenerator::renderAndWrite(
-    const std::filesystem::path& file,
+    const std::filesystem::path& targetFile,
     const std::filesystem::path& relPath,
     const std::string& fileContent,
     const Frontmatter& frontmatter,
     Paginator::iterator* pag
 ) {
     std::ofstream f(
-        file
+        targetFile
     );
     if (!f) {
-        minilog::error("Failed to open {}", file.string());
+        minilog::error("Failed to open {}", targetFile.string());
         return;
     }
     auto renderedContent = irisManager->renderPage(
@@ -83,7 +84,7 @@ void SiteGenerator::renderAndWrite(
 
     // TODO: this is the output file, not the input file. Need to fix. Should be understandable still, at least for
     // now.
-    minilog::info("Committing generated page to {}", file.string());
+    minilog::info("Committing generated page to {}", targetFile.string());
     f.write(
         renderedContent.data(),
         renderedContent.size()
@@ -157,13 +158,14 @@ void SiteGenerator::handleTemplatesAndSave(
 }
 
 bool SiteGenerator::processFile(
-    const std::filesystem::path& relPath
+    const std::filesystem::path& relPath,
+    bool isThemeExport
 ) {
     minilog::debug("Now reading {}", relPath.string());
 
     try {
         auto data = this->metadataCache.openFile(
-            relPath
+            relPath, isThemeExport
         );
 
         auto& parsedFrontmatter = data.metadata.frontmatter;
@@ -271,17 +273,18 @@ bool SiteGenerator::processFile(
 }
 
 std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
-    const std::filesystem::path& file,
-    const std::filesystem::path& relPath
+    const std::filesystem::path& relPath,
+    bool isThemeExport
 ) {
     // Here, we do a manual read to avoid `std::getline`, just in case it's a minimised file. This reads 4
     // bytes rather than potentially an entire gigabyte-sized single-line file (unlikely to ever come up,
     // but might as well)
-    std::ifstream in(file);
+    auto location = (isThemeExport ? *cfg.getThemeRoot() : cfg.root()) / relPath;
+    std::ifstream in(location);
     // this means the file is not readable. copyRaw will throw in this case.
     // Other files can also trigger the same error, but we shamelessly ignore those for now.
     if (!in) {
-        minilog::warn("Failed to open {} for a file read check", file.string());
+        minilog::warn("Failed to open {} for a frontmatter check", location.string());
         return false;
     }
 
@@ -303,7 +306,8 @@ std::optional<bool> SiteGenerator::processFileIfFrontmatterIsPresent(
 
     // At this point, we have something frontmatter-shaped.
     return processFile(
-        relPath
+        relPath,
+        isThemeExport
     );
 }
 
@@ -322,7 +326,10 @@ bool SiteGenerator::generate() {
         rootDir.string()
     );
 
-    fileManager.copyThemeFiles();
+    if (!copyThemeFiles()) {
+        minilog::error("Theme loading failed");
+        return false;
+    }
 
     bool success = true;
     fileManager.recursivelyIterateFiles(
@@ -342,7 +349,6 @@ bool SiteGenerator::generate() {
                 return success;
             } else if (ext == ".html") {
                 auto result = processFileIfFrontmatterIsPresent(
-                    p,
                     relPath
                 );
                 if (result.has_value()) {
@@ -351,7 +357,6 @@ bool SiteGenerator::generate() {
                 }
             } else if (ext == ".atom" || ext == ".xml" || ext == ".rss") {
                 auto result = processFileIfFrontmatterIsPresent(
-                    p,
                     relPath
                 );
                 if (result.has_value()) {
@@ -360,7 +365,6 @@ bool SiteGenerator::generate() {
                 }
             } else if (ext == ".js" || ext == ".mjs" || ext == ".css") {
                 auto result = processFileIfFrontmatterIsPresent(
-                    p,
                     relPath
                 );
                 if (result.has_value()) {
@@ -416,5 +420,61 @@ void SiteGenerator::resetCaches() {
     this->metadataCache.clear();
     this->irisManager = nullptr;
 }
+
+bool SiteGenerator::copyThemeFiles() {
+    const auto& themeRoot = cfg.getThemeRoot();
+    if (!themeRoot) {
+        minilog::info("No theme set, so no theme files to copy.");
+        return true;
+    }
+    std::ifstream confFile(*themeRoot / "violet.theme.json");
+
+    if (!confFile) {
+        minilog::error(
+            "Failed to open violet.theme.json for theme. Tried path: {}",
+            (*themeRoot / "violet.theme.json").string()
+        );
+        return false;
+    }
+
+    minilog::info("Copying theme exports...");
+    // TODO: cache ThemeConfig somewhere appropriate
+    ThemeConfig themeCfg = nlohmann::json::parse(confFile);
+    for (const auto& m : themeCfg.mount) {
+        auto folder = *themeRoot / m;
+        if (!std::filesystem::is_directory(folder)) {
+            throw std::runtime_error("Misconfigured theme: tried to mount non-folder");
+        }
+        for (auto& file : std::filesystem::recursive_directory_iterator(folder)) {
+            if (std::filesystem::is_directory(file)) {
+                continue;
+            }
+            auto rel = std::filesystem::relative(
+                file.path(),
+                *themeRoot
+            );
+
+            minilog::debug("COPY {}", std::filesystem::weakly_canonical(*themeRoot / rel).string());
+            auto result = processFileIfFrontmatterIsPresent(
+                rel,
+                true
+            );
+            if (result.has_value()) {
+                minilog::debug("Copied {} as template", file.path().string());
+                if (!*result) {
+                    return false;
+                }
+            } else {
+                fileManager.copyRaw(
+                    *themeRoot,
+                    rel,
+                    rel
+                );
+            }
+        }
+    }
+    return true;
+}
+
 
 }

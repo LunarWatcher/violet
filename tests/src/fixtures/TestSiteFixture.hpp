@@ -90,6 +90,10 @@ struct TestSiteFixture : public DebugMarkerFixture {
     const std::filesystem::path& buildPath() const { return workspace.buildDirectory.folder; }
     const std::filesystem::path& sourcePath() const { return workspace.rootDirectory; }
 
+    std::filesystem::path getBuildFile(const std::filesystem::path& fragment) const {
+        return buildPath() / fragment;
+    }
+
     void generateWithAsserts() const {
         if (!gen->generate()) {
             throw std::runtime_error(

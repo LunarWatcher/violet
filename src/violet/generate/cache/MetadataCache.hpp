@@ -23,12 +23,12 @@ class MetadataCache {
 private:
     std::unordered_map<std::string, std::shared_ptr<Metadata>> fileToMetadataCache;
 
-    FileManager& fileManager;
+    const Config& cfg;
 public:
 
     MetadataCache(
-        FileManager& fileManager
-    ) : fileManager(fileManager) {}
+        const Config& cfg
+    ) : cfg(cfg) {}
 
     const Metadata& loadMetadata(
         const std::filesystem::path& relPath
@@ -42,9 +42,11 @@ public:
     }
 
     OpenData openFile(
-        const std::filesystem::path& relPath
+        const std::filesystem::path& relPath,
+        bool isThemeExport = false
     ) {
-        std::ifstream f(fileManager.root() / relPath);
+        // NOLINTNEXTLINE(bugprone-unchecked-optional-access): if no theme, how openFile(..., true)?
+        std::ifstream f((isThemeExport ? *cfg.getThemeRoot() : cfg.root()) / relPath);
         if (!f) {
             throw std::runtime_error(
                 "Failed to open " + relPath.string()

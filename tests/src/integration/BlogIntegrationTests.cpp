@@ -21,7 +21,8 @@ TEST_CASE("Blog integration tests") {
         f >> j;
 
         violet::meta::MetadataJson metadata = j;
-        REQUIRE(metadata.input.pages == 13); // the number of .md and .atom files, plus one css file (style.css)
+        REQUIRE(metadata.input.pages == 15); // the number of .md and .atom files, plus one css file (style.css), plus
+                                             // two files from the theme
         REQUIRE(metadata.input.files == 1); // non-template.css
 
         REQUIRE(
@@ -32,6 +33,8 @@ TEST_CASE("Blog integration tests") {
                 13
                 // the blog/README.md paginated page list generates itself plus 5 more `index.html`s
                 + 5
+                // rendered assets in the default theme
+                + 2
             )
         );
 

@@ -68,48 +68,6 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(const std::str
     return std::nullopt;
 }
 
-void FileManager::copyThemeFiles() {
-    const auto& themeRoot = cfg.getThemeRoot();
-    if (!themeRoot) {
-        minilog::info("No theme set, so no theme files to copy.");
-        return;
-    }
-    std::ifstream confFile(*themeRoot / "violet.theme.json");
-
-    if (!confFile) {
-        minilog::warn(
-            "Failed to open violet.theme.json for theme. Tried path: {}",
-            (*themeRoot / "violet.theme.json").string()
-        );
-        return;
-    }
-
-    minilog::info("Copying theme exports...");
-    // TODO: export ThemeConfig to the class
-    ThemeConfig themeCfg = nlohmann::json::parse(confFile);
-    for (const auto& m : themeCfg.mount) {
-        auto folder = *themeRoot / m;
-        if (!std::filesystem::is_directory(folder)) {
-            throw std::runtime_error("Misconfigured theme: tried to mount non-folder");
-        }
-        for (auto& file : std::filesystem::recursive_directory_iterator(folder)) {
-            if (std::filesystem::is_directory(file)) {
-                continue;
-            }
-            auto rel = std::filesystem::relative(
-                file.path(),
-                *themeRoot
-            );
-            minilog::debug("COPY {}", std::filesystem::weakly_canonical(*themeRoot / rel).string());
-            copyRaw(
-                *themeRoot,
-                rel,
-                rel
-            );
-        }
-    }
-}
-
 std::optional<std::filesystem::path> FileManager::resolvePartial(
     const std::filesystem::path& path
 ) {

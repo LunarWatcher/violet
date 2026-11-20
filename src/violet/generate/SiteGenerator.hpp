@@ -31,7 +31,8 @@ private:
     );
 
     bool processFile(
-        const std::filesystem::path& relPath
+        const std::filesystem::path& relPath,
+        bool isThemeExport = false
     );
 
     void handleTemplatesAndSave(
@@ -47,7 +48,7 @@ private:
     );
 
     void renderAndWrite(
-        const std::filesystem::path& file,
+        const std::filesystem::path& targetFile,
         const std::filesystem::path& relPath,
         const std::string& fileContent,
         const Frontmatter& frontmatter,
@@ -66,9 +67,12 @@ private:
  resetCaches()    *          frontmatter. This is currently limited to failures to open the file for frontmatter checking
      */
     std::optional<bool> processFileIfFrontmatterIsPresent(
-        const std::filesystem::path& file,
-        const std::filesystem::path& relPath
+        const std::filesystem::path& relPath,
+        bool isThemeExport = false
     );
+
+    [[nodiscard("Ignoring the result can result in a broken site")]]
+    bool copyThemeFiles();
 public:
     ~SiteGenerator() = default;
 
