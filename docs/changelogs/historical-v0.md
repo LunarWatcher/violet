@@ -333,9 +333,9 @@ No functional changes have been made in iris relative to inja, so no other migra
 ### Added
 
 * Templates: Added `render(frontmatterRef)`, which allows pages from the various iteration functions rendered outside their normal filesystem declaration.
-  * Note: this does not replace `{% include "content" %}` due to limitations in inja. `{% include %}` is subject to context propagation, while `render()`, much like `recursiveInclude`, has to re-build the context from scratch.
+  * Note: this does not replace `{% include "content" %}` due to limitations in inja. `{% include %}` is subject to context propagation, while `render()`, much like `recurseInclude`, has to re-build the context from scratch.
 
-    In `recursiveInclude`, this is a feature, but in `render()`, that makes it a weaker alternative (or stronger, depending on your point of view). See the docs for `render` for more information
+    In `recurseInclude`, this is a feature, but in `render()`, that makes it a weaker alternative (or stronger, depending on your point of view). See the docs for `render` for more information
 * Theme(default): Added `render()`ed `<content>` to the default RSS feed.
 * Templates: Added `urlEncode`
 
