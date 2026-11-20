@@ -65,49 +65,53 @@ This example shows an atom feed with no base template, so everything is containe
     See /templating/functions/files.html (File operation functions) for more info on the function 
     -->
     {% for entry in listPagesPaginated(".", violet.sort.by_last_modified_date) %}
-        <entry>
-            <!-- All userdata must be escaped. Here, I use CDATA, because it's the easiest option. You can also use
-                {{ htmlEscape(entry.title) }}
-            though it's far more aggressive. The formatting is the same in XML and HTML, but HTML requires more escapes
-            than XML does.
-            -->
-            <title><![CDATA[{{ entry.title }}]]></title>
-            <!-- At this time, violet doesn't have a way to reference the domain. {{ site.prefix }} is just relative to the domain
-            to allow for easy deployments to both github pages and codeberg pages from the same generated source. 
-            You can use {{ site.data }} if you want to get around this for your site. Better design is clearly needed, and input
-            is very much welcome here :) -->
-            <link rel="alternate" href="https://lunarwatcher.codeberg.page/{{ entry.url }}" />
-            <id>https://lunarwatcher.codeberg.page/{{ entry.url }}</id>
+        {%- if entry.layout != "page_list" -%}
+            <entry>
+                <!-- All userdata must be escaped. Here, I use CDATA, because it's the easiest option. You can also use
+                    {{ htmlEscape(entry.title) }}
+                though it's far more aggressive. The formatting is the same in XML and HTML, but HTML requires more escapes
+                than XML does.
+                -->
+                <title><![CDATA[{{ entry.title }}]]></title>
+                <!-- At this time, violet doesn't have a way to reference the domain. {{ site.prefix }} is just relative to the domain
+                to allow for easy deployments to both github pages and codeberg pages from the same generated source. 
+                You can use {{ site.data }} if you want to get around this for your site. Better design is clearly needed, and input
+                is very much welcome here :) -->
+                <link rel="alternate" href="https://lunarwatcher.codeberg.page{{ abspath(entry.url) }}" />
+                <id>https://lunarwatcher.codeberg.page{{ abspath(entry.url) }}</id>
 
-            {% if existsIn(entry, "date") %}
-                <published>{{ formatDate(entry.date, violet.datetime.iso) }}</published>
-            {% else %}
-                <published>{{ formatDate(now(), violet.datetime.iso) }}</published>
-            {% endif %}
-            {% if existsIn(entry, "last_modified") %}
-                <updated>{{ formatDate(entry.last_modified, violet.datetime.iso) }}</updated>
-            {% else if existsIn(entry, "date") %}
-                <updated>{{ formatDate(entry.date, violet.datetime.iso) }}</updated>
-            {% else %}
-                <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
-            {% endif %}
-            {% if existsIn(entry, "summary") %}
-                <summary><![CDATA[{{ entry.summary }}]]></summary>
-            {% endif %}
-            <!-- New in violet 0.9.0: render() lets the content of other pages be included.
-            We htmlEscape() the contents to avoid CDATA or xhtml -->
-            <content type="html">
-                {{ htmlEscape(render(entry).content) }}
-            </content>
-            <!-- My reference site only has one author. You can use {{ entry.data }} if you have a multi-author site. -->
-            <author>
-                <name>Olivia</name>
-                <email>email@example.com</email>
-            </author>
-        </entry>
+                {% if existsIn(entry, "date") %}
+                    <published>{{ formatDate(entry.date, violet.datetime.iso) }}</published>
+                {% else %}
+                    <published>{{ formatDate(now(), violet.datetime.iso) }}</published>
+                {% endif %}
+                {% if existsIn(entry, "last_modified") %}
+                    <updated>{{ formatDate(entry.last_modified, violet.datetime.iso) }}</updated>
+                {% else if existsIn(entry, "date") %}
+                    <updated>{{ formatDate(entry.date, violet.datetime.iso) }}</updated>
+                {% else %}
+                    <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+                {% endif %}
+                {% if existsIn(entry, "summary") %}
+                    <summary><![CDATA[{{ entry.summary }}]]></summary>
+                {% endif %}
+                <!-- New in violet 0.9.0: render() lets the content of other pages be included.
+                We htmlEscape() the contents to avoid CDATA or xhtml -->
+                <content type="html">
+                    {{ htmlEscape(render(entry).content) }}
+                </content>
+                <!-- My reference site only has one author. You can use {{ entry.data }} if you have a multi-author site. -->
+                <author>
+                    <name>Olivia</name>
+                    <email>email@example.com</email>
+                </author>
+            </entry>
+        {%- endif -%}
     {% endfor %}
 </feed>
 ```
+
+Note how we exclude the `page_list` layout; this is purely to avoid lumping them in with actual content, since `listPagesPaginated` doesn't filter these out on its own.
 
 ### Atom feed using template
 
@@ -116,45 +120,47 @@ This example is the same in principle as the standalone example. Its comments ap
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>{{ site.name }} - {{ page.data.name }}</title>
-    <link href="{{ site.data.domain }}/{{ page.url }}" rel="self" />
+    <link href="{{ site.data.domain }}{{ page.url }}" rel="self" />
     <!-- Technically, you can have https://example.com/feed.atom that provides a feed for https://example.com/blog.
     Also, violet does not yet provide anything that lets you strip components from a URL, so this is a cheap workaround
     -->
-    <link href="{{ site.data.domain }}{{ page.data.for-scope }}" />
-    <id>{{ site.data.domain }}/{{ page.url }}</id>
+    <link href="{{ site.data.domain }}{{ abspath(page.data.for-scope) }}" />
+    <id>{{ site.data.domain }}{{ abspath(page.url) }}</id>
     <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
 
     {% for entry in listPagesPaginated(".", violet.sort.by_last_modified_date) %}
-        <entry>
-            <title><![CDATA[{{ entry.title }}]]></title>
-            <link rel="alternate" href="{{ site.data.domain }}/{{ entry.url }}" />
-            <id>{{ site.data.domain }}/{{ entry.url }}</id>
+        {%- if entry.layout != "page_list" -%}
+            <entry>
+                <title><![CDATA[{{ entry.title }}]]></title>
+                <link rel="alternate" href="{{ site.data.domain }}{{ abspath(entry.url) }}" />
+                <id>{{ site.data.domain }}{{ abspath(entry.url) }}</id>
 
-            {% if existsIn(entry, "date") %}
-                <published>{{ formatDate(entry.date, violet.datetime.iso) }}</published>
-            {% else %}
-                <published>{{ formatDate(now(), violet.datetime.iso) }}</published>
-            {% endif %}
-            {% if existsIn(entry, "last_modified") %}
-                <updated>{{ formatDate(entry.last_modified, violet.datetime.iso) }}</updated>
-            {% else if existsIn(entry, "date") %}
-                <updated>{{ formatDate(entry.date, violet.datetime.iso) }}</updated>
-            {% else %}
-                <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
-            {% endif %}
-            {% if existsIn(entry, "summary") %}
-                <summary><![CDATA[{{ entry.summary }}]]></summary>
-            {% endif %}
-            <!-- New in violet 0.9.0: render() lets the content of other pages be included.
-            We htmlEscape() the contents to avoid CDATA or xhtml -->
-            <content type="html">
-                {{ htmlEscape(render(entry).content) }}
-            </content>
-            <author>
-                <name>Olivia</name>
-                <email>email@example.com</email>
-            </author>
-        </entry>
+                {% if existsIn(entry, "date") %}
+                    <published>{{ formatDate(entry.date, violet.datetime.iso) }}</published>
+                {% else %}
+                    <published>{{ formatDate(now(), violet.datetime.iso) }}</published>
+                {% endif %}
+                {% if existsIn(entry, "last_modified") %}
+                    <updated>{{ formatDate(entry.last_modified, violet.datetime.iso) }}</updated>
+                {% else if existsIn(entry, "date") %}
+                    <updated>{{ formatDate(entry.date, violet.datetime.iso) }}</updated>
+                {% else %}
+                    <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
+                {% endif %}
+                {% if existsIn(entry, "summary") %}
+                    <summary><![CDATA[{{ entry.summary }}]]></summary>
+                {% endif %}
+                <!-- New in violet 0.9.0: render() lets the content of other pages be included.
+                We htmlEscape() the contents to avoid CDATA or xhtml -->
+                <content type="html">
+                    {{ htmlEscape(render(entry).content) }}
+                </content>
+                <author>
+                    <name>Olivia</name>
+                    <email>email@example.com</email>
+                </author>
+            </entry>
+        {%- endif -%}
     {% endfor %}
 </feed>
 ```
@@ -171,7 +177,7 @@ Now, `/blog/feed.atom` becomes the much shorter:
 ---
 ```
 
-... no, really, that's it. Now you can make multiple feeds. Due to the use of the "." scope, they'll all generate relative to the location of the final `feed.atom`. Unfortunately, you now can't make RSS feeds
+... no, really, that's it. Now you can make multiple feeds. Due to the use of the "." scope, they'll all generate relative to the location of the final `feed.atom`.
 
 ### RSS feed
 
@@ -188,7 +194,7 @@ Here's an abridged example based on the Atom feed example, using the file `/comb
     <title>{{ site.name }} - {{ page.data.name }}</title>
     <link href="https://example.com/combined.atom" rel="self" />
     <link href="https://example.com" />
-    <id>{{ site.data.domain }}/combined.atom</id>
+    <id>{{ site.data.domain }}{{ abspath("/combined.atom") }}</id>
     <updated>{{ formatDate(now(), violet.datetime.iso) }}</updated>
 
     <!-- The second argument is now used to iterate subfolders of the root rather than the entire root
@@ -196,21 +202,27 @@ Here's an abridged example based on the Atom feed example, using the file `/comb
     For my use, I avoid iterating the root since I have non-blog content I don't want in the feed.
     -->
     {% for entry in listPagesPaginated("/blog", violet.sort.by_last_modified_date, 10) %}
-        <entry>
-            <!-- Entry content omitted for brevity -->
-        </entry>
+        {%- if entry.layout != "page_list" -%}
+            <entry>
+                <!-- Entry content omitted for brevity -->
+            </entry>
+        {%- endif -%}
     {% endfor %}
 
     {% for entry in listPagesPaginated("/til", violet.sort.by_last_modified_date, 10) %}
-        <entry>
-            <!-- Entry content omitted for brevity -->
-        </entry>
+        {%- if entry.layout != "page_list" -%}
+            <entry>
+                <!-- Entry content omitted for brevity -->
+            </entry>
+        {%- endif -%}
     {% endfor %}
 
     {% for entry in listPagesPaginated("/notes", violet.sort.by_last_modified_date, 10) %}
-        <entry>
-            <!-- Entry content omitted for brevity -->
-        </entry>
+        {%- if entry.layout != "page_list" -%}
+            <entry>
+                <!-- Entry content omitted for brevity -->
+            </entry>
+        {%- endif -%}
     {% endfor %}
 </feed>
 ```
