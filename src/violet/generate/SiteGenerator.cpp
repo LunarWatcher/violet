@@ -13,6 +13,7 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <string>
 #include <violet/parsing/Markdown.hpp>
 
 namespace violet {
@@ -378,7 +379,7 @@ bool SiteGenerator::generate() {
     return success;
 }
 
-std::expected<std::shared_ptr<SiteGenerator>, std::string_view> SiteGenerator::loadWorkspace(
+std::expected<std::shared_ptr<SiteGenerator>, std::string> SiteGenerator::loadWorkspace(
     const GenerateOpts& opts
 ) {
     nlohmann::json rawConf;

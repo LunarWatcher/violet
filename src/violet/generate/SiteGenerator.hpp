@@ -10,7 +10,7 @@
 #include <expected>
 #include <filesystem>
 #include <memory>
-#include <string_view>
+#include <string>
 
 namespace violet {
 
@@ -86,7 +86,7 @@ public:
      * error is returned. This string should not be parsed programmatically, as it's intended for non-recoverable issues
      * that require user intervention.
      */
-    static std::expected<std::shared_ptr<SiteGenerator>, std::string_view> loadWorkspace(
+    static std::expected<std::shared_ptr<SiteGenerator>, std::string> loadWorkspace(
         const GenerateOpts& opts
     );
 

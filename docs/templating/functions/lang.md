@@ -11,6 +11,10 @@ This category of functions describes extension functions to the iris language, t
 
 ## `recurseInclude(templateName, context)`
 
+> [!warning]
+>
+> As of violet 0.21.0, using this function is discouraged. It's kept for backwards compatibility reasons, but newer use of similar functionality should use [macros](/templating/Macros.md) instead, which support both arguments and recursive calls in a much better way.
+
 This function can be used to include a template and provide the context object directly. Example usage:
 ```jinja
 {% set context = {
