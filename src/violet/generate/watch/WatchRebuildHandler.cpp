@@ -6,12 +6,14 @@
 
 #include <chrono>
 #include <filesystem>
+#include <utility>
 
 namespace violet {
 
 WatchRebuildHandler::WatchRebuildHandler(
     const GenerateOpts &opts,
-    std::atomic<bool>* notify
+    std::atomic<bool>* buildState,
+    std::function<void()> afterBuild
 ) : AutoRebuildHandler(opts),
     watcher(
         { opts.root },
@@ -33,7 +35,10 @@ WatchRebuildHandler::WatchRebuildHandler(
                     std::filesystem::weakly_canonical(cfg.root()).string()
                 );
         }
-    ), notify(notify) {}
+    ),
+    buildState(buildState),
+    afterBuild(std::move(afterBuild))
+{}
 
 int WatchRebuildHandler::watch() {
     if (!refreshGenerator()) {
@@ -42,8 +47,11 @@ int WatchRebuildHandler::watch() {
         );
     } else {
         auto result = generate();
-        if (this->notify) {
-            this->notify->store(result);
+        if (afterBuild) {
+            afterBuild();
+        }
+        if (this->buildState) {
+            this->buildState->store(result);
         }
     }
     watcher.block([this](auto type, const auto &path) -> bool {
@@ -66,7 +74,6 @@ int WatchRebuildHandler::watch() {
             );
             return true;
         }
-
 
         if (generator) {
             const auto& cfg = this->generator->getConfig();
@@ -98,13 +105,16 @@ int WatchRebuildHandler::watch() {
         // something?
         if (generate()) {
             minilog::info("Site successfully refreshed");
-            if (this->notify) {
-                this->notify->store(true);
+            if (this->buildState) {
+                this->buildState->store(true);
+            }
+            if (afterBuild) {
+                afterBuild();
             }
         } else {
             minilog::error("Site failed to generate. See error messages");
-            if (this->notify) {
-                this->notify->store(false);
+            if (this->buildState) {
+                this->buildState->store(false);
             }
         }
 

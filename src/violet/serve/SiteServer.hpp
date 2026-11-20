@@ -4,6 +4,7 @@
 
 #include "magpie/App.hpp"
 #include "violet/data/GenerateOpts.hpp"
+#include "violet/data/ServeOpts.hpp"
 #include "violet/serve/ServerContext.hpp"
 
 #include <filesystem>
@@ -51,7 +52,10 @@ private:
     void watchRoot();
 
 public:
-    SiteServer(const GenerateOpts &generateOpts);
+    SiteServer(
+        const ServeOpts& serveOpts,
+        const GenerateOpts& generateOpts
+    );
 
     ~SiteServer();
 

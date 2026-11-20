@@ -10,19 +10,31 @@
 
 namespace violet {
 
-SiteServer::SiteServer(const GenerateOpts &generateOpts)
+SiteServer::SiteServer(
+    const ServeOpts& serveOpts,
+    const GenerateOpts& generateOpts
+)
     : isBuildValid(false),
       context(
         std::make_shared<ServerContext>(
             generateOpts,
-            std::make_shared<WatchRebuildHandler>(generateOpts, &isBuildValid)
+            std::make_shared<WatchRebuildHandler>(
+                generateOpts,
+                &isBuildValid,
+                [this]() {
+                    minilog::info(
+                        "Server available at http://localhost:{}",
+                        this->app->getPort()
+                    );
+                }
+            )
         )
     ),
       app(
           std::make_shared<magpie::App<ServerContext>>(
               context,
-              magpie::AppConfig{
-                  .port = 8080,
+              magpie::AppConfig {
+                  .port = serveOpts.port,
                   // Beware if you try to patch this IP to accept external connections: magpie has not been tested in
                   // production, and likely has vulnerabilities. Exposing this outside your machine is a risk, and
                   // that's why we don't support it at this time. You have been warned.
@@ -178,7 +190,6 @@ void SiteServer::watchRoot() {
         try {
             if (!this->context->watcher->watch()) {
                 minilog::error("Watch thread shut down unexpectedly!");
-                abort();
             }
         } catch (const std::exception& e) {
             minilog::error("Handled uncaught exception: {}", e.what());

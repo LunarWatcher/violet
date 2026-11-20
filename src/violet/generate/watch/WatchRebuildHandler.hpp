@@ -21,11 +21,13 @@ namespace violet {
 class WatchRebuildHandler : public AutoRebuildHandler {
 private:
     stc::FileWatcher watcher;
-    std::atomic<bool>* notify;
+    std::atomic<bool>* buildState;
+    std::function<void()> afterBuild;
 public:
     WatchRebuildHandler(
         const GenerateOpts &opts,
-        std::atomic<bool>* notify = nullptr
+        std::atomic<bool>* buildState = nullptr,
+        std::function<void()> afterBuild = nullptr
     );
     virtual ~WatchRebuildHandler() = default;
 

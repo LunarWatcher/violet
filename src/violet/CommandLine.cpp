@@ -108,13 +108,20 @@ CLI::App* violet::initCommand(CLI::App& app, violet::InitOpts& initOpts) {
     return cmdInit;
 }
 
-CLI::App* violet::serveCommand(CLI::App& app, violet::GenerateOpts& generateOpts) {
+CLI::App* violet::serveCommand(CLI::App& app, violet::GenerateOpts& generateOpts, violet::ServeOpts& serveOpts) {
     auto cmdServe = app.add_subcommand(
         "serve",
-        "Currently not implemented, but will exist in the future:tm:"
+        "Used to create a local preview server. Has to be enabled at compile time (defaults to being enabled)"
     );
     withStandardFlags(cmdServe);
     commonGenerateFlags(cmdServe, generateOpts);
+
+    cmdServe->add_option(
+        "--port,-p",
+        serveOpts.port,
+        "The port to run the server on. Pass 0 to pick a random free port"
+    )
+        ->default_val(serveOpts.port);
 
     return cmdServe;
 }
@@ -164,6 +171,7 @@ int violet::cliMain(int argc, char** argv) {
     GenerateOpts generateOpts, generateServeOpts {
         .overridePrefix = "/"
     };
+    ServeOpts serveOpts;
     InitOpts initOpts;
 
     minilog::setLevel(minilog::Level::Info);
@@ -173,7 +181,7 @@ int violet::cliMain(int argc, char** argv) {
 
     auto* cmdGenerate = generateCommand(app, generateOpts);
     auto* cmdInit = initCommand(app, initOpts);
-    auto* cmdServe = serveCommand(app, generateServeOpts);
+    auto* cmdServe = serveCommand(app, generateServeOpts, serveOpts);
     auto* cmdVersion = versionCommand(app);
 
     initMeta(app);
@@ -189,7 +197,8 @@ int violet::cliMain(int argc, char** argv) {
         );
     } else if (cmdServe->parsed()) {
         return serveMain(
-            generateServeOpts
+            generateServeOpts,
+            serveOpts
         );
     } else if (cmdInit->parsed()) {
         return initMain(initOpts);
@@ -211,9 +220,11 @@ int violet::generateMain(const GenerateOpts& opts) {
 
 #ifdef VIOLET_ENABLE_SERVER
 int violet::serveMain(
-    const GenerateOpts& generateOpts
+    const GenerateOpts& generateOpts,
+    const ServeOpts& serveOpts
 ) {
     SiteServer serv(
+        serveOpts,
         generateOpts
     );
     serv.serve();
