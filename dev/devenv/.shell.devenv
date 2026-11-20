@@ -2,6 +2,10 @@
 
 git_root=$(git rev-parse --show-toplevel)
 
+cd "$git_root"
+mkdir -p build
+cd build
+
 function help() {
     echo "Commands:"
     echo -e "\tgen-docs\tGenerate violet's doc page (Firefox local mapping-compatible)"
@@ -9,6 +13,7 @@ function help() {
     echo -e "\tserve\t\tRuns violet serve on the docs"
     echo -e "\tpublish\t\tMAINTAINER ONLY: Publish the docs to codeberg"
     echo -e "\tgenpkg\t\tGenerate a new PKGBUILD. Should only be used while a tag is checked out."
+    echo -e "\tinstall\t\tInstalls a release build locally, built in a separate build folder"
 }
 
 function gen-docs() {
@@ -51,4 +56,14 @@ function publish() {
 
 function genpkg() {
     "${git_root}/scripts/pkgbuild-gen.sh"
+}
+
+function install() {
+    pushd
+    cd "${git_root}"
+    mkdir -p build-release
+    cd build-release
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local
+    make -j $(nproc) install
+    popd
 }
