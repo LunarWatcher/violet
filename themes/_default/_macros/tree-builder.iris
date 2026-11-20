@@ -1,0 +1,19 @@
+{% macro violetTreeBuilder(currTree) %}
+    {# Direct root descendants #}
+    {% for p in currTree.items %}
+        <li><a href="{{ abspath(p.url) }}">{{ p.title }}</a></li>
+    {% endfor %}
+
+    {% for nextTree in currTree.subfolders %}
+        <li>
+            {% if nextTree.index != null %}
+                <a href="{{ abspath(nextTree.index.url) }}">{{ nextTree.index.title }}</a>
+            {% else %}
+                {{ nextTree.folder_name }}
+            {% endif %}
+            <ul>
+                {{ violetTreeBuilder(nextTree) }}
+            </ul>
+        </li>
+    {% endfor %}
+{% endmacro %}

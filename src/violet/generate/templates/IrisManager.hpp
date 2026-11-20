@@ -23,7 +23,7 @@ public:
     std::shared_ptr<iris::Environment> env;
 
     void reloadEnv();
-
+    void reloadMacros();
 public:
     DateTimeFunctions dateTimeFuncs;
     FileFunctions fileFuncs;

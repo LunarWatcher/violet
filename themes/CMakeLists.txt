@@ -1,11 +1,12 @@
 set(ASSETS
     _default/violet.theme.json
 
+    _default/_macros/tree-builder.iris
+
     _default/_partials/footer.iris
     _default/_partials/head.iris
     _default/_partials/header.iris
     _default/_partials/paginator.iris
-    _default/_partials/tree_builder.iris
 
     _default/_templates/_default/base.iris
     _default/_templates/_default/feed.iris

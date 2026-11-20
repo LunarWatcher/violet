@@ -12,8 +12,8 @@ namespace tests {
 
 struct DebugMarkerFixture {
     static inline std::regex extract {
-        R"(\[\[violet-test\(([^)]+)\):(\|*)(.*?)\2\]\])",
-        std::regex::optimize | std::regex::ECMAScript
+        R"(\[\[violet-test\(([^)]+)\):(\|*)((.|\n)*?)\2\]\])",
+        std::regex::optimize | std::regex::ECMAScript | std::regex::multiline
     };
 
     std::string createDebugMarker(const std::string& key, const std::string& content) const {

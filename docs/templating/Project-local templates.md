@@ -11,6 +11,7 @@ Project-local templates can either be used instead of a theme, or to override pa
 
 * **Layout folder:** `<project root>/_templates`
 * **Partials folder:** `<project root>/_partials`
+* **User-defined functions folder:** `<project root>/_macros` (see [user-defined functions](Macros.md))
 
 These are only required if `"theme": null`, and are optional with a theme.
 

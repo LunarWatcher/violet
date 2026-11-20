@@ -16,6 +16,7 @@ Only one theme may be active at any given time, though if you need to extend a t
 
 * **Layout folder:** `<project root>/themes/<theme name>/_templates`
 * **Partials folder:** `<project root>/themes/<theme name>/_partials`
+* **User-defined functions folder:** `<project root>/themes/<theme name>/_macros` (see [user-defined functions](Macros.md))
 
 Note that `<theme name>` may not start with an underscore. Themes starting with an underscore are reserved for internal use, and do a lookup in an installation-internal folder.
 

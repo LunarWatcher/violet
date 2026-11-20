@@ -15,6 +15,7 @@ add_executable(tests
     src/integration/BlogIntegrationTests.cpp
 
     src/integration/monolith/AbsPathTests.cpp
+    src/integration/monolith/GlobalMacroTests.cpp
     src/integration/monolith/JsonLoadingTests.cpp
     src/integration/monolith/ListPagesPaginatedTests.cpp
     src/integration/monolith/ListPagesTests.cpp

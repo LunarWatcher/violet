@@ -8,7 +8,6 @@ namespace violet {
 class FileManager {
 private:
     Config& cfg;
-    std::filesystem::path themeDir;
 public:
     FileManager(Config& cfg);
 

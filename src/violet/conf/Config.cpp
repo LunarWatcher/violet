@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include "stc/Environment.hpp"
 
 namespace violet {
 
@@ -6,6 +7,23 @@ Config::Config(const ConfigFileData& config) : confFileData(config) {}
 
 const std::filesystem::path& Config::root() const {
     return env.root;
+}
+std::vector<std::filesystem::path> Config::macroLocations() const
+{
+    constexpr std::string_view macroFolderName = "_macros";
+    std::vector<std::filesystem::path> out;
+    out.reserve(2);
+
+    if (std::filesystem::is_directory(root() / macroFolderName)) {
+        out.push_back(root() / macroFolderName);
+    }
+    auto theme = getThemeRoot();
+    if (theme) {
+        if (std::filesystem::is_directory(*theme / macroFolderName)) {
+            out.push_back(*theme / macroFolderName);
+        }
+    }
+    return out;
 }
 
 std::filesystem::path Config::output() const {
@@ -60,6 +78,18 @@ void Config::setPrefix(const std::string& newPrefix) {
     confFileData.prefix = ss.str();
 
     confFileData.raw["prefix"] = confFileData.prefix;
+
+    auto theme = getTheme();
+    if (theme) {
+        // TODO: error `stc::executablePath` should probably be cached statically to better support rebuilds
+        if ((*theme)[0] == '_') {
+            themeDir = std::filesystem::path(
+                stc::executablePath()
+            ).parent_path() / "../share/violet/themes" / *theme;
+        } else {
+            themeDir = root() / "_themes" / *theme;
+        }
+    }
 }
 
 bool Config::allowLegacyInjaExtensions() const {
@@ -92,6 +122,9 @@ const std::string& Config::getTimezone() const {
 
 const std::optional<std::string>& Config::getTheme() const {
     return confFileData.theme;
+}
+const std::optional<std::filesystem::path>& Config::getThemeRoot() const {
+    return themeDir;
 }
 
 const std::vector<std::string>& Config::getExcludes() const {

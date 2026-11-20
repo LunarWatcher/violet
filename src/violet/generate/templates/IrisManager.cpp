@@ -1,12 +1,12 @@
 #include "IrisManager.hpp"
 #include "iris/environment.hpp"
 #include "violet/conf/Frontmatter.hpp"
-#include "violet/data/VioletGlobal.hpp"
 #include "violet/generate/ProcessedFileType.hpp"
 #include "violet/paginator/Paginator.hpp"
 
 #include <filesystem>
 #include <iris/iris.hpp>
+#include <stacktrace>
 
 namespace violet {
 
@@ -24,6 +24,7 @@ IrisManager::IrisManager(
     escapingFuncs(*this)
 {
     reloadEnv();
+    reloadMacros();
 }
 
 void IrisManager::reloadEnv() {
@@ -38,6 +39,9 @@ void IrisManager::reloadEnv() {
             );
         }
         if (!templateName.starts_with("partials")) {
+            // TODO: this does not support alternative path locations, like allowing the template directory to become
+            // the defacto root. This requires an extra path existence check against the template root before lookup,
+            // and is therefore trivial to implement, but I'm not sure what should take priority
             return env->parse_file(
                 path / templateName
             );
@@ -45,6 +49,51 @@ void IrisManager::reloadEnv() {
             throw iris::CallbackError("Failed to resolve partial");
         }
     });
+}
+
+void IrisManager::reloadMacros() {
+    const auto locations = cfg.macroLocations();
+
+    if (locations.empty()) {
+        minilog::info("No macros to load");
+        return;
+    }
+    minilog::info("Found {} macro locations.", locations.size());
+
+    for (auto& loc : locations) {
+        for (const auto& f : std::filesystem::recursive_directory_iterator(loc)) {
+            if (!f.is_regular_file()) {
+                continue;
+            }
+
+            const auto& entryPath = f.path();
+
+            if (entryPath.extension() != ".iris") {
+                continue;
+            }
+
+            minilog::debug(
+                "Now loading macros from {}",
+                entryPath.string()
+            );
+
+            auto tmpl = env->parse_file(
+                entryPath
+            );
+
+            if (tmpl.macroStorage.empty()) {
+                minilog::warn(
+                    "Macro file {} does not contain any macros!",
+                    entryPath.string()
+                );
+            } else {
+                for (const auto& [name, _] : tmpl.macroStorage) {
+                    minilog::debug("Loading macro {}", name);
+                }
+                env->accept_macros(tmpl);
+            }
+        }
+    }
 }
 
 RenderContext IrisManager::buildCommonContext(const Frontmatter& pageFm) {

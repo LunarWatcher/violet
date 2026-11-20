@@ -1,5 +1,4 @@
 #include "FileManager.hpp"
-#include "stc/Environment.hpp"
 #include "violet/conf/ThemeConfig.hpp"
 #include "violet/util/FileHelper.hpp"
 
@@ -29,22 +28,11 @@ void FileManager::copyRaw(
     );
 }
 
-FileManager::FileManager(Config& cfg) : cfg(cfg)
-{
-    // TODO: error `stc::executablePath` should probably be cached statically to better support rebuilds
-    if (this->cfg.getTheme() && (*cfg.getTheme())[0] == '_') {
-        this->themeDir
-            = std::filesystem::path(
-                stc::executablePath()
-            ).parent_path() / "../share/violet/themes" / *cfg.getTheme();
-    } else if (this->cfg.getTheme()) {
-        this->themeDir = cfg.root() / "_themes" / *cfg.getTheme();
-    }
-}
+FileManager::FileManager(Config& cfg) : cfg(cfg) {}
+
 std::optional<std::filesystem::path> FileManager::resolveTemplate(const std::string& type, const std::string& layout)
 {
-
-    // Temporary; used to cehck both .iris and .iris extensions. This is temporary until we can do the breaking change
+    // Temporary; used to check both .iris and .iris extensions. This is temporary until we can do the breaking change
     // of dropping .iris files
     std::vector<std::string> extensions{".iris"};
     if (cfg.allowLegacyInjaExtensions()) {
@@ -60,13 +48,14 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(const std::str
         // std::cout << file << std::endl;
 
         paths.push_back(root / "_templates" / type);
-        if (cfg.getTheme()) {
-            paths.push_back(themeDir / "_templates" / type);
+        const auto& themeRoot = cfg.getThemeRoot();
+        if (themeRoot) {
+            paths.push_back(*themeRoot / "_templates" / type);
         }
 
         paths.push_back(root / "_templates" / "_default");
-        if (cfg.getTheme()) {
-            paths.push_back(themeDir / "_templates" / "_default");
+        if (themeRoot) {
+            paths.push_back(*themeRoot / "_templates" / "_default");
         }
         auto result = stc::FileUtil::findFile(
             paths,
@@ -80,16 +69,17 @@ std::optional<std::filesystem::path> FileManager::resolveTemplate(const std::str
 }
 
 void FileManager::copyThemeFiles() {
-    if (!cfg.getTheme()) {
+    const auto& themeRoot = cfg.getThemeRoot();
+    if (!themeRoot) {
         minilog::info("No theme set, so no theme files to copy.");
         return;
     }
-    std::ifstream confFile(themeDir / "violet.theme.json");
+    std::ifstream confFile(*themeRoot / "violet.theme.json");
 
     if (!confFile) {
         minilog::warn(
             "Failed to open violet.theme.json for theme. Tried path: {}",
-            (themeDir / "violet.theme.json").string()
+            (*themeRoot / "violet.theme.json").string()
         );
         return;
     }
@@ -98,7 +88,7 @@ void FileManager::copyThemeFiles() {
     // TODO: export ThemeConfig to the class
     ThemeConfig themeCfg = nlohmann::json::parse(confFile);
     for (const auto& m : themeCfg.mount) {
-        auto folder = themeDir / m;
+        auto folder = *themeRoot / m;
         if (!std::filesystem::is_directory(folder)) {
             throw std::runtime_error("Misconfigured theme: tried to mount non-folder");
         }
@@ -108,11 +98,11 @@ void FileManager::copyThemeFiles() {
             }
             auto rel = std::filesystem::relative(
                 file.path(),
-                themeDir
+                *themeRoot
             );
-            minilog::debug("COPY {}", std::filesystem::weakly_canonical(themeDir / rel).string());
+            minilog::debug("COPY {}", std::filesystem::weakly_canonical(*themeRoot / rel).string());
             copyRaw(
-                themeDir,
+                *themeRoot,
                 rel,
                 rel
             );
@@ -145,8 +135,9 @@ std::optional<std::filesystem::path> FileManager::resolvePartial(
         return p;
     }
 
-    if (cfg.getTheme()) {
-        if (auto p = this->themeDir / "_partials" / fn;
+    const auto& themeRoot = cfg.getThemeRoot();
+    if (themeRoot) {
+        if (auto p = *themeRoot / "_partials" / fn;
             std::filesystem::is_regular_file(p)
         ) {
             return p;

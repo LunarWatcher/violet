@@ -53,11 +53,21 @@ private:
     ConfigFileData confFileData;
 
     EnvConfig env = {};
+
+    std::optional<std::filesystem::path> themeDir = std::nullopt;
 public:
     Config() = default;
     Config(const ConfigFileData& config);
 
     const std::filesystem::path& root() const;
+
+    /**
+     * Returns all macro locations for this site. This may return an empty vector if neither the theme nor the site
+     * defines macros.
+     * The site is always the first item if the site has macros, since iris currently ignores subsequent assignments
+     * rather than override them. If this changes in the future, the order will be reversed.
+     */
+    std::vector<std::filesystem::path> macroLocations() const;
 
     std::filesystem::path output() const;
 
@@ -84,6 +94,7 @@ public:
     const std::string& getTimezone() const;
 
     const std::optional<std::string>& getTheme() const;
+    const std::optional<std::filesystem::path>& getThemeRoot() const;
 
     const std::vector<std::string>& getExcludes() const;
 
