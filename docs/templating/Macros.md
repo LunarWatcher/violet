@@ -40,7 +40,7 @@ At this time, it's not possible to `{% include %}` a file to get its macros. Thi
 
 ## Example usage
 
-This is a real example from violet's default documentation theme.
+This is a real example from violet's default documentation theme, specifically for the macro used to build the navigation tree shown in the sidebar.
 
 `_macros/tree-builder.iris`
 ```jinja

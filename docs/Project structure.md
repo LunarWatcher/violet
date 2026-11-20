@@ -10,7 +10,7 @@ TL;DR:
   * [`_themes`](#themes)
   * [`_templates`](#templates)
   * [`_partials`](#partials)
-
+  * [`_macros`](#macros)
 
 ## Content folders
 
@@ -122,4 +122,12 @@ Similarly to templates, partials are checked with a lookup order that prioritize
 * `{theme}/_partials/{user-provided path}`
 
 The `{user-provided path}` is just whatever was provided to the `{% include "partials/path.iris" %}` statement. Note that `.iris` may be omitted from the include statement, in which case it'll be appended.
+
+## Macros
+
+[Global user-defined functions](/templating/Macros.md), called "macros" from the keyword used to define them in the iris templates, are a set of files stored in the `_macros` folder that contain `{% macro %}` statements. These are loaded before any other files are, and can be used anywhere in the project similarly to normal functions.
+
+Macros do not have a lookup order in the same sense that partials and templates do; they are loaded in the same order as partials and templates, but since they're only loaded at project load time, they do not need to be explicitly included. Additionally, macros do not depend on filenames to determine the macro name, as this is handled internally by iris.
+
+`{project}/_macros/{user-provided path}` is still loaded before `{theme}/_macros/{user-provided path}`. This order may change in the future if iris' function loading semantics change. Currently, this order is in use because macros *cannot* be overridden, so the project-local templates must be loaded first in order to potentially override themes.
 
